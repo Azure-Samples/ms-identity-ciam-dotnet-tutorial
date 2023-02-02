@@ -1,0 +1,46 @@
+{
+  "Sample": {
+    "Title": "An ASP.NET Core Web App which lets sign-in users with work and school in my org",
+    "Level": 200,
+    "Client": "ASP.NET Core Web App",
+    "Service": "Microsoft Graph",
+    "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+    "Endpoint": "AAD v2.0"
+  },
+
+  /*
+    This section describes the Azure AD Applications to configure, and their dependencies
+  */
+  "AADApps": [
+    {
+      "Id": "webApp",
+      "Name": "WebApp",
+      "Kind": "WebApp",
+      "Audience": "AzureADandPersonalMicrosoftAccount",
+      "HomePage": "https://localhost:7274/",
+      "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
+      "LogoutUrl": "https://localhost:7274/signout-oidc",
+    }
+  ],
+  "CodeConfiguration": [
+    {
+      "App": "webApp",
+      "SettingKind": "JSon",
+      "SettingFile": "\\..\\appsettings.json",
+      "Mappings": [
+        {
+          "key": "ClientId",
+          "value": ".AppId"
+        },
+        {
+          "key": "TenantId",
+          "value": "$tenantId"
+        },
+        {
+          "key": "Domain",
+          "value": "$tenantName"
+        }
+      ]
+    }
+  ]
+}
