@@ -5,7 +5,8 @@
     "Client": "ASP.NET Core Web App",
     "Service": "Microsoft Graph",
     "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
-    "Endpoint": "AAD v2.0"
+    "Endpoint": "AAD v2.0",
+    "Provider": "CIAM"
   },
 
   /*
@@ -20,6 +21,12 @@
       "HomePage": "https://localhost:7274/",
       "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
       "LogoutUrl": "https://localhost:7274/signout-oidc",
+      "RequiredResourcesAccess": [
+        {
+          "Resource": "Microsoft Graph",
+          "DelegatedPermissions": [ "User.Read" ]
+        }
+      ]
     }
   ],
   "CodeConfiguration": [
