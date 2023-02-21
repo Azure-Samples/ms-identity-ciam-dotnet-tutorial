@@ -3,7 +3,6 @@
     "Title": "An ASP.NET Core Web App which lets sign-in users with work and school in my org",
     "Level": 200,
     "Client": "ASP.NET Core Web App",
-    "Service": "Microsoft Graph",
     "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
     "Endpoint": "AAD v2.0",
     "Provider": "CIAM"
@@ -15,18 +14,14 @@
   "AADApps": [
     {
       "Id": "webApp",
-      "Name": "WebApp",
+      "Name": "CIAMWebApp",
       "Kind": "WebApp",
-      "Audience": "AzureADandPersonalMicrosoftAccount",
+      "Audience": "AzureADMyOrg",
       "HomePage": "https://localhost:7274/",
       "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
       "LogoutUrl": "https://localhost:7274/signout-oidc",
-      "RequiredResourcesAccess": [
-        {
-          "Resource": "Microsoft Graph",
-          "DelegatedPermissions": [ "User.Read" ]
-        }
-      ]
+      "SDK": "MicrosoftIdentityWeb",
+      "SampleSubPath": "1-Authentication\\1-sign-in-aspnet-core-mvc"
     }
   ],
   "CodeConfiguration": [
