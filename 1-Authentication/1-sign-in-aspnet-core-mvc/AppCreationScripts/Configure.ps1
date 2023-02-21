@@ -107,6 +107,9 @@ Function ConfigureApplications
                                                           RedirectUris = "https://localhost:7274/", "https://localhost:7274/signin-oidc"; `
                                                           HomePageUrl = "https://localhost:7274/"; `
                                                           LogoutUrl = "https://localhost:7274/signout-oidc"; `
+                                                          ImplicitGrantSettings = @{ `
+                                                              EnableIdTokenIssuance=$true; `
+                                                          } `
                                                         } `
                                                        -SignInAudience AzureADMyOrg `
                                                       #end of command

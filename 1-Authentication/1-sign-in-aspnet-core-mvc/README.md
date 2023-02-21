@@ -39,7 +39,7 @@ This sample demonstrates a ASP.NET Core Web App that authenticates users against
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* A **CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your CIAM tenant.
 
 >This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
@@ -94,8 +94,7 @@ There is one project in this sample. To register it, you can:
        ```
 
     > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
-    
+
 </details>
 
 #### Choose the CIAM tenant where you want to create your applications
@@ -133,6 +132,8 @@ Please refer to:
         1. `https://localhost:7274/`
         1. `https://localhost:7274/signin-oidc`
     1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-oidc`.
+    1. In the **Implicit grant** section, check the **ID tokens** option as this sample requires the [Implicit grant flow](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-implicit-grant-flow) to be enabled to sign-in the user and call an API.
+    1. Select **ID tokens (used for implicit and hybrid flows)** checkbox.
     1. Click **Save** to save your changes.
 
 ##### Configure the webApp app (CIAMWebApp) to use your app registration
@@ -144,7 +145,6 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Open the `appsettings.json` file.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `CIAMWebApp` app copied from the Azure portal.
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `Domain` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
 
 ### Step 4: Running the sample
 
@@ -185,7 +185,7 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single CIAM Azure AD tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
+This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single Azure AD CIAM tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
 
 - Downloading the Azure AD metadata, finding the signing keys, and finding the issuer name for the tenant.
 - Processing OpenID Connect sign-in responses by validating the signature and issuer in an incoming JWT, extracting the user's claims, and putting the claims in `ClaimsPrincipal.Current`.

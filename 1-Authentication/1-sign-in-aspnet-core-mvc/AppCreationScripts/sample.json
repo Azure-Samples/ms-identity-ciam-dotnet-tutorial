@@ -16,6 +16,7 @@
       "Id": "webApp",
       "Name": "CIAMWebApp",
       "Kind": "WebApp",
+      "EnableIdTokenIssuance": true,
       "Audience": "AzureADMyOrg",
       "HomePage": "https://localhost:7274/",
       "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
@@ -37,10 +38,6 @@
         {
           "key": "TenantId",
           "value": "$tenantId"
-        },
-        {
-          "key": "Domain",
-          "value": "$tenantName"
         }
       ]
     }
