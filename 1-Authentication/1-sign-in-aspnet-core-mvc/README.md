@@ -162,7 +162,7 @@ From your shell or command line, execute the following commands:
 1. You should now see your display name next to a **Sign out** button.
 1. When you're done exploring you can end the session and sign out with the **Sign out** button
 
-> * Insert a screenshot of the client application.
+![](ReademeFiles/../ReadmeFiles/mainpage.png)
 
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
