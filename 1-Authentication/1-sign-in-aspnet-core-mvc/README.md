@@ -36,8 +36,6 @@ This sample demonstrates a ASP.NET Core Web App that authenticates users against
 1. The client ASP.NET Core Web App uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD**.
 1. The **ID Token** proves that the user has successfully authenticated against CIAM.
 
-![Scenario Image](./ReadmeFiles/topology.png)
-
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
