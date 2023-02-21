@@ -7,7 +7,6 @@
     "Endpoint": "AAD v2.0",
     "Provider": "CIAM"
   },
-
   /*
     This section describes the Azure AD Applications to configure, and their dependencies
   */
@@ -22,7 +21,16 @@
       "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
       "LogoutUrl": "https://localhost:7274/signout-oidc",
       "SDK": "MicrosoftIdentityWeb",
-      "SampleSubPath": "1-Authentication\\1-sign-in-aspnet-core-mvc"
+      "SampleSubPath": "1-Authentication\\1-sign-in-aspnet-core-mvc",
+      "RequiredResourcesAccess": [
+        {
+          "Resource": "Microsoft Graph",
+          "DelegatedPermissions": [
+            "openid",
+            "offline_access"
+          ]
+        }
+      ]
     }
   ],
   "CodeConfiguration": [
