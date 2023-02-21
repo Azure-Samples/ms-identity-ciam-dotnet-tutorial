@@ -157,7 +157,11 @@ From your shell or command line, execute the following commands:
 
 ## Explore the sample
 
-> * Explain how to explore the sample.
+1. Open your web browser and navigate to <https://localhost:7274>.
+1. Sign-in with an account registered to the CIAM tenant.
+1. You should now see your display name next to a **Sign out** button.
+1. When you're done exploring you can end the session and sign out with the **Sign out** button
+
 > * Insert a screenshot of the client application.
 
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
@@ -181,8 +185,17 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-> * Describe where the code uses auth libraries, or calls the graph
-> * Describe specific aspects (e.g. caching, validation etc.)
+This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single CIAM Azure AD tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
+
+- Downloading the Azure AD metadata, finding the signing keys, and finding the issuer name for the tenant.
+- Processing OpenID Connect sign-in responses by validating the signature and issuer in an incoming JWT, extracting the user's claims, and putting the claims in `ClaimsPrincipal.Current`.
+- Integrating with the session cookie ASP.NET Core middleware to establish a session for the user.
+
+You can trigger the middleware to send an OpenID Connect sign-in request by decorating a class or method with the `[Authorize]` attribute or by issuing a challenge (see the [AccountController.cs](https://github.com/aspnet/AspNetCore/blob/master/src/Azure/AzureAD/Authentication.AzureAD.UI/src/Areas/AzureAD/Controllers/AccountController.cs) file which is part of ASP.NET Core):
+
+The middleware in this project is created as a part of the open-source [ASP.NET Core Security](https://github.com/aspnet/aspnetcore) project.
+
+These steps are encapsulated in the [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web/wiki) library.
 
 
 ### Deploying Web app to Azure App Service
