@@ -7,7 +7,7 @@ public class DownstreamApiOptions
     /// <summary>
     /// Base URL of the API being called
     /// </summary>
-    public string BaseUrl { get; set; } = "https://localhost:44372/";
+    public string BaseUrl { get; set; } = "https://localhost:44351";
 
     /// <summary>
     /// Space separated string of scopes to access from the API

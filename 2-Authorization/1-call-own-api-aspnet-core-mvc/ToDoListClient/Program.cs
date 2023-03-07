@@ -22,7 +22,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpClient<IToDoListService, ToDoListService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration.GetSection(downstreamApiOptions.BaseUrl).Get<string>()!);
+    client.BaseAddress = new Uri(downstreamApiOptions.BaseUrl);
 });
 
 builder.Services.AddControllersWithViews(options =>
