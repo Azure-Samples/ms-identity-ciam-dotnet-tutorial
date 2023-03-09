@@ -65,7 +65,11 @@
       "OptionalClaims": {
         "IdTokenClaims": [ "acct" ]
       },
-      "ManualSteps": [],
+      "ManualSteps": [
+        {
+          "Comment": "Navigate to the API Permissions page and select 'Grant admin consent for (your tenant)'"
+        }
+      ],
         "SampleSubPath": "2-Authorization\\1-call-own-api-aspnet-core-mvc",
         "ProjectDirectory": "\\ToDoListClient"
       }
