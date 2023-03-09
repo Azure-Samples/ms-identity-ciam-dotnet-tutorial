@@ -26,7 +26,7 @@ public class ToDoController : ControllerBase
     public async Task<IActionResult> GetAsync()
     {
         var toDos = await _toDoContext.ToDos!
-            .Where(td => RequesterCanAccessToDo(td.UserId))
+            .Where(td => RequestCanAccessToDo(td.UserId))
             .ToListAsync();
 
         return Ok(toDos);
@@ -39,8 +39,7 @@ public class ToDoController : ControllerBase
     public async Task<IActionResult> GetAsync(int id)
     {
         var toDo = await _toDoContext.ToDos!
-            .FirstOrDefaultAsync(td => td.ID == id && 
-                RequesterCanAccessToDo(td.UserId));
+            .FirstOrDefaultAsync(td => RequestCanAccessToDo(td.UserId) && td.ID == id);
 
         if (toDo is null)
         {
@@ -57,8 +56,7 @@ public class ToDoController : ControllerBase
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var toDoToDelete = await _toDoContext.ToDos!
-            .FirstOrDefaultAsync(td => td.ID == id &&
-                RequesterCanAccessToDo(td.UserId));
+            .FirstOrDefaultAsync(td => RequestCanAccessToDo(td.UserId) && td.ID == id);
         
         if (toDoToDelete is null)
         {
@@ -79,9 +77,7 @@ public class ToDoController : ControllerBase
     public async Task<IActionResult> PostAsync([FromBody] ToDo toDo)
     {
         // Only let applications with global to-do access set the user ID or to-do's
-        var userIdOfTodo = IsAppMakingRequest() ?
-            toDo.UserId :
-            GetUserId();
+        var userIdOfTodo = IsAppMakingRequest() ? toDo.UserId : GetUserId();
 
         var newToDo = new ToDo() {
             UserId = userIdOfTodo,
@@ -100,8 +96,7 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> PatchAsync(int id, [FromBody] ToDo toDo)
     {
-        var storedToDo = await _toDoContext.ToDos!.FirstOrDefaultAsync(td => td.ID == id &&
-            RequesterCanAccessToDo(td.UserId));
+        var storedToDo = await _toDoContext.ToDos!.FirstOrDefaultAsync(td => RequestCanAccessToDo(td.UserId) && td.ID == id);
 
         if (storedToDo is null)
         {
@@ -116,7 +111,7 @@ public class ToDoController : ControllerBase
         return Ok(storedToDo);
     }
 
-    private bool RequesterCanAccessToDo(Guid userId)
+    private bool RequestCanAccessToDo(Guid userId)
     {
         return IsAppMakingRequest() || (userId == GetUserId());
     }
