@@ -1,5 +1,4 @@
 using ToDoListApi;
-using ToDoListApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -10,8 +9,6 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration);
-
-builder.Services.AddScoped<IToDoService, ToDoService>();
 
 builder.Services.AddDbContext<ToDoContext>(options => {
     options.UseInMemoryDatabase("ToDos");

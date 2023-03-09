@@ -1,82 +1,88 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Abstractions;
+using Microsoft.Identity.Web;
 using ToDoListApi.Models;
-using ToDoListClient.Services;
 
 namespace ToDoListClient.Controllers;
 
 public class TodoListController : Controller
 {
-    private IToDoListService _todoListService;
+    private IDownstreamApi _downstreamApi;
+    private const string ServiceName = "ToDoApi";
 
-    public TodoListController(IToDoListService todoListService)
+    public TodoListController(IDownstreamApi downstreamApi)
     {
-        _todoListService = todoListService;
+        _downstreamApi = downstreamApi;
     }
 
     public async Task<ActionResult> Index()
     {
-        var result = await _todoListService.GetAsync();
-        return View(result);
+        Console.WriteLine(HttpContext.User.GetObjectId());
+        var toDos = await _downstreamApi.GetForUserAsync<IEnumerable<ToDo>>(
+            ServiceName,
+            options => options.RelativePath = "/api/todo");
+
+        return View(toDos);
     }
 
-    // GET: TodoList/Details/5
-    public async Task<ActionResult> Details(int id)
-    {
-        return View(await _todoListService.GetAsync(id));
-    }
-
-    // GET: TodoList/Create
     public ActionResult Create()
     {
-        ToDo todo = new ToDo() { Message = "" };
-        return View(todo);
-    }
-
-    // POST: TodoList/Create
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Create([Bind("Message")] ToDo todo)
-    {
-        await _todoListService.AddAsync(todo);
-        return RedirectToAction("Index");
-    }
-
-    // GET: TodoList/Edit/5
-    public async Task<ActionResult> Edit(int id)
-    {
-        ToDo todo = await this._todoListService.GetAsync(id);
-
-        if (todo == null)
-        {
-            return NotFound();
-        }
-
-        return View(todo);
-    }
-
-    // POST: TodoList/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Edit(int id, [Bind("Message")] ToDo todo)
-    {
-        await _todoListService.EditAsync(id, todo);
-        return RedirectToAction("Index");
-    }
-
-    // GET: TodoList/Delete/5
-    public async Task<ActionResult> Remove(int id)
-    {
-        var toDo = await _todoListService.GetAsync(id);
+        var toDo = new ToDo() { Message = "" };
 
         return View(toDo);
     }
 
-    // POST: TodoList/Delete/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> Create([Bind("Message")] ToDo toDo)
+    {
+        await _downstreamApi.PostForUserAsync<ToDo, ToDo>(
+            ServiceName,
+            toDo,
+            options => options.RelativePath = "api/todo");
+
+        return RedirectToAction("Index");
+    }
+
+    public async Task<ActionResult> Edit(int id)
+    {
+        var toDo = await _downstreamApi.GetForUserAsync<ToDo>(
+            ServiceName,
+            options => options.RelativePath = $"api/todo/{id}");
+
+        return View(toDo);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> Edit(int id, [Bind("Message")] ToDo toDo)
+    {
+        await _downstreamApi.PatchForUserAsync<ToDo, ToDo>(
+            ServiceName,
+            toDo,
+            options => options.RelativePath = $"api/todo/{id}");
+
+        return RedirectToAction("Index");
+    }
+
+    public async Task<ActionResult> Remove(int id)
+    {
+        var toDo = await _downstreamApi.GetForUserAsync<ToDo>(
+            ServiceName,
+            options => options.RelativePath = $"api/todo/{id}");
+
+        return View(toDo);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> Delete(int id, [Bind("ID")] ToDo todo)
     {
-        await _todoListService.DeleteAsync(id);
+        await _downstreamApi.DeleteForUserAsync(
+            ServiceName,
+            todo,
+            options => options.RelativePath = $"api/todo/{id}");
+
         return RedirectToAction("Index");
     }
 }

@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
 using ToDoListApi.Models;
 using ToDoListApi.Options;
-using ToDoListApi.Services;
 
 namespace ToDoListApi.Controllers;
 
@@ -11,11 +12,11 @@ namespace ToDoListApi.Controllers;
 [Route("api/[controller]")]
 public class ToDoController : ControllerBase
 {
-    private readonly IToDoService _toDoService;
+    private readonly ToDoContext _toDoContext;
 
-    public ToDoController(IToDoService toDoService)
+    public ToDoController(ToDoContext toDoContext)
     {
-        _toDoService = toDoService;
+        _toDoContext = toDoContext;
     }
 
     [HttpGet()]
@@ -24,7 +25,10 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> GetAsync()
     {
-        var toDos = await _toDoService.GetToDosAsync();
+        var toDos = await _toDoContext.ToDos!
+            .Where(td => RequesterCanAccessToDo(td.UserId))
+            .ToListAsync();
+
         return Ok(toDos);
     }
 
@@ -34,7 +38,9 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> GetAsync(int id)
     {
-        var toDo = await _toDoService.GetToDoAsync(id);
+        var toDo = await _toDoContext.ToDos!
+            .FirstOrDefaultAsync(td => td.ID == id && 
+                RequesterCanAccessToDo(td.UserId));
 
         if (toDo is null)
         {
@@ -50,7 +56,19 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        await _toDoService.DeleteTodoAsync(id);
+        var toDoToDelete = await _toDoContext.ToDos!
+            .FirstOrDefaultAsync(td => td.ID == id &&
+                RequesterCanAccessToDo(td.UserId));
+        
+        if (toDoToDelete is null)
+        {
+            return NotFound();
+        }
+
+        _toDoContext.ToDos!.Remove(toDoToDelete);
+
+        await _toDoContext.SaveChangesAsync();
+
         return Ok();
     }
 
@@ -60,7 +78,18 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> PostAsync([FromBody] ToDo toDo)
     {
-        var newToDo = await _toDoService.CreateToDoAsync(toDo.Message);        
+        // Only let applications with global to-do access set the user ID or to-do's
+        var userIdOfTodo = IsAppMakingRequest() ?
+            toDo.UserId :
+            GetUserId();
+
+        var newToDo = new ToDo() {
+            UserId = userIdOfTodo,
+            Message = toDo.Message
+        };
+
+        await _toDoContext.ToDos!.AddAsync(newToDo);
+        await _toDoContext.SaveChangesAsync();   
     
         return Created($"/todo/{newToDo!.ID}", newToDo);
     }
@@ -71,14 +100,37 @@ public class ToDoController : ControllerBase
         RequiredAppPermissionsConfigurationKey = RequiredTodoAccessPermissionsOptions.RequiredApplicationTodoReadWriteClaimsKey)]
     public async Task<IActionResult> PatchAsync(int id, [FromBody] ToDo toDo)
     {
-        var editedToDo = await _toDoService.EditToDoAsync(id, toDo.Message);
+        var storedToDo = await _toDoContext.ToDos!.FirstOrDefaultAsync(td => td.ID == id &&
+            RequesterCanAccessToDo(td.UserId));
 
-        if (editedToDo is null)
+        if (storedToDo is null)
         {
             return NotFound();
         }
 
-        return Ok(editedToDo);
+        storedToDo.Message = toDo.Message;
+        _toDoContext.ToDos!.Update(storedToDo);
+        
+        await _toDoContext.SaveChangesAsync();
+
+        return Ok(storedToDo);
+    }
+
+    private bool RequesterCanAccessToDo(Guid userId)
+    {
+        return IsAppMakingRequest() || (userId == GetUserId());
+    }
+
+    private Guid GetUserId()
+    {
+        Guid userId;
+
+        if (!Guid.TryParse(HttpContext.User.GetObjectId(), out userId))
+        {
+            throw new Exception("User ID is not valid.");
+        }
+
+        return userId;
     }
 
     private bool IsAppMakingRequest()
