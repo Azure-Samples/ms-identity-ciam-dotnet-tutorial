@@ -12,7 +12,7 @@ extensions:
 - service: 
 ---
 
-# An ASP.NET Core Web App which lets sign-in users with work and school in my org
+# An ASP.NET Core Web App which sign-in users 
 
 [![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
 
@@ -102,7 +102,10 @@ There is one project in this sample. To register it, you can:
 To manually register the apps, as a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired CIAM tenant.
+1. If your account is present in more than one CIAM tenant, make sure you're using the directory that contains your Azure CIAM tenant: 
+	1. Select the **Directories + subscriptions** icon in the portal toolbar.
+
+	1. On the **Portal settings | Directories + subscriptions** page, find your Azure AD B2C directory in the Directory name list, and then select **Switch**.
 
 #### Create User Flows
 
@@ -132,7 +135,7 @@ Please refer to:
         1. `https://localhost:7274/`
         1. `https://localhost:7274/signin-oidc`
     1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-oidc`.
-    1. In the **Implicit grant** section, check the **ID tokens** option as this sample requires the [Implicit grant flow](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-implicit-grant-flow) to be enabled to sign-in the user and call an API.
+    1. In the **Implicit grant** section, check the **ID tokens** option as this sample requires the [Implicit grant flow](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-implicit-grant-flow) to be enabled to sign-in the user.
     1. Select **ID tokens (used for implicit and hybrid flows)** checkbox.
     1. Click **Save** to save your changes.
     1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users.
