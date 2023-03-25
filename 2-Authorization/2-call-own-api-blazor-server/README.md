@@ -189,7 +189,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `call-msgraph-api-blazor`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ToDoListClient`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
