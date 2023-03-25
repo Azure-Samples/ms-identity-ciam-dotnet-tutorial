@@ -223,7 +223,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 1. Open the `ToDoListClient\appsettings.json` file.
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `call-msgraph-api-blazor` app copied from the Azure portal.
+1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ToDoListClient` app copied from the Azure portal.
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `call-msgraph-api-blazor` copied from the Azure portal.
 1. Find the key `Scopes` and replace the existing value with **"api://<your_service_api_client_id>/ToDoList.Read api://<your_service_api_client_id>/ToDoList.ReadWrite"**.
 1. Find the key `BaseAddress` and replace the existing value with the base address of `TodoListApi` (by default `https://localhost:44351`).
