@@ -119,14 +119,6 @@
                 {
                     "key": "ClientSecret`\":",
                     "value": ".AppKey"
-                },
-                {
-                    "key": "TodoListScope",
-                    "value": "service.ScopeDefault"
-                },
-                {
-                    "key": "TodoListBaseAddress",
-                    "value": "service.HomePage"
                 }
             ]
         },
