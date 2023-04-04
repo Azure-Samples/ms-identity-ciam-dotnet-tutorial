@@ -10,14 +10,14 @@ using ToDoListApi.Models;
 const string ServiceName = "ToDoApi";
 
 var publicClientApplication = PublicClientApplicationBuilder
-    .Create("bc862355-65d0-4f7c-a45e-df6499781b25")
-    .WithAuthority("https://login.microsoftonline.com/afa75af5-3425-40e6-a8e5-d64187afed4a")
+    .Create("[CLIENT ID HERE]")
+    .WithAuthority("https://login.microsoftonline.com/[TENANTID HERE]")
     .WithRedirectUri("http://localhost:64170")
     .Build();
 
 
 var authenticationResult = await publicClientApplication
-    .AcquireTokenInteractive(new string[] { "api://9414f642-f677-449d-9102-eae5f649ed1b/ToDoList.Read", "api://9414f642-f677-449d-9102-eae5f649ed1b/ToDoList.Read" })
+    .AcquireTokenInteractive(new string[] { "SCOPES HERE" })
     .ExecuteAsync();
 
 var httpClient = new HttpClient();
