@@ -141,12 +141,12 @@ Please refer to:
 1. All APIs should publish a minimum of one [App role for applications](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#assign-app-roles-to-applications), also called [Application Permission](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#permission-types), for the client apps to obtain an access token as *themselves*, i.e. when they are not signing-in a user. **Application permissions** are the type of permissions that APIs should publish when they want to enable client applications to successfully authenticate as themselves and not need to sign-in users. To publish an application permission, follow these steps:
 1. Still on the same app registration, select the **App roles** blade to the left.
 1. Select **Create app role**:
-    1. For **Display name**, enter a suitable name for your application permission, for instance **TodoList.Read.All**.
+    1. For **Display name**, enter a suitable name for your application permission, for instance **ToDoList.Read.All**.
     1. For **Allowed member types**, choose **Application** to ensure other applications can be granted this permission.
-    1. For **Value**, enter **TodoList.Read.All**.
+    1. For **Value**, enter **ToDoList.Read.All**.
     1. For **Description**, enter *e.g. Allows the app to read the signed-in user's files.*.
     1. Select **Apply** to save your changes.
-    > Repeat the steps above for another app permission named **TodoList.ReadWrite.All**
+    > Repeat the steps above for another app permission named **ToDoList.ReadWrite.All**
 
 ##### Configure Optional Claims
 
@@ -163,7 +163,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-1. Open the `TodoList-WebApi\appsettings.json` file.
+1. Open the `ToDoListApi\appsettings.json` file.
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-todolist-webapi-daemon-v2` app copied from the Azure portal.
 
@@ -194,7 +194,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. Ensure that the **My APIs** tab is selected.
     1. In the list of APIs, select the API `ciam-todolist-webapi-daemon-v2`.
         1. We will select “Application permissions”, which should be the type of permissions that apps should use when they are authenticating just as themselves and not signing-in users. 
-   1. In the **Application permissions** section, select the **TodoList.Read.All**, **TodoList.ReadWrite.All** in the list. Use the search box if necessary.
+   1. In the **Application permissions** section, select the **ToDoList.Read.All**, **ToDoList.ReadWrite.All** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly but since the client app does not allow users to interact, the users' themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
 
@@ -208,8 +208,6 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `Tenant` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-daemon-console-v2` app copied from the Azure portal.
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `ciam-daemon-console-v2` copied from the Azure portal.
-1. Find the key `TodoListScope` and replace the existing value with ScopeDefault.
-1. Find the key `TodoListBaseAddress` and replace the existing value with the base address of `ciam-todolist-webapi-daemon-v2` (by default `https://localhost:44372`).
 
 1. Open the `ToDoClient\appsettings.json` file.
 1. Find the key `[Enter here the scopes for your web API]` and replace the existing value with `https://<YOUR_CIAM_DOMAIN>/<YOUR_API_CLIENT_ID>/.default`.
