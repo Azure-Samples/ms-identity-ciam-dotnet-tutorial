@@ -13,7 +13,7 @@ var tokenAcquirerFactory = TokenAcquirerFactory.GetDefaultInstance();
 // Configure the application options to be read from the configuration
 // and add the services you need (Graph, token cache)
 tokenAcquirerFactory.Services.AddDownstreamApi(ServiceName,
-    tokenAcquirerFactory.Configuration.GetSection("MyWebApi"));
+    tokenAcquirerFactory.Configuration.GetSection("ToDoApi"));
 
 // By default, you get an in-memory token cache.
 // For more token cache serialization options, see https://aka.ms/msal-net-token-cache-serialization
@@ -24,7 +24,7 @@ var serviceProvider = tokenAcquirerFactory.Build();
 
 var toDoApiClient = serviceProvider.GetRequiredService<IDownstreamApi>();
 
-Console.WriteLine("Posting a to-do...\n\n");
+Console.WriteLine("Posting a to-do...");
 
 // Upload a sample to-do
 var firstNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
@@ -37,7 +37,7 @@ var firstNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
 
 await DisplayToDosFromServer();
 
-Console.WriteLine("Posting a second to-do...\n\n");
+Console.WriteLine("Posting a second to-do...");
 
 // Upload a sample to-do
 var secondNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
@@ -51,7 +51,7 @@ var secondNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
 
 await DisplayToDosFromServer();
 
-Console.WriteLine("Deleting a to-do...\n\n");
+Console.WriteLine("Deleting a to-do...");
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
             firstNewToDo,
@@ -59,7 +59,7 @@ await toDoApiClient.DeleteForAppAsync(
 
 await DisplayToDosFromServer();
 
-Console.WriteLine("Editing a to-do...\n\n");
+Console.WriteLine("Editing a to-do...");
 
 secondNewToDo!.Message = "Eat bread";
 
@@ -70,7 +70,7 @@ secondNewToDo = await toDoApiClient.PatchForAppAsync<ToDo, ToDo>(
 
 await DisplayToDosFromServer();
 
-Console.WriteLine("Deleting remaining to-do...\n\n");
+Console.WriteLine("Deleting remaining to-do...");
 
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
@@ -86,6 +86,12 @@ async Task DisplayToDosFromServer()
         ServiceName,
         options => options.RelativePath = "/api/todo"
     );
+
+    if (!toDos!.Any())
+    {
+        Console.WriteLine("There are no to-do's in server");
+        return;
+    }
 
     Console.WriteLine("To-do data:");
 
