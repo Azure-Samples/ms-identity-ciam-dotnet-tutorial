@@ -306,9 +306,9 @@ Function ConfigureApplications
     
     # Publish Application Permissions
     $appRoles = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphAppRole]
-    $newRole = CreateAppRole -types "Application" -name "TodoList.Read.All" -description "e.g. Allows the app to read the signed-in user's files."
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi-daemon-v2'"
     $appRoles.Add($newRole)
-    $newRole = CreateAppRole -types "Application" -name "TodoList.ReadWrite.All" -description "e.g. Allows the app to read the signed-in user's files."
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi-daemon-v2'"
     $appRoles.Add($newRole)
     Update-MgApplication -ApplicationId $currentAppObjectId -AppRoles $appRoles
     
@@ -390,7 +390,7 @@ Function ConfigureApplications
     # Add Required Resources Access (from 'client' to 'service')
     Write-Host "Getting access from 'client' to 'service'"
     $requiredPermission = GetRequiredPermissions -applicationDisplayName "ciam-todolist-webapi-daemon-v2"`
-        -requiredApplicationPermissions "TodoList.Read.All|TodoList.ReadWrite.All"
+        -requiredApplicationPermissions "ToDoList.Read.All|ToDoList.ReadWrite.All"
 
     $requiredResourcesAccess.Add($requiredPermission)
     Write-Host "Added 'service' to the RRA list."

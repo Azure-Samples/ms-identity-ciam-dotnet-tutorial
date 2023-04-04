@@ -40,14 +40,14 @@
                     "AllowedMemberTypes": [
                         "Application"
                     ],
-                    "Name": "TodoList.Read.All",
+                    "Name": "ToDoList.Read.All",
                     "Description": "Allow this application to read every users TodoList items"
                 },
                 {
                     "AllowedMemberTypes": [
                         "Application"
                     ],
-                    "Name": "TodoList.ReadWrite.All",
+                    "Name": "ToDoList.ReadWrite.All",
                     "Description": "Allow this application to read and write every users TodoList items"
                 }
             ]
@@ -69,8 +69,8 @@
                 {
                     "Resource": "service",
                     "ApplicationPermissions": [
-                        "TodoList.Read.All",
-                        "TodoList.ReadWrite.All"
+                        "ToDoList.Read.All",
+                        "ToDoList.ReadWrite.All"
                     ]
                 }
             ],
