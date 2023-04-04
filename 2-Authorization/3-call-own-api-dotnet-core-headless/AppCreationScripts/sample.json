@@ -110,14 +110,14 @@
             "Mappings": [
                 {
                     "key": "Tenant",
-                    "value": "$tenantName"
+                    "value": "$tenantId"
                 },
                 {
                     "key": "ClientId",
                     "value": ".AppId"
                 },
                 {
-                    "key": "ClientSecret",
+                    "key": "ClientSecret`\":",
                     "value": ".AppKey"
                 },
                 {
