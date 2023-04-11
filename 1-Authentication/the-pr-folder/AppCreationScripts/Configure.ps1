@@ -111,59 +111,6 @@ Function UpdateTextFile([string] $configFilePath, [System.Collections.HashTable]
 
     Set-Content -Path $configFilePath -Value $lines -Force
 }
-<#.Description
-   This function creates a new Azure AD scope (OAuth2Permission) with default and provided values
-#>  
-Function CreateScope( [string] $value, [string] $userConsentDisplayName, [string] $userConsentDescription, [string] $adminConsentDisplayName, [string] $adminConsentDescription, [string] $consentType)
-{
-    $scope = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphPermissionScope
-    $scope.Id = New-Guid
-    $scope.Value = $value
-    $scope.UserConsentDisplayName = $userConsentDisplayName
-    $scope.UserConsentDescription = $userConsentDescription
-    $scope.AdminConsentDisplayName = $adminConsentDisplayName
-    $scope.AdminConsentDescription = $adminConsentDescription
-    $scope.IsEnabled = $true
-    $scope.Type = $consentType
-    return $scope
-}
-
-<#.Description
-   This function creates a new Azure AD AppRole with default and provided values
-#>  
-Function CreateAppRole([string] $types, [string] $name, [string] $description)
-{
-    $appRole = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphAppRole
-    $appRole.AllowedMemberTypes = New-Object System.Collections.Generic.List[string]
-    $typesArr = $types.Split(',')
-    foreach($type in $typesArr)
-    {
-        $appRole.AllowedMemberTypes += $type;
-    }
-    $appRole.DisplayName = $name
-    $appRole.Id = New-Guid
-    $appRole.IsEnabled = $true
-    $appRole.Description = $description
-    $appRole.Value = $name;
-    return $appRole
-}
-
-<#.Description
-   This function takes a string as input and creates an instance of an Optional claim object
-#> 
-Function CreateOptionalClaim([string] $name)
-{
-    <#.Description
-    This function creates a new Azure AD optional claims  with default and provided values
-    #>  
-
-    $appClaim = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim
-    $appClaim.AdditionalProperties =  New-Object System.Collections.Generic.List[string]
-    $appClaim.Source =  $null
-    $appClaim.Essential = $false
-    $appClaim.Name = $name
-    return $appClaim
-}
 
 <#.Description
    Primary entry method to create and configure app registrations
@@ -207,152 +154,47 @@ Function ConfigureApplications
 
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
-   # Create the service AAD application
-   Write-Host "Creating the AAD application (TodoListApi)"
+   # Create the dotnetDeviceCode AAD application
+   Write-Host "Creating the AAD application (DotnetDeviceCode)"
    # create the application 
-   $serviceAadApplication = New-MgApplication -DisplayName "TodoListApi" `
-                                                       -Web `
-                                                       @{ `
-                                                           HomePageUrl = "https://localhost:44351"; `
-                                                         } `
-                                                         -Api `
-                                                         @{ `
-                                                            RequestedAccessTokenVersion = 2 `
-                                                         } `
-                                                        -SignInAudience AzureADMyOrg `
-                                                       #end of command
+   $dotnetDeviceCodeAadApplication = New-MgApplication -DisplayName "DotnetDeviceCode" `
+                                                                -IsFallbackPublicClient `
+                                                                 -SignInAudience AzureADandPersonalMicrosoftAccount `
+                                                                #end of command
 
-    $currentAppId = $serviceAadApplication.AppId
-    $currentAppObjectId = $serviceAadApplication.Id
-
-     $serviceIdentifierUri = 'https://'+ $verifiedDomainName + "/" +$currentAppId
-     Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
-    
-    # create the service principal of the newly created application     
-    $serviceServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
-
-    # add the user running the script as an app owner if needed
-    $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
-    if ($owner -eq $null)
-    { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($serviceServicePrincipal.DisplayName)'"
-    }
-
-    # Add Claims
-
-    $optionalClaims = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaims
-    $optionalClaims.AccessToken = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
-    $optionalClaims.IdToken = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
-    $optionalClaims.Saml2Token = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
-
-    # Add Optional Claims
-
-    $newClaim =  CreateOptionalClaim  -name "idtyp" 
-    $optionalClaims.AccessToken += ($newClaim)
-    Update-MgApplication -ApplicationId $currentAppObjectId -OptionalClaims $optionalClaims
-    
-    # Publish Application Permissions
-    $appRoles = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphAppRole]
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'TodoListApi'"
-    $appRoles.Add($newRole)
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'TodoListApi'"
-    $appRoles.Add($newRole)
-    Update-MgApplication -ApplicationId $currentAppObjectId -AppRoles $appRoles
-    
-    # rename the user_impersonation scope if it exists to match the readme steps or add a new scope
-       
-    # delete default scope i.e. User_impersonation
-    $scopes = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphPermissionScope]
-    $scope = $serviceAadApplication.Api.Oauth2PermissionScopes | Where-Object { $_.Value -eq "User_impersonation" }
-    
-    if($scope -ne $null)
-    {    
-        # disable the scope
-        $scope.IsEnabled = $false
-        $scopes.Add($scope)
-        Update-MgApplication -ApplicationId $currentAppObjectId -Api @{Oauth2PermissionScopes = @($scopes)}
-
-        # clear the scope
-        Update-MgApplication -ApplicationId $currentAppObjectId -Api @{Oauth2PermissionScopes = @()}
-    }
-
-    $scopes = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphPermissionScope]
-    $scope = CreateScope -value ToDoList.Read  `
-        -userConsentDisplayName "Read users ToDo list using the 'TodoListApi'"  `
-        -userConsentDescription "Allow the app to read your ToDo list items via the 'TodoListApi'"  `
-        -adminConsentDisplayName "Read users ToDo list using the 'TodoListApi'"  `
-        -adminConsentDescription "Allow the app to read the user's ToDo list using the 'TodoListApi'" `
-        -consentType "Admin" `
-        
-            
-    $scopes.Add($scope)
-    $scope = CreateScope -value ToDoList.ReadWrite  `
-        -userConsentDisplayName "Read and Write user's ToDo list using the 'TodoListApi'"  `
-        -userConsentDescription "Allow the app to read and write your ToDo list items via the 'TodoListApi'"  `
-        -adminConsentDisplayName "Read and Write user's ToDo list using the 'TodoListApi'"  `
-        -adminConsentDescription "Allow the app to read and write user's ToDo list using the 'TodoListApi'" `
-        -consentType "Admin" `
-        
-            
-    $scopes.Add($scope)
-    
-    # add/update scopes
-    Update-MgApplication -ApplicationId $currentAppObjectId -Api @{Oauth2PermissionScopes = @($scopes)}
-    Write-Host "Done creating the service application (TodoListApi)"
-
-    # URL of the AAD application in the Azure portal
-    # Future? $servicePortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $servicePortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
-
-    Add-Content -Value "<tr><td>service</td><td>$currentAppId</td><td><a href='$servicePortalUrl'>TodoListApi</a></td></tr>" -Path createdApps.html
-
-    # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'TodoListApi' at `n $servicePortalUrl" -ForegroundColor Green 
-   # Create the webApp AAD application
-   Write-Host "Creating the AAD application (WebApp)"
-   # create the application 
-   $webAppAadApplication = New-MgApplication -DisplayName "WebApp" `
-                                                      -IsFallbackPublicClient `
-                                                          RedirectUris = "https://localhost:7274/", "https://localhost:7274/signin-oidc"; `
-                                                          HomePageUrl = "https://localhost:7274/"; `
-                                                          LogoutUrl = "https://localhost:7274/signout-oidc"; `
-                                                       -SignInAudience AzureADandPersonalMicrosoftAccount `
-                                                      #end of command
-
-    $currentAppId = $webAppAadApplication.AppId
-    $currentAppObjectId = $webAppAadApplication.Id
+    $currentAppId = $dotnetDeviceCodeAadApplication.AppId
+    $currentAppObjectId = $dotnetDeviceCodeAadApplication.Id
 
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/WebApp")
+    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/DotnetDeviceCode")
     
     # create the service principal of the newly created application     
-    $webAppServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+    $dotnetDeviceCodeServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
     # add the user running the script as an app owner if needed
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
         New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($webAppServicePrincipal.DisplayName)'"
+        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($dotnetDeviceCodeServicePrincipal.DisplayName)'"
     }
-    Write-Host "Done creating the webApp application (WebApp)"
+    Write-Host "Done creating the dotnetDeviceCode application (DotnetDeviceCode)"
 
     # URL of the AAD application in the Azure portal
-    # Future? $webAppPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $webAppPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
+    # Future? $dotnetDeviceCodePortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
+    $dotnetDeviceCodePortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>webApp</td><td>$currentAppId</td><td><a href='$webAppPortalUrl'>WebApp</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>dotnetDeviceCode</td><td>$currentAppId</td><td><a href='$dotnetDeviceCodePortalUrl'>DotnetDeviceCode</a></td></tr>" -Path createdApps.html
     # Declare a list to hold RRA items    
     $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
 
-    # Add Required Resources Access (from 'webApp' to 'service')
-    Write-Host "Getting access from 'webApp' to 'service'"
-    $requiredPermission = GetRequiredPermissions -applicationDisplayName "TodoListApi"`
-        -requiredDelegatedPermissions "ToDoList.Read|ToDoList.ReadWrite"
+    # Add Required Resources Access (from 'dotnetDeviceCode' to 'Microsoft Graph')
+    Write-Host "Getting access from 'dotnetDeviceCode' to 'Microsoft Graph'"
+    $requiredPermission = GetRequiredPermissions -applicationDisplayName "Microsoft Graph"`
+        -requiredDelegatedPermissions "openid|offline_access"
 
     $requiredResourcesAccess.Add($requiredPermission)
-    Write-Host "Added 'service' to the RRA list."
+    Write-Host "Added 'Microsoft Graph' to the RRA list."
     # Useful for RRA additions troubleshooting
     # $requiredResourcesAccess.Count
     # $requiredResourcesAccess
@@ -362,13 +204,13 @@ Function ConfigureApplications
     
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'WebApp' at `n $webAppPortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'DotnetDeviceCode' at `n $dotnetDeviceCodePortalUrl" -ForegroundColor Green 
     
-    # Update config file for 'webApp'
+    # Update config file for 'dotnetDeviceCode'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "ClientId" = $webAppAadApplication.AppId;"TenantId" = $tenantId };
+    $dictionary = @{ "ClientId" = $dotnetDeviceCodeAadApplication.AppId;"TenantId" = $tenantId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
@@ -377,13 +219,9 @@ Function ConfigureApplications
     UpdateTextFile -configFilePath $configFile -dictionary $dictionary
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
     Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
-    Write-Host "- For service"
-    Write-Host "  - Navigate to $servicePortalUrl"
-    Write-Host "  - Application 'service' publishes application permissions. Do remember to navigate to any client app(s) registration in the app portal and consent for those, (if required)" -ForegroundColor Red 
-    Write-Host "  - Application 'service' publishes delegated permissions. Do remember to navigate to any client app(s) registration in the app portal and consent for those, (if required)" -ForegroundColor Red 
-    Write-Host "- For webApp"
-    Write-Host "  - Navigate to $webAppPortalUrl"
-    Write-Host "  - The delegated permissions for the 'webApp' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
+    Write-Host "- For dotnetDeviceCode"
+    Write-Host "  - Navigate to $dotnetDeviceCodePortalUrl"
+    Write-Host "  - The delegated permissions for the 'dotnetDeviceCode' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
    
 Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  

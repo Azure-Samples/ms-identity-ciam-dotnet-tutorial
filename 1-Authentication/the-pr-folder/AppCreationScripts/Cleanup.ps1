@@ -57,20 +57,20 @@ Function Cleanup
     # Removes the applications
     Write-Host "Cleaning-up applications from tenant '$tenantId'"
 
-    Write-Host "Removing 'service' (TodoListApi) if needed"
+    Write-Host "Removing 'dotnetDeviceCode' (DotnetDeviceCode) if needed"
     try
     {
-        Get-MgApplication -Filter "DisplayName eq 'TodoListApi'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
+        Get-MgApplication -Filter "DisplayName eq 'DotnetDeviceCode'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'TodoListApi'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove the application 'DotnetDeviceCode'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
     }
 
-    Write-Host "Making sure there are no more (TodoListApi) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'TodoListApi'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
+    Write-Host "Making sure there are no more (DotnetDeviceCode) applications found, will remove if needed..."
+    $apps = Get-MgApplication -Filter "DisplayName eq 'DotnetDeviceCode'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
     
     if ($apps)
     {
@@ -80,56 +80,19 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed TodoListApi.."
+        Write-Host "Removed DotnetDeviceCode.."
     }
 
     # also remove service principals of this app
     try
     {
-        Get-MgServicePrincipal -filter "DisplayName eq 'TodoListApi'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
+        Get-MgServicePrincipal -filter "DisplayName eq 'DotnetDeviceCode'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'TodoListApi'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
-    }
-    Write-Host "Removing 'webApp' (WebApp) if needed"
-    try
-    {
-        Get-MgApplication -Filter "DisplayName eq 'WebApp'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
-    }
-    catch
-    {
-        $message = $_
-        Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'WebApp'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
-    }
-
-    Write-Host "Making sure there are no more (WebApp) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'WebApp'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
-    
-    if ($apps)
-    {
-        Remove-MgApplication -ApplicationId $apps.Id
-    }
-
-    foreach ($app in $apps) 
-    {
-        Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed WebApp.."
-    }
-
-    # also remove service principals of this app
-    try
-    {
-        Get-MgServicePrincipal -filter "DisplayName eq 'WebApp'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
-    }
-    catch
-    {
-        $message = $_
-        Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'WebApp'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove ServicePrincipal 'DotnetDeviceCode'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
     }
 }
 
