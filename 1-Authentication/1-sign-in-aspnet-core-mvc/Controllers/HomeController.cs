@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ms_identity_ciam_dotnet_tutorial.Models;
+using Microsoft.AspNetCore.Authorization;
+using MsIdWebApp.Models;
 
-namespace ms_identity_ciam_dotnet_tutorial.Controllers;
+namespace MsIdWebApp.Controllers;
 
 [Authorize]
 public class HomeController : Controller
