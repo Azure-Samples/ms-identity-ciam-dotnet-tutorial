@@ -44,7 +44,7 @@
                     "settingFile": "/appsettings.json",
                     "replaceTokens": {
                         "appId": "Enter_the_Application_Id_Here",
-                        "tenantName": "Enter_the_Tenant_Name_Here"
+                        "tenantId": "Enter_the_Tenant_Id_Here"
                     }
                 }
             ]

@@ -45,15 +45,15 @@
     "CodeConfiguration": [
         {
             "App": "client",
-            "SettingKind": "json",
+            "SettingKind": "Replace",
             "SettingFile": "\\..\\appsettings.json",
             "Mappings": [
                 {
-                    "key": "ClientId",
+                    "key": "Enter_the_Application_Id_Here",
                     "value": ".AppId"
                 },
                 {
-                    "key": "TenantId",
+                    "key": "Enter_the_Tenant_Id_Here",
                     "value": "$tenantId"
                 }
             ]

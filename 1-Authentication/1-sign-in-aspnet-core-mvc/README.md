@@ -25,7 +25,6 @@ extensions:
 * [Explore the sample](#explore-the-sample)
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
@@ -149,8 +148,8 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
-1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
+1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 
 ### Step 4: Running the sample
 
@@ -234,14 +233,6 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
 </details>
-
-## Next Steps
-
-Learn how to:
-
-* [Change your app to sign-in users from any organization or Microsoft accounts](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-3-AnyOrgOrPersonal)
-* [Enable users from National clouds to sign-in to your application](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-4-Sovereign)
-* [Enable your web app to call a web API on behalf of the signed-in user](https://github.com/Azure-Samples/ms-identity-dotnetcore-ca-auth-context-app)
 
 ## Contributing
 
