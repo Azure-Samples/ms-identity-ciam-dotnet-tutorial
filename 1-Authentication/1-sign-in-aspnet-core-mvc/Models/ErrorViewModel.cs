@@ -1,4 +1,4 @@
-namespace ms_identity_ciam_dotnet_tutorial.Models;
+namespace MsIdWebApp.Models;
 
 public class ErrorViewModel
 {
