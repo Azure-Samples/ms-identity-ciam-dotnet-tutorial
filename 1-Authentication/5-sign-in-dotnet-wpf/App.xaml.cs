@@ -43,10 +43,10 @@ namespace sign_in_dotnet_wpf
         //   - for any Work or School accounts, use organizations
         //   - for any Work or School accounts, or Microsoft personal account, use common
         //   - for Microsoft Personal account, use consumers
-        private static string ClientId = "c03eb668-a40d-4281-8aef-a82997e7a8f6";
+        private static string ClientId = "Enter_the_Application_Id_Here";
 
         // Note: Tenant is important for the quickstart.
-        private static string Tenant = "5e156ef5-9bd2-480c-9de0-d8658f21d3f7";
+        private static string Tenant = "Enter_the_Tenant_Id_Here";
         private static string Instance = "https://tenant.ciamlogin.com/";
         private static IPublicClientApplication _clientApp;
 
