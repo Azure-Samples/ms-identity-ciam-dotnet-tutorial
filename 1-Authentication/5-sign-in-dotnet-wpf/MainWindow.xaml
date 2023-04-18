@@ -10,7 +10,7 @@
         <StackPanel Background="Azure">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <ComboBox x:Name="howToSignIn" SelectedIndex="0" SelectionChanged="UseWam_Changed" VerticalAlignment="Center">
-                    <ComboBoxItem>Use account used to signed-in in Windows (WAM)</ComboBoxItem>
+                    <ComboBoxItem>Use account used to sign in to Windows (WAM)</ComboBoxItem>
                     <ComboBoxItem>Use one of the Accounts known by Windows (WAM)</ComboBoxItem>
                     <ComboBoxItem>Use any account (Azure AD)</ComboBoxItem>
                 </ComboBox>
