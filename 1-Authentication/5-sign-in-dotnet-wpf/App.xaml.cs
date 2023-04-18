@@ -19,7 +19,9 @@ namespace sign_in_dotnet_wpf
         public static void CreateApplication(bool useWam)
         {
             var builder = PublicClientApplicationBuilder.Create(ClientId)
-                .WithAuthority($"{Instance}{Tenant}")
+                //.WithAuthority($"{Instance}{Tenant}")
+                .WithAuthority($"https://tenant.ciamlogin.com/{Tenant}")
+                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithDefaultRedirectUri();
 
             //Use of Broker Requires redirect URI "ms-appx-web://microsoft.aad.brokerplugin/{client_id}" in app registration
