@@ -91,6 +91,7 @@ namespace sign_in_dotnet_wpf
                 ResultText.Text = "Sign in was successful.";
                 DisplayBasicTokenInfo(authResult);
                 this.CallApiButton.Visibility = Visibility.Collapsed;
+                this.howToSignIn.Visibility = Visibility.Collapsed;
                 this.SignOutButton.Visibility = Visibility.Visible;
             }
         }
@@ -109,6 +110,7 @@ namespace sign_in_dotnet_wpf
                     this.ResultText.Text = "User has signed-out";
                     this.TokenInfoText.Text = string.Empty;
                     this.CallApiButton.Visibility = Visibility.Visible;
+                    this.howToSignIn.Visibility = Visibility.Visible;
                     this.SignOutButton.Visibility = Visibility.Collapsed;
                 }
                 catch (MsalException ex)
