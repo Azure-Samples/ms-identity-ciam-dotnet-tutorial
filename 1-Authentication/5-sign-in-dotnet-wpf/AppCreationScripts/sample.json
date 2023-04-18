@@ -1,0 +1,58 @@
+{
+    "Sample": {
+        "Title": "A WPF application authenticating users against Azure AD CIAM using .NET Core",
+        "Level": 100,
+        "Client": "WPF .NET Core app",
+        "Languages": [
+            "csharp"
+        ],
+        "Products": [
+            "azure-active-directory",
+            "microsoft-identity"
+        ],
+        "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+        "Endpoint": "AAD v2.0",
+        "Provider": "CIAM"
+    },
+    "AADApps": [
+        {
+            "Id": "client",
+            "Name": "ciam-wpf-sign-in",
+            "Kind": "Desktop",
+            "Audience": "AzureADMyOrg",
+            "SDK": "MicrosoftIdentityWeb",
+            "SampleSubPath": "1-Authentication\\5-sign-in-dotnet-wpf",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "Microsoft Graph",
+                    "DelegatedPermissions": [
+                        "openid",
+                        "offline_access"
+                    ]
+                }
+            ],
+            "ManualSteps": [
+                {
+                    "Comment": "Navigate to your tenant and create user flows to allow users to sign up for the application."
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\App.xaml.cs",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                },
+                {
+                    "key": "Enter_the_Tenant_Id_Here",
+                    "value": "$tenantId"
+                }
+            ]
+        }
+    ]
+}
