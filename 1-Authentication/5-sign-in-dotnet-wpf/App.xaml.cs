@@ -19,8 +19,7 @@ namespace sign_in_dotnet_wpf
         public static void CreateApplication(bool useWam)
         {
             var builder = PublicClientApplicationBuilder.Create(ClientId)
-                //.WithAuthority($"{Instance}{Tenant}")
-                .WithAuthority($"https://tenant.ciamlogin.com/{Tenant}")
+                .WithAuthority($"{Instance}{Tenant}")
                 .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithDefaultRedirectUri();
 
@@ -48,7 +47,7 @@ namespace sign_in_dotnet_wpf
 
         // Note: Tenant is important for the quickstart.
         private static string Tenant = "5e156ef5-9bd2-480c-9de0-d8658f21d3f7";
-        private static string Instance = "https://login.microsoftonline.com/";
+        private static string Instance = "https://tenant.ciamlogin.com/";
         private static IPublicClientApplication _clientApp;
 
         public static IPublicClientApplication PublicClientApp { get { return _clientApp; } }

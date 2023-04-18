@@ -1,7 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -13,11 +12,6 @@ namespace sign_in_dotnet_wpf
  
     public partial class MainWindow : Window
     {
-        //Set the API Endpoint to Graph 'me' endpoint. 
-        // To change from Microsoft public cloud to a national cloud, use another value of graphAPIEndpoint.
-        // Reference with Graph endpoints here: https://docs.microsoft.com/graph/deployments#microsoft-graph-and-graph-explorer-service-root-endpoints
-        string graphAPIEndpoint = "https://graph.microsoft.com/v1.0/me";
-
         //Set the scope for API call to user.read
         string[] scopes = new string[] { };
 
@@ -30,7 +24,7 @@ namespace sign_in_dotnet_wpf
         /// <summary>
         /// Call AcquireToken - to acquire a token requiring user to sign-in
         /// </summary>
-        private async void CallGraphButton_Click(object sender, RoutedEventArgs e)
+        private async void CallApiButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
@@ -94,34 +88,10 @@ namespace sign_in_dotnet_wpf
 
             if (authResult != null)
             {
-                ResultText.Text = await GetHttpContentWithToken(graphAPIEndpoint, authResult.AccessToken);
+                ResultText.Text = "Sign in was successful.";
                 DisplayBasicTokenInfo(authResult);
+                this.CallApiButton.Visibility = Visibility.Collapsed;
                 this.SignOutButton.Visibility = Visibility.Visible;
-            }
-        }
-
-        /// <summary>
-        /// Perform an HTTP GET request to a URL using an HTTP Authorization header
-        /// </summary>
-        /// <param name="url">The URL</param>
-        /// <param name="token">The token</param>
-        /// <returns>String containing the results of the GET operation</returns>
-        public async Task<string> GetHttpContentWithToken(string url, string token)
-        {
-            var httpClient = new System.Net.Http.HttpClient();
-            System.Net.Http.HttpResponseMessage response;
-            try
-            {
-                var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, url);
-                //Add the token in Authorization header
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                response = await httpClient.SendAsync(request);
-                var content = await response.Content.ReadAsStringAsync();
-                return content;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
             }
         }
 
@@ -137,7 +107,8 @@ namespace sign_in_dotnet_wpf
                 {
                     await App.PublicClientApp.RemoveAsync(accounts.FirstOrDefault());
                     this.ResultText.Text = "User has signed-out";
-                    this.CallGraphButton.Visibility = Visibility.Visible;
+                    this.TokenInfoText.Text = string.Empty;
+                    this.CallApiButton.Visibility = Visibility.Visible;
                     this.SignOutButton.Visibility = Visibility.Collapsed;
                 }
                 catch (MsalException ex)
@@ -167,3 +138,4 @@ namespace sign_in_dotnet_wpf
         }
     }
 }
+
