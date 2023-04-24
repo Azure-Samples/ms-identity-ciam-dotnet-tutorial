@@ -19,11 +19,11 @@
             "Id": "client",
             "Name": "ciam-aspnet-webapp",
             "Kind": "WebApp",
-            "EnableIdTokenIssuance": true,
             "Audience": "AzureADMyOrg",
             "HomePage": "https://localhost:7274/",
             "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
             "LogoutUrl": "https://localhost:7274/signout-callback-oidc",
+            "PasswordCredentials": "Auto",
             "SDK": "MicrosoftIdentityWeb",
             "SampleSubPath": "1-Authentication\\1-sign-in-aspnet-core-mvc",
             "RequiredResourcesAccess": [
@@ -55,6 +55,10 @@
                 {
                     "key": "Enter_the_Tenant_Name_Here",
                     "value": "$tenantName"
+                },
+                {
+                    "key": "Enter_the_Client_Secret_Here",
+                    "value": ".AppKey"
                 }
             ]
         }

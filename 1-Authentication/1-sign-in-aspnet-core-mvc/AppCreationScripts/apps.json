@@ -9,6 +9,14 @@
             "x-ms-id": "ciam-aspnet-webapp",
             "x-ms-name": "ms-identity-ciam-aspnet-webapp",
             "x-ms-version": "2.0",
+            "oauth2AllowImplicitFlow": false,
+            "oauth2AllowIdTokenImplicitFlow": false,
+            "x-ms-passwordCredentials": "Auto",
+            "passwordCredentials": [
+                {
+                    "value": "{auto}"
+                }
+            ],
             "replyUrlsWithType": [
                 {
                     "url": "https://localhost:7274/",
@@ -19,7 +27,6 @@
                     "type": "Web"
                 }
             ],
-            "oauth2AllowIdTokenImplicitFlow": true,
             "logoutUrl": "https://localhost:7274/signout-callback-oidc",
             "requiredResourceAccess": [
                 {
@@ -44,7 +51,8 @@
                     "settingFile": "/appsettings.json",
                     "replaceTokens": {
                         "appId": "Enter_the_Application_Id_Here",
-                        "tenantName": "Enter_the_Tenant_Name_Here"
+                        "tenantName": "Enter_the_Tenant_Name_Here",
+                        "clientSecret": "Enter_the_Client_Secret_Here"
                     }
                 }
             ]
