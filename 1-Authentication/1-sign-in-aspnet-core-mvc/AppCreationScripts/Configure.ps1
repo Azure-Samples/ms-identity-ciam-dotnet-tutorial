@@ -275,7 +275,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com");"Enter_the_Client_Secret_Here" = $clientAppKey };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Client_Secret_Here" = $clientAppKey };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
