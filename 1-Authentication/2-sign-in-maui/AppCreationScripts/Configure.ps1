@@ -169,10 +169,10 @@ Function ConfigureApplications
     # Connect to the Microsoft Graph API, non-interactive is not supported for the moment (Oct 2021)
     Write-Host "Connecting to Microsoft Graph"
     if ($tenantId -eq "") {
-        Connect-MgGraph -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
+        Connect-MgGraph -Scopes "openid offline_access" -Environment $azureEnvironmentName
     }
     else {
-        Connect-MgGraph -TenantId $tenantId -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
+        Connect-MgGraph -TenantId $tenantId -Scopes "openid offline_access" -Environment $azureEnvironmentName
     }
     
     $context = Get-MgContext
@@ -205,7 +205,7 @@ Function ConfigureApplications
     $currentAppId = $clientAadApplication.AppId
     $currentAppObjectId = $clientAadApplication.Id
 
-    $replyUrlsForApp = "msal$currentAppId`://auth", "msal$currentAppId://auth"
+    $replyUrlsForApp = "msal$currentAppId`://auth"
     Update-MgApplication -ApplicationId $currentAppObjectId -PublicClient @{RedirectUris=$replyUrlsForApp}
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
     #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/active-directory-maui-v2")
@@ -240,7 +240,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "Instance" = the instance url of your CIAM tenant;"TenantId" = $tenantId;"ClientId" = $clientAadApplication.AppId;"CacheFileName" = the name of the cache file you wish to use with WinUI caching (not used in Android nor iOS);"CacheDir" = the directory path storing cache file you wish to use with WinUI caching (not used in Android nor iOS);"Scopes" = the scopes (space separated) you wish to use in your application };
+    $dictionary = @{ "[Enter Tenant Id (Obtained from the Azure portal. Select 'Endpoints' from the 'App registrations' blade and use the GUID in any of the URLs), e.g. da41245a5-11b3-996c-00a8-4d99re19f292]" = $tenantId;"[Enter the Client Id of the service (Application ID obtained from the Azure portal), e.g. ba74781c2-53c2-442a-97c2-3d60re42f403]" = $clientAadApplication.AppId; };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
