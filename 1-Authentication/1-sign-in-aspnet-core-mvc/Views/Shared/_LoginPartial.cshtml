@@ -4,7 +4,7 @@
 @if (User.Identity is not null && User.Identity.IsAuthenticated)
 {
         <li class="nav-item">
-            <span class="nav-link text-dark">Hello @User.Identity.Name</span>
+            <span class="nav-link text-dark">Hello @User.Claims.First(c => c.Type == "preferred_username").Value</span>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a>
