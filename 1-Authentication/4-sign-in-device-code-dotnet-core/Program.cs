@@ -8,6 +8,7 @@ var config = configuration.Build();
 var publicClientOptions = config.GetSection("AzureAd").Get<PublicClientApplicationOptions>()!;
 
 var app = PublicClientApplicationBuilder.CreateWithApplicationOptions(publicClientOptions)
+    .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
     .Build();
 
 var result = await app.AcquireTokenWithDeviceCode(new [] { "openid" }, async deviceCode => {
