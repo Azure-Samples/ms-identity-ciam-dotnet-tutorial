@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
-using ToDoListApi.Models;
+using ToDoListAPI.Models;
 
 const string ServiceName = "ToDoApi";
 
@@ -31,8 +31,8 @@ var firstNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
             ServiceName,
             new ToDo()
             {
-                UserId = Guid.NewGuid(),
-                Message = "Bake bread"
+                Owner = Guid.NewGuid(),
+                Description = "Bake bread"
             });
 
 await DisplayToDosFromServer();
@@ -44,8 +44,8 @@ var secondNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
             ServiceName,
             new ToDo()
             {
-                UserId = Guid.NewGuid(),
-                Message = "Butter bread"
+                Owner = Guid.NewGuid(),
+                Description = "Butter bread"
             });
 
 
@@ -55,18 +55,18 @@ Console.WriteLine("Deleting a to-do...");
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
             firstNewToDo,
-            options => options.RelativePath = $"api/todo/{firstNewToDo!.ID}");;
+            options => options.RelativePath = $"api/todo/{firstNewToDo!.Id}");;
 
 await DisplayToDosFromServer();
 
 Console.WriteLine("Editing a to-do...");
 
-secondNewToDo!.Message = "Eat bread";
+secondNewToDo!.Description = "Eat bread";
 
-secondNewToDo = await toDoApiClient.PatchForAppAsync<ToDo, ToDo>(
+secondNewToDo = await toDoApiClient.PutForAppAsync<ToDo, ToDo>(
             ServiceName,
             secondNewToDo!,
-            options => options.RelativePath = $"api/todo/{secondNewToDo!.ID}");;
+            options => options.RelativePath = $"api/todolist/{secondNewToDo!.Id}");;
 
 await DisplayToDosFromServer();
 
@@ -75,7 +75,7 @@ Console.WriteLine("Deleting remaining to-do...");
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
             secondNewToDo!,
-            options => options.RelativePath = $"api/todo/{secondNewToDo!.ID}");;
+            options => options.RelativePath = $"api/todo/{secondNewToDo!.Id}");;
 
 await DisplayToDosFromServer();
 
@@ -101,7 +101,7 @@ async Task DisplayToDosFromServer()
 }
 
 void DisplayToDo(ToDo toDo) {
-    Console.WriteLine($"ID: {toDo.ID}");
-    Console.WriteLine($"User ID: {toDo.UserId}");
-    Console.WriteLine($"Message: {toDo.Message}");
+    Console.WriteLine($"ID: {toDo.Id}");
+    Console.WriteLine($"User ID: {toDo.Owner}");
+    Console.WriteLine($"Message: {toDo.Description}");
 }
