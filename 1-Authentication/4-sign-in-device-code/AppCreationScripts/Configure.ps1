@@ -113,6 +113,44 @@ Function UpdateTextFile([string] $configFilePath, [System.Collections.HashTable]
 }
 
 <#.Description
+   This function takes a string input as a single line, matches a key value and replaces with the replacement value
+#>     
+Function ReplaceInLine([string] $line, [string] $key, [string] $value)
+{
+    $index = $line.IndexOf($key)
+    if ($index -ige 0)
+    {
+        $index2 = $index+$key.Length
+        $line = $line.Substring(0, $index) + $value + $line.Substring($index2)
+    }
+    return $line
+}
+
+<#.Description
+   This function takes a dictionary of keys to search and their replacements and replaces the placeholders in a text file
+#>     
+Function ReplaceInTextFile([string] $configFilePath, [System.Collections.HashTable] $dictionary)
+{
+    $lines = Get-Content $configFilePath
+    $index = 0
+    while($index -lt $lines.Length)
+    {
+        $line = $lines[$index]
+        foreach($key in $dictionary.Keys)
+        {
+            if ($line.Contains($key))
+            {
+                $lines[$index] = ReplaceInLine $line $key $dictionary[$key]
+            }
+        }
+        $index++
+    }
+
+    Set-Content -Path $configFilePath -Value $lines -Force
+}
+
+
+<#.Description
    Primary entry method to create and configure app registrations
 #> 
 Function ConfigureApplications
@@ -154,42 +192,42 @@ Function ConfigureApplications
 
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
-   # Create the dotnetDeviceCode AAD application
-   Write-Host "Creating the AAD application (DotnetDeviceCode)"
+   # Create the client AAD application
+   Write-Host "Creating the AAD application (msal-dotnet-browserless)"
    # create the application 
-   $dotnetDeviceCodeAadApplication = New-MgApplication -DisplayName "DotnetDeviceCode" `
-                                                                -IsFallbackPublicClient `
-                                                                 -SignInAudience AzureADandPersonalMicrosoftAccount `
-                                                                #end of command
+   $clientAadApplication = New-MgApplication -DisplayName "msal-dotnet-browserless" `
+                                                      -IsFallbackPublicClient `
+                                                       -SignInAudience AzureADMyOrg `
+                                                      #end of command
 
-    $currentAppId = $dotnetDeviceCodeAadApplication.AppId
-    $currentAppObjectId = $dotnetDeviceCodeAadApplication.Id
+    $currentAppId = $clientAadApplication.AppId
+    $currentAppObjectId = $clientAadApplication.Id
 
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/DotnetDeviceCode")
+    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/msal-dotnet-browserless")
     
     # create the service principal of the newly created application     
-    $dotnetDeviceCodeServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+    $clientServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
     # add the user running the script as an app owner if needed
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($dotnetDeviceCodeServicePrincipal.DisplayName)'"
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($clientServicePrincipal.DisplayName)'"
     }
-    Write-Host "Done creating the dotnetDeviceCode application (DotnetDeviceCode)"
+    Write-Host "Done creating the client application (msal-dotnet-browserless)"
 
     # URL of the AAD application in the Azure portal
-    # Future? $dotnetDeviceCodePortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $dotnetDeviceCodePortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
+    # Future? $clientPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
+    $clientPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>dotnetDeviceCode</td><td>$currentAppId</td><td><a href='$dotnetDeviceCodePortalUrl'>DotnetDeviceCode</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>client</td><td>$currentAppId</td><td><a href='$clientPortalUrl'>msal-dotnet-browserless</a></td></tr>" -Path createdApps.html
     # Declare a list to hold RRA items    
     $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
 
-    # Add Required Resources Access (from 'dotnetDeviceCode' to 'Microsoft Graph')
-    Write-Host "Getting access from 'dotnetDeviceCode' to 'Microsoft Graph'"
+    # Add Required Resources Access (from 'client' to 'Microsoft Graph')
+    Write-Host "Getting access from 'client' to 'Microsoft Graph'"
     $requiredPermission = GetRequiredPermissions -applicationDisplayName "Microsoft Graph"`
         -requiredDelegatedPermissions "openid|offline_access"
 
@@ -204,24 +242,24 @@ Function ConfigureApplications
     
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'DotnetDeviceCode' at `n $dotnetDeviceCodePortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'msal-dotnet-browserless' at `n $clientPortalUrl" -ForegroundColor Green 
     
-    # Update config file for 'dotnetDeviceCode'
+    # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "ClientId" = $dotnetDeviceCodeAadApplication.AppId;"TenantId" = $tenantId };
+    $dictionary = @{ "Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
     Write-Host "-----------------"
 
-    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
+    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
     Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
-    Write-Host "- For dotnetDeviceCode"
-    Write-Host "  - Navigate to $dotnetDeviceCodePortalUrl"
-    Write-Host "  - The delegated permissions for the 'dotnetDeviceCode' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
+    Write-Host "- For client"
+    Write-Host "  - Navigate to $clientPortalUrl"
+    Write-Host "  - The delegated permissions for the 'client' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
    
 Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  

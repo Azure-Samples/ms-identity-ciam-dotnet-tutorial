@@ -1,0 +1,50 @@
+{
+    "Sample": {
+        "Title": ".NET browserless application using MSAL.NET to authentication users with the device code flow against Customer Identity Access Management (CIAM)",
+        "Level": 100,
+        "Client": "Dotnet browserless application",
+        "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial.git",
+        "Endpoint": "AAD v2.0",
+        "Languages": ["csharp"],
+        "Description": "A .NET browserless application using MSAL.NET to authentication users with the device code flow against Customer Identity Access Management (CIAM)",
+        "products": ["azure-active-directory", "msal-net"],
+        "Provider": "CIAM"
+    },
+    "AADApps": [
+        {
+            "Id": "client",
+            "Name": "msal-dotnet-browserless",
+            "Kind": "Browserless",
+            "IsPublicClient": true,
+            "SDK": "MsalNet",
+            "Audience": "AzureADMyOrg",
+            "SampleSubPath": "1-Authentication\\4-sign-in-device-code",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "Microsoft Graph",
+                    "DelegatedPermissions": [
+                        "openid",
+                        "offline_access"
+                    ]
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Tenant_Name_Here",
+                    "value": "$tenantName"
+                },
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                }
+            ]
+        }
+    ]
+}
