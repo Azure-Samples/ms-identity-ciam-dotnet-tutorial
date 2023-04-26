@@ -142,7 +142,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `Instance` and replace the existing value with the instance url of your CIAM tenant.
+1. Find the key `Instance` and replace the existing value with the instance url of your CIAM tenant (in most cases you'll need to replace the value of `Your_Tenant_Name_Here` with the name of your tenant).
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `active-directory-maui-v2` app copied from the Azure portal.
 1. Find the key `CacheFileName` and replace the existing value with the name of the cache file you wish to use with WinUI caching (not used in Android nor iOS).
@@ -168,9 +168,12 @@ Clean the solution, rebuild the solution, and run it:
 
 
 - Click the sign-in button at the bottom of the application screen.
+![Home screen](./ReadmeFiles/login-screen.png)
 - On the sign-in screen, you can sign-in with a microsoft account directly on the screen or through another flow like Facebook or Google if you have that set up on your tenant. See setting up workflows. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. During the sign in process, you will be prompted to grant various permissions (to allow the application to access your data).
+![Sign-in prompt](./ReadmeFiles/sign-in-prompt.png)
 - Upon successful sign in and consent, the application screen will display the main page.
 - After you sign-in you will see a screen displaying the scopes available on the access token acquired after signing in.
+![Sign-in prompt](./ReadmeFiles/after-login.png)
 - On WinUI sessions are cached. You can close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
 - Sign out by clicking the sign out button.
 

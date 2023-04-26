@@ -55,7 +55,7 @@
       "Mappings": [
         {
           "key": "Instance",
-          "value": "the instance url of your CIAM tenant"
+          "value": "the instance url of your CIAM tenant (in most cases you'll need to replace the value of `Your_Tenant_Name_Here` with the name of your tenant)."
         },
         {
           "key": "TenantId",

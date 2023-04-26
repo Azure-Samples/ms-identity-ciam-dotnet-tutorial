@@ -248,8 +248,10 @@ Function ConfigureApplications
     # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
+
+    $domainPrefix = $verifiedDomain.Name.replace('.onmicrosoft.com', '')
     
-    $dictionary = @{ "[Enter Tenant Id (Obtained from the Azure portal. Select 'Endpoints' from the 'App registrations' blade and use the GUID in any of the URLs), e.g. da41245a5-11b3-996c-00a8-4d99re19f292]" = $tenantId;"[Enter the Client Id of the service (Application ID obtained from the Azure portal), e.g. ba74781c2-53c2-442a-97c2-3d60re42f403]" = $clientAadApplication.AppId; };
+    $dictionary = @{  "https://Your_Tenant_Name_Here.ciamlogin.com/" = "https://$domainPrefix.ciamlogin.com/"; "[Enter Tenant Id (Obtained from the Azure portal. Select 'Endpoints' from the 'App registrations' blade and use the GUID in any of the URLs), e.g. da41245a5-11b3-996c-00a8-4d99re19f292]" = $tenantId;"[Enter the Client Id of the service (Application ID obtained from the Azure portal), e.g. ba74781c2-53c2-442a-97c2-3d60re42f403]" = $clientAadApplication.AppId; };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
