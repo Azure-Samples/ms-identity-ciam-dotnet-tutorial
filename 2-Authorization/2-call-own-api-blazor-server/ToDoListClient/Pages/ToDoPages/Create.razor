@@ -1,0 +1,25 @@
+@page "/create"
+
+@using ToDoListAPI.Models;
+@using Microsoft.Identity.Abstractions;
+
+@inject NavigationManager Navigation
+@inject IDownstreamApi _downstreamApi
+
+<h3>Create Task</h3>
+
+<CommonForm ButtonText="Add Task" ToDoItem="@toDo" OnValidSubmit="@AddTask" />
+
+@code {
+    const string ServiceName = "ToDoApi";
+    protected ToDo toDo = new ToDo();
+    protected async Task AddTask()
+    {
+        await _downstreamApi.PostForUserAsync<ToDo, ToDo>(
+            ServiceName,
+            toDo,
+            options => options.RelativePath = "api/todolist");
+
+        Navigation.NavigateTo("todolist");
+    }
+}
