@@ -1,7 +1,7 @@
 ---
 page_type: sample
-name: .NET browserless application using MSAL.NET to authentication users with the device code flow against Customer Identity Access Management (CIAM)
-description: A .NET browserless application using MSAL.NET to authentication users with the device code flow against Customer Identity Access Management (CIAM)
+name: .NET browserless application using MSAL.NET to authenticate users with the device code flow against Customer Identity Access Management (CIAM)
+description: A .NET browserless application using MSAL.NET to authenticate users with the device code flow against Customer Identity Access Management (CIAM)
 languages:
  - csharp
 products:
@@ -14,12 +14,9 @@ extensions:
 - endpoint: AAD v2.0
 - level: 100
 - client: Dotnet browserless application
-- service: 
 ---
 
-# .NET browserless application using MSAL.NET to authentication users with the device code flow against Customer Identity Access Management (CIAM)
-
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
+# .NET browserless application using MSAL.NET to authenticate users with the device code flow against Azure AD for Customers
 
 * [Overview](#overview)
 * [Scenario](#scenario)
@@ -28,13 +25,12 @@ extensions:
 * [Explore the sample](#explore-the-sample)
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
 ## Overview
 
-This sample demonstrates a Dotnet browserless application that authenticates users against Azure AD.
+This sample demonstrates a .NET 7.0 browserless application that authenticates users against Azure AD for Customers using the [device code flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code).
 
 ## Scenario
 
@@ -64,8 +60,7 @@ or download and extract the repository *.zip* file.
 
 > :warning: To avoid path length limitations on Windows, we recommend cloning into a directory near the root of your drive.
 
-
-### Step 3: Register the sample application(s) in your tenant
+### Step 2: Register the sample application(s) in your tenant
 
 There is one project in this sample. To register it, you can:
 
@@ -89,7 +84,6 @@ There is one project in this sample. To register it, you can:
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
 
 </details>
 
@@ -141,29 +135,36 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
+1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `msal-dotnet-browserless` app copied from the Azure portal.
 
-### Step 4: Running the sample
+### Step 3: Running the sample
 
+If you are using **Visual Studio Code**, type the following in a VS Code integrated terminal:
+
+```console
+    cd 1-Authentication/4-sign-in-device-code
+    dotnet run
+```
+
+If you are using Visual Studio, follow the instructions [here](https://learn.microsoft.com/visualstudio/get-started/csharp/run-program?view=vs-2022).
 
 ## Explore the sample
 
-> * Explain how to explore the sample.
-> * Insert a screenshot of the client application.
+When the app launches, copy the suggested URL `https://microsoft.com/devicelogin` from the terminal and visit it in a browser. Then, copy the device code from terminal and follow the prompts on `https://microsoft.com/devicelogin`.
+
+Once you are successfully signed-in, the terminal should display the claims in your ID token.
 
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
-
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/DesignPageV2.aspx?subpage=design&m2=1&id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUMlJETFFSQVQ4SjBGQk9aVUhPS0JUOUJUUi4u).
 
 ## Troubleshooting
 
 <details>
 	<summary>Expand for troubleshooting info</summary>
-
 
 To provide feedback on or suggest features for Azure Active Directory, visit [User Voice page](https://feedback.azure.com/d365community/forum/79b1327d-d925-ec11-b6e6-000d3a4f06a4).
 </details>
@@ -180,17 +181,9 @@ var result = await app.AcquireTokenWithDeviceCode(new [] { "openid" }, async dev
 .ExecuteAsync();
 
 Console.WriteLine($"You signed in as {result.Account.Username}");
-Console.WriteLine($"{result.Account.HomeAccountId}");
-Console.WriteLine("\nRetrieved access token:");
-Console.WriteLine(result.AccessToken);
 ```
 
 </details>
-
-## Next Steps
-
-Learn how to:
-
 
 ## Contributing
 
