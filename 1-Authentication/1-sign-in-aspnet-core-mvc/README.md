@@ -45,8 +45,6 @@ This sample demonstrates an ASP.NET Core web app that authenticates users agains
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
 
->This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
-
 ## Setup the sample
 
 ### Step 1: Clone or download this repository
@@ -92,6 +90,8 @@ There is one project in this sample. To register it, you can:
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
 
+> :information_source: This sample can make use of client certificates. You can use **AppCreationScripts** to register an Azure AD application with certificates. See: [How to use certificates instead of client secrets](./README-use-certificate.md)
+
 </details>
 
 #### Choose the Azure AD CIAM tenant where you want to create your applications
@@ -129,9 +129,14 @@ Please refer to:
         1. `https://localhost:7274/`
         1. `https://localhost:7274/signin-oidc`
     1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-callback-oidc`.
-    1. In the **Implicit grant** section, check the **ID tokens** option as this sample requires the [Implicit grant flow](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-implicit-grant-flow) to be enabled to sign-in the user and call an API.
-    1. Select **ID tokens (used for implicit and hybrid flows)** checkbox.
     1. Click **Save** to save your changes.
+1. In the app's registration screen, select the **Certificates & secrets** blade in the left to open the page where you can generate secrets and upload certificates.
+1. In the **Client secrets** section, select **New client secret**:
+    1. Type a key description (for instance `app secret`).
+    1. Select one of the available key durations (**6 months**, **12 months** or **Custom**) as per your security posture.
+    1. The generated key value will be displayed when you select the **Add** button. Copy and save the generated value for use in later steps.
+    1. You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
+    > :warning: For enhanced security, consider using **certificates** instead of client secrets. See: [How to use certificates instead of secrets](./README-use-certificate.md).
 1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users.
     1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
     1. Select the **Add a permission** button and then:
@@ -150,6 +155,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Open the `appsettings.json` file.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
 1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with name of your Azure AD CIAM tenant.
+1. Find the key `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-aspnet-webapp` copied from the Azure portal.
 
 ### Step 4: Running the sample
 

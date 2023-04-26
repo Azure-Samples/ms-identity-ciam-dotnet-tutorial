@@ -17,6 +17,20 @@ param(
  There are two ways to run this script. For more information, read the AppCreationScripts.md file in the same folder as this script.
 #>
 
+# Create an application key
+# See https://www.sabin.io/blog/adding-an-azure-active-directory-application-and-key-using-powershell/
+Function CreateAppKey([DateTime] $fromDate, [double] $durationInMonths)
+{
+    $key = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphPasswordCredential
+
+    $key.StartDateTime = $fromDate
+    $key.EndDateTime = $fromDate.AddMonths($durationInMonths)
+    $key.KeyId = (New-Guid).ToString()
+    $key.DisplayName = "app secret"
+
+    return $key
+}
+
 # Adds the requiredAccesses (expressed as a pipe separated string) to the requiredAccess structure
 # The exposed permissions are in the $exposedPermissions collection, and the type of permission (Scope | Role) is 
 # described in $permissionType
@@ -194,6 +208,10 @@ Function ConfigureApplications
 
    # Create the client AAD application
    Write-Host "Creating the AAD application (ciam-aspnet-webapp)"
+   # Get a 6 months application key for the client Application
+   $fromDate = [DateTime]::Now;
+   $key = CreateAppKey -fromDate $fromDate -durationInMonths 6
+   
    # create the application 
    $clientAadApplication = New-MgApplication -DisplayName "ciam-aspnet-webapp" `
                                                       -Web `
@@ -201,12 +219,13 @@ Function ConfigureApplications
                                                           RedirectUris = "https://localhost:7274/", "https://localhost:7274/signin-oidc"; `
                                                           HomePageUrl = "https://localhost:7274/"; `
                                                           LogoutUrl = "https://localhost:7274/signout-callback-oidc"; `
-                                                          ImplicitGrantSettings = @{ `
-                                                              EnableIdTokenIssuance=$true; `
-                                                          } `
                                                         } `
                                                        -SignInAudience AzureADMyOrg `
                                                       #end of command
+
+    #add a secret to the application
+    $pwdCredential = Add-MgApplicationPassword -ApplicationId $clientAadApplication.Id -PasswordCredential $key
+    $clientAppKey = $pwdCredential.SecretText
 
     $currentAppId = $clientAadApplication.AppId
     $currentAppObjectId = $clientAadApplication.Id
@@ -256,7 +275,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0] };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Client_Secret_Here" = $clientAppKey };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary

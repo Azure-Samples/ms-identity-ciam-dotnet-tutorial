@@ -1,5 +1,5 @@
 ---
-title: "Quickstart: Add sign in to a ASP.NET Core web app" 
+title: "Quickstart: Add sign in to an ASP.NET Core web app" 
 description: Learn how to run a sample ASP.NET Core web application to sign in users 
 services: active-directory 
 author: kengaderdus 
@@ -19,8 +19,7 @@ ms.date: 04/19/2023
 > [!div renderon="portal" id="display-on-portal" class="sxs-lookup"]
 >
 > 1. Make sure you've installed [.NET SDK](https://dotnet.microsoft.com/download/dotnet/7.0) v7 or later.
-> 1. Unzip the sample.
-> 1. Locate the sample folder in your terminal, then run the following commands:
+> 1. Unzip the downloaded file, locate the sample folder in your terminal, then run the following commands:
 >
 >    ```console
 >    dotnet run
