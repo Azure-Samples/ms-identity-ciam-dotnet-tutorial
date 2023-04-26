@@ -55,7 +55,7 @@ Console.WriteLine("Deleting a to-do...");
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
             firstNewToDo,
-            options => options.RelativePath = $"api/todo/{firstNewToDo!.Id}");;
+            options => options.RelativePath = $"api/todolist/{firstNewToDo!.Id}");;
 
 await DisplayToDosFromServer();
 
@@ -75,7 +75,7 @@ Console.WriteLine("Deleting remaining to-do...");
 await toDoApiClient.DeleteForAppAsync(
             ServiceName,
             secondNewToDo!,
-            options => options.RelativePath = $"api/todo/{secondNewToDo!.Id}");;
+            options => options.RelativePath = $"api/todolist/{secondNewToDo!.Id}");;
 
 await DisplayToDosFromServer();
 
@@ -84,7 +84,7 @@ async Task DisplayToDosFromServer()
     Console.WriteLine("Retrieving to-do's from server...");
     var toDos = await toDoApiClient!.GetForAppAsync<IEnumerable<ToDo>>(
         ServiceName,
-        options => options.RelativePath = "/api/todo"
+        options => options.RelativePath = "/api/todolist"
     );
 
     if (!toDos!.Any())
