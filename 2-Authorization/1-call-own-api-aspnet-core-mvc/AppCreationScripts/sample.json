@@ -1,0 +1,121 @@
+{
+  "Sample": {
+    "Author": "v-abeyderman",
+    "Title": "How to secure an ASP.NET Core Web API with the Microsoft identity platform",
+    "Level": 200,
+    "Client": "ASP.NET Core Web App",
+    "Service": "ASP.NET Core Web API",
+    "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+    "Endpoint": "AAD v2.0",
+    "Description": "This sample demonstrates an ASP.NET Core Web App signing-in a user and calling an ASP.NET Core Web API that is secured with Azure AD.",
+    "Languages": [ "csharp" ],
+    "Products": [ "aspnet-core", "azure-active-directory" ],
+    "Library": [ "Microsoft.Identity.Web" ],
+    "Platform": "AspNetCore",
+    "Provider": "CIAM"
+  },
+  "AADApps": [
+    {
+      "Id": "service",
+      "Name": "TodoListApi",
+      "Kind": "WebApi",
+      "HomePage": "https://localhost:44351",
+      "Audience": "AzureADMyOrg",
+      "SDK": "MicrosoftIdentityWeb",
+      "ManualSteps": [],
+      "Sample": {
+        "SampleSubPath": "4-WebApp-Your-API\\4-1-MyOrg",
+        "ProjectDirectory": "\\TodoListApi"
+      },
+      "OptionalClaims": {
+        "AccessTokenClaims": [ "idtyp" ]
+      },
+      "Scopes": [ "ToDoList.Read", "ToDoList.ReadWrite" ],
+      "AppRoles": [
+        {
+          "AllowedMemberTypes": [ "Application" ],
+          "Name": "ToDoList.Read.All",
+          "Description": "Allow application to read all ToDo list items"
+        },
+        {
+          "AllowedMemberTypes": [ "Application" ],
+          "Name": "ToDoList.ReadWrite.All",
+          "Description": "Allow application to read and write into ToDo list"
+        }
+      ],
+      "SampleSubPath": "2-Authorization\\1-call-own-api-aspnet-core-mvc",
+      "ProjectDirectory": "\\TodoListApi"
+    },
+    {
+      "Id": "client",
+      "Name": "TodoListClient",
+      "Kind": "WebApp",
+      "HomePage": "https://localhost:44321/",
+      "ReplyUrls": "https://localhost:44321/signin-oidc",
+      "LogoutUrl": "https://localhost:44321/signout-oidc",
+      "Audience": "AzureADMyOrg",
+      "PasswordCredentials": "Auto",
+      "SDK": "MicrosoftIdentityWeb",
+      "RequiredResourcesAccess": [
+        {
+          "Resource": "service",
+          "DelegatedPermissions": [ "ToDoList.Read", "ToDoList.ReadWrite" ]
+        }
+      ],
+      "OptionalClaims": {
+        "IdTokenClaims": [ "acct" ]
+      },
+      "ManualSteps": [
+        {
+          "Comment": "Navigate to the API Permissions page and select 'Grant admin consent for (your tenant)'"
+        }
+      ],
+        "SampleSubPath": "2-Authorization\\1-call-own-api-aspnet-core-mvc",
+        "ProjectDirectory": "\\ToDoListClient"
+      }
+  ],
+  "CodeConfiguration": [
+    {
+      "App": "service",
+      "SettingKind": "Text",
+      "SettingFile": "\\..\\TodoListApi\\appsettings.json",
+      "Mappings": [
+        {
+          "key": "TenantId",
+          "value": "$tenantId"
+        },
+        {
+          "key": "ClientId",
+          "value": "service.AppId"
+        }
+      ]
+    },
+    {
+      "App": "client",
+      "SettingKind": "Text",
+      "SettingFile": "\\..\\ToDoListClient\\appsettings.json",
+      "Mappings": [
+        {
+          "key": "TenantId",
+          "value": "$tenantId"
+        },
+        {
+          "key": "ClientId",
+          "value": ".AppId"
+        },
+        {
+          "key": "ClientSecret",
+          "value": "$pwdCredential.SecretText"
+        },
+        {
+          "key": "Scopes",
+          "value": "service.RequiredScopes"
+        },
+        {
+          "key": "BaseAddress",
+          "value": "service.HomePage"
+        }
+      ]
+    }
+  ]
+}
