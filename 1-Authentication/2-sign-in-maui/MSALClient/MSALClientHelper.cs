@@ -74,7 +74,7 @@ namespace SignInMaui.MSALClient
                 .WithExperimentalFeatures() // this is for upcoming logger
                 .WithAuthority(string.Format(AzureAdConfig.Authority, AzureAdConfig.TenantId))
                 .WithLogging(new IdentityLogger(EventLogLevel.Warning), enablePiiLogging: false)    // This is the currently recommended way to log MSAL message. For more info refer to https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/logging. Set Identity Logging level to Warning which is a middle ground
-                .WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+                .WithIosKeychainSecurityGroup("com.microsoft.msalcache");
         }
 
         /// <summary>

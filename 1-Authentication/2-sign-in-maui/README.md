@@ -17,9 +17,7 @@ extensions:
 - service: Microsoft Graph
 ---
 
-# A .NET MAUI app using MSAL.NET to sign-in users and calling MS Graph Api
-
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
+# A .NET MAUI cross-platform app using MSAL.NET to authenticate users against Azure AD for Customers
 
 * [Overview](#overview)
 * [Scenario](#scenario)
@@ -35,7 +33,7 @@ extensions:
 
 This sample demonstrates a MAUI (iOS, Android, WinUI) calling Microsoft Graph.
 
-> :information_source: To learn how applications integrate with [Microsoft Graph](https://aka.ms/graph), consider going through the recorded session:: [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A)
+> :information_source: To learn how applications integrate with [Microsoft Graph](https://aka.ms/graph), consider going through the recorded session: [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A)
 
 ## Scenario
 
@@ -68,10 +66,7 @@ or download and extract the repository *.zip* file.
 
 > :warning: To avoid path length limitations on Windows, we recommend cloning into a directory near the root of your drive.
 
-### Step 2: Navigate to project folder
-You don't have to change current folder. 
-
-### Step 3: Register the sample application(s) in your tenant
+### Step 2: Register the sample application(s) in your tenant
 
 > :information_source: While there are multiple projects in this sample, we'd register just one app with Azure AD and use the registered app's *client id* in both apps. This reuse of app ids (client ids) is used when the apps themselves are just components of one larger app topology.  
 
@@ -96,7 +91,6 @@ There is one project in this sample. To register it, you can:
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
 
 </details>
 
@@ -279,4 +273,3 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 * [Building Zero Trust ready apps](https://aka.ms/ztdevsession)
 [Public client and confidential client applications](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-client-applications)
 [Token cache serialization in MSAL\.NET](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization)
-

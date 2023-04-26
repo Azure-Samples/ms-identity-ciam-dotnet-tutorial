@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SignInMaui.Views.ScopeView"
-             Title="Scope View">
+             x:Class="SignInMaui.Views.ClaimsView"
+             Title="ID Token View">
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" IsEnabled="False" />
     </Shell.BackButtonBehavior>
     <VerticalStackLayout>
         <Label 
-            Text="Azure Active Directory CIAM"
+            Text="Azure AD for Customers"
             FontSize="26"
             HorizontalOptions="Center" />
         <Label 
@@ -16,30 +16,16 @@
             FontSize="26"
             Padding="0,0,0,20"
             HorizontalOptions="Center" />
-        <Label 
-            Padding="0,20,0,20"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center"
-            FontSize="18"
-            Text="Token expires on"
-            />
-        <Label 
-            x:Name="ExpiresAt"
-            Padding="0,0,0,20"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center"
-            FontSize="16"
-            />
 
         <Label 
             Padding="0,20,0,0"
             VerticalOptions="Center" 
             HorizontalOptions="Center"
             FontSize="18"
-            Text="Scopes found in access token"
+            Text="Claims found in ID token"
             />
-        <ListView ItemsSource="{Binding AccessTokenScopes}"
-                  x:Name="Scopes">
+        <ListView ItemsSource="{Binding IdTokenClaims}"
+                  x:Name="Claims">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
