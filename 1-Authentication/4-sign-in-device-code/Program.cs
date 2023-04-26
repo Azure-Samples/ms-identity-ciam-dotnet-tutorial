@@ -18,5 +18,5 @@ var result = await app.AcquireTokenWithDeviceCode(new [] { "openid" }, async dev
 
 Console.WriteLine($"You signed in as {result.Account.Username}");
 Console.WriteLine($"{result.Account.HomeAccountId}");
-Console.WriteLine("\nRetrieved access token:");
-Console.WriteLine(result.AccessToken);
+Console.WriteLine("\nRetrieved ID token:");
+Console.WriteLine(result.IdToken);
