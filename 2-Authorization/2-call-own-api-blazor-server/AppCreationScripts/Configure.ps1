@@ -447,17 +447,16 @@ Function ConfigureApplications
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
 
-    $dictionary = @{ "/* Populate this array with your claims */" = "[`"api://$($serviceAadApplication.AppId)/ToDoList.Read`", `"api://$($serviceAadApplication.AppId)/ToDoList.ReadWrite`"]"; };
+    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
 
+    $dictionary = @{ "/* Populate this array with your claims */" = "[`"api://$($serviceAadApplication.AppId)/ToDoList.Read`", `"api://$($serviceAadApplication.AppId)/ToDoList.ReadWrite`"]"; };
 
     Write-Host "Replacing values in the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
-    Write-Host "-----------------"
 
     ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
     Write-Host "-----------------"
 
-    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
     Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
     Write-Host "- For service"
