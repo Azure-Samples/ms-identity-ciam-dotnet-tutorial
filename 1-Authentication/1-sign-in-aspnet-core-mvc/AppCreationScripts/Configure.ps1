@@ -1,3 +1,4 @@
+#Requires -Version 7
  
 [CmdletBinding()]
 param(
@@ -15,6 +16,75 @@ param(
  
  There are two ways to run this script. For more information, read the AppCreationScripts.md file in the same folder as this script.
 #>
+
+# Create an application key
+# See https://www.sabin.io/blog/adding-an-azure-active-directory-application-and-key-using-powershell/
+Function CreateAppKey([DateTime] $fromDate, [double] $durationInMonths)
+{
+    $key = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphPasswordCredential
+
+    $key.StartDateTime = $fromDate
+    $key.EndDateTime = $fromDate.AddMonths($durationInMonths)
+    $key.KeyId = (New-Guid).ToString()
+    $key.DisplayName = "app secret"
+
+    return $key
+}
+
+# Adds the requiredAccesses (expressed as a pipe separated string) to the requiredAccess structure
+# The exposed permissions are in the $exposedPermissions collection, and the type of permission (Scope | Role) is 
+# described in $permissionType
+Function AddResourcePermission($requiredAccess, `
+                               $exposedPermissions, [string]$requiredAccesses, [string]$permissionType)
+{
+    foreach($permission in $requiredAccesses.Trim().Split("|"))
+    {
+        foreach($exposedPermission in $exposedPermissions)
+        {
+            if ($exposedPermission.Value -eq $permission)
+                {
+                $resourceAccess = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphResourceAccess
+                $resourceAccess.Type = $permissionType # Scope = Delegated permissions | Role = Application permissions
+                $resourceAccess.Id = $exposedPermission.Id # Read directory data
+                $requiredAccess.ResourceAccess += $resourceAccess
+                }
+        }
+    }
+}
+
+#
+# Example: GetRequiredPermissions "Microsoft Graph"  "Graph.Read|User.Read"
+# See also: http://stackoverflow.com/questions/42164581/how-to-configure-a-new-azure-ad-application-through-powershell
+Function GetRequiredPermissions([string] $applicationDisplayName, [string] $requiredDelegatedPermissions, [string]$requiredApplicationPermissions, $servicePrincipal)
+{
+    # If we are passed the service principal we use it directly, otherwise we find it from the display name (which might not be unique)
+    if ($servicePrincipal)
+    {
+        $sp = $servicePrincipal
+    }
+    else
+    {
+        $sp = Get-MgServicePrincipal -Filter "DisplayName eq '$applicationDisplayName'"
+    }
+    $appid = $sp.AppId
+    $requiredAccess = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess
+    $requiredAccess.ResourceAppId = $appid 
+    $requiredAccess.ResourceAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphResourceAccess]
+
+    # $sp.Oauth2Permissions | Select Id,AdminConsentDisplayName,Value: To see the list of all the Delegated permissions for the application:
+    if ($requiredDelegatedPermissions)
+    {
+        AddResourcePermission $requiredAccess -exposedPermissions $sp.Oauth2PermissionScopes -requiredAccesses $requiredDelegatedPermissions -permissionType "Scope"
+    }
+    
+    # $sp.AppRoles | Select Id,AdminConsentDisplayName,Value: To see the list of all the Application permissions for the application
+    if ($requiredApplicationPermissions)
+    {
+        AddResourcePermission $requiredAccess -exposedPermissions $sp.AppRoles -requiredAccesses $requiredApplicationPermissions -permissionType "Role"
+    }
+    return $requiredAccess
+}
+
 
 <#.Description
    This function takes a string input as a single line, matches a key value and replaces with the replacement value
@@ -55,6 +125,44 @@ Function UpdateTextFile([string] $configFilePath, [System.Collections.HashTable]
 
     Set-Content -Path $configFilePath -Value $lines -Force
 }
+
+<#.Description
+   This function takes a string input as a single line, matches a key value and replaces with the replacement value
+#>     
+Function ReplaceInLine([string] $line, [string] $key, [string] $value)
+{
+    $index = $line.IndexOf($key)
+    if ($index -ige 0)
+    {
+        $index2 = $index+$key.Length
+        $line = $line.Substring(0, $index) + $value + $line.Substring($index2)
+    }
+    return $line
+}
+
+<#.Description
+   This function takes a dictionary of keys to search and their replacements and replaces the placeholders in a text file
+#>     
+Function ReplaceInTextFile([string] $configFilePath, [System.Collections.HashTable] $dictionary)
+{
+    $lines = Get-Content $configFilePath
+    $index = 0
+    while($index -lt $lines.Length)
+    {
+        $line = $lines[$index]
+        foreach($key in $dictionary.Keys)
+        {
+            if ($line.Contains($key))
+            {
+                $lines[$index] = ReplaceInLine $line $key $dictionary[$key]
+            }
+        }
+        $index++
+    }
+
+    Set-Content -Path $configFilePath -Value $lines -Force
+}
+
 
 <#.Description
    Primary entry method to create and configure app registrations
@@ -98,63 +206,90 @@ Function ConfigureApplications
 
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
-   # Create the webApp AAD application
-   Write-Host "Creating the AAD application (CIAMWebApp)"
+   # Create the client AAD application
+   Write-Host "Creating the AAD application (ciam-aspnet-webapp)"
+   # Get a 6 months application key for the client Application
+   $fromDate = [DateTime]::Now;
+   $key = CreateAppKey -fromDate $fromDate -durationInMonths 6
+   
    # create the application 
-   $webAppAadApplication = New-MgApplication -DisplayName "CIAMWebApp" `
+   $clientAadApplication = New-MgApplication -DisplayName "ciam-aspnet-webapp" `
                                                       -Web `
                                                       @{ `
                                                           RedirectUris = "https://localhost:7274/", "https://localhost:7274/signin-oidc"; `
                                                           HomePageUrl = "https://localhost:7274/"; `
-                                                          LogoutUrl = "https://localhost:7274/signout-oidc"; `
-                                                          ImplicitGrantSettings = @{ `
-                                                              EnableIdTokenIssuance=$true; `
-                                                          } `
+                                                          LogoutUrl = "https://localhost:7274/signout-callback-oidc"; `
                                                         } `
                                                        -SignInAudience AzureADMyOrg `
                                                       #end of command
 
-    $currentAppId = $webAppAadApplication.AppId
-    $currentAppObjectId = $webAppAadApplication.Id
+    #add a secret to the application
+    $pwdCredential = Add-MgApplicationPassword -ApplicationId $clientAadApplication.Id -PasswordCredential $key
+    $clientAppKey = $pwdCredential.SecretText
+
+    $currentAppId = $clientAadApplication.AppId
+    $currentAppObjectId = $clientAadApplication.Id
 
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/CIAMWebApp")
+    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-aspnet-webapp")
     
     # create the service principal of the newly created application     
-    $webAppServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+    $clientServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
     # add the user running the script as an app owner if needed
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($webAppServicePrincipal.DisplayName)'"
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($clientServicePrincipal.DisplayName)'"
     }
-    Write-Host "Done creating the webApp application (CIAMWebApp)"
+    Write-Host "Done creating the client application (ciam-aspnet-webapp)"
 
     # URL of the AAD application in the Azure portal
-    # Future? $webAppPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $webAppPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
+    # Future? $clientPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
+    $clientPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>webApp</td><td>$currentAppId</td><td><a href='$webAppPortalUrl'>CIAMWebApp</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>client</td><td>$currentAppId</td><td><a href='$clientPortalUrl'>ciam-aspnet-webapp</a></td></tr>" -Path createdApps.html
+    # Declare a list to hold RRA items    
+    $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
+
+    # Add Required Resources Access (from 'client' to 'Microsoft Graph')
+    Write-Host "Getting access from 'client' to 'Microsoft Graph'"
+    $requiredPermission = GetRequiredPermissions -applicationDisplayName "Microsoft Graph"`
+        -requiredDelegatedPermissions "openid|offline_access"
+
+    $requiredResourcesAccess.Add($requiredPermission)
+    Write-Host "Added 'Microsoft Graph' to the RRA list."
+    # Useful for RRA additions troubleshooting
+    # $requiredResourcesAccess.Count
+    # $requiredResourcesAccess
+    
+    Update-MgApplication -ApplicationId $currentAppObjectId -RequiredResourceAccess $requiredResourcesAccess
+    Write-Host "Granted permissions."
+    
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'CIAMWebApp' at `n $webAppPortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'ciam-aspnet-webapp' at `n $clientPortalUrl" -ForegroundColor Green 
     
-    # Update config file for 'webApp'
+    # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "ClientId" = $webAppAadApplication.AppId;"TenantId" = $tenantId;"Domain" = $tenantName };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Client_Secret_Here" = $clientAppKey };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
     Write-Host "-----------------"
 
-    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
-    Write-Host "- App webApp  - created at $webAppPortalUrl"
-
-
+    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
+    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
+    Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
+    Write-Host "- For client"
+    Write-Host "  - Navigate to $clientPortalUrl"
+    Write-Host "  - Navigate to your tenant and create user flows to allow users to sign up for the application." -ForegroundColor Red 
+    Write-Host "  - The delegated permissions for the 'client' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
+    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
+   
 Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  
 } # end of ConfigureApplications function
 

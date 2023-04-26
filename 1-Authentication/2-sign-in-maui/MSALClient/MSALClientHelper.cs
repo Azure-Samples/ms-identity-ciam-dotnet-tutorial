@@ -70,6 +70,7 @@ namespace SignInMaui.MSALClient
         private void InitializePublicClientApplicationBuilder()
         {
             this.PublicClientApplicationBuilder = PublicClientApplicationBuilder.Create(AzureAdConfig.ClientId)
+                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithExperimentalFeatures() // this is for upcoming logger
                 .WithAuthority(string.Format(AzureAdConfig.Authority, AzureAdConfig.TenantId))
                 .WithLogging(new IdentityLogger(EventLogLevel.Warning), enablePiiLogging: false)    // This is the currently recommended way to log MSAL message. For more info refer to https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/logging. Set Identity Logging level to Warning which is a middle ground

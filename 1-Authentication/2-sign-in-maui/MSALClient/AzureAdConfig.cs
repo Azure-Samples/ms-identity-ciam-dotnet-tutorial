@@ -31,15 +31,6 @@ namespace SignInMaui.MSALClient
         public string Instance { get; set; }
 
         /// <summary>
-        /// Gets or sets the domain of your CIAM tenant
-        /// </summary>
-        /// <value>
-        /// The login instance for your CIAM tenant
-        /// </value>
-        public string Domain { get; set; }
-
-
-        /// <summary>
         /// Gets or sets the client Id (App Id) from the app registration in the Azure AD portal.
         /// </summary>
         /// <value>

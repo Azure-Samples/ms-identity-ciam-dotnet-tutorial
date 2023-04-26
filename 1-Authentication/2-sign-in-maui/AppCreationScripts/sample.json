@@ -7,7 +7,7 @@
     "Endpoint": "AAD v2.0",
     "Description": "Sign in to a CIAM tenant using MAUI",
     "Languages": [ "csharp" ],
-    "Products": [ "maui", "azure-active-directory-b2c" ],
+    "Products": [ "maui", "azure-active-directory-maui" ],
     "Library": [ "MSAL.NET" ],
     "Service": "Microsoft Graph",
     "Platform": "MAUI",
@@ -31,10 +31,11 @@
         "SampleSubPath": ""
       },
       "Id": "client",
-      "Name": "active-directory-maui-b2c-v2",
+      "Name": "active-directory-maui-v2",
       "Kind": "Mobile",
       "SampleSubPath": "",
       "RequiredResourcesAccess": [ ],
+      "SDK": "MicrosoftIdentityWeb",
       "DefaultDesktopAndMobileRedirectUriSettings": {
         "UsesDefaultMsalRedirectUri": true
       }
@@ -57,28 +58,12 @@
           "value": "the instance url of your CIAM tenant"
         },
         {
-          "key": "Domain",
-          "value": "the domain of your CIAM tenant"
-        },
-        {
           "key": "TenantId",
           "value": "$tenantId"
         },
         {
           "key": "ClientId",
           "value": ".AppId"
-        },
-        {
-          "key": "SignUpSignInPolicyId",
-          "value": "the sign-in/sign-up policy you wish to use"
-        },
-        {
-          "key": "ResetPasswordPolicyId",
-          "value": "the password reset policy you wish to use (optional)"
-        },
-        {
-          "key": "EditProfilePolicyId",
-          "value": "the edit profile policy you wish to use (optional)"
         },
         {
           "key": "CacheFileName",
