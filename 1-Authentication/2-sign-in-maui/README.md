@@ -131,8 +131,7 @@ Please refer to:
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. If you don't have a platform added, select **Add a platform** and select the **Public client (mobile & desktop)** option.
-    1. In the **Redirect URIs** | **Suggested Redirect URIs for public clients (mobile, desktop)** type in the value **http://localhost**
-    1. In the **Redirect URI** section enter the following redirect URI `http://localhost`.
+    1. In the **Redirect URIs** section, add **msal{ClientId}://auth**. The **ClientId** is the Id of the App Registration and can be found under **Overview/Application (client) ID**
     1. Click **Save** to save your changes.
 1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users.
     1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
@@ -181,7 +180,7 @@ Clean the solution, rebuild the solution, and run it:
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/DesignPageV2.aspx?subpage=design&m2=1&id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUMlJETFFSQVQ4SjBGQk9aVUhPS0JUOUJUUi4u).
 
 ## About the code
 
