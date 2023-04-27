@@ -155,7 +155,7 @@ Finally, you need to modify the app's configuration files.
     "ClientSecret": "[Copy the client secret added to the app from the Azure portal]"
 ```
 
-3. *Un-comment* the following lines and replace the default values:
+3. *Insert* the following lines and replace the default values:
 
 ```json
     "ClientCertificates": [
@@ -182,7 +182,7 @@ You can now start the application as instructed in the [README](./README#setup-t
     "ClientSecret": "[Copy the client secret added to the app from the Azure portal]"
 ```
 
-3. *Un-comment* the following lines and replace the default values:
+3. *Insert* the following lines and replace the default values:
 
 ```json
     "ClientCertificates": [
