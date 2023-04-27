@@ -280,7 +280,7 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-The setup for the main Blazor application happens in the `Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD CIAM**.
+The setup for the main Blazor application happens in the `ToDoClient\Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD CIAM**.
 
 ```Csharp
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)

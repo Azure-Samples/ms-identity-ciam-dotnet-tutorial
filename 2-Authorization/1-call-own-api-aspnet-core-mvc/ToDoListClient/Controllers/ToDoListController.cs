@@ -17,7 +17,6 @@ public class TodoListController : Controller
 
     public async Task<ActionResult> Index()
     {
-        Console.WriteLine(HttpContext.User.GetObjectId());
         var toDos = await _downstreamApi.GetForUserAsync<IEnumerable<ToDo>>(
             ServiceName,
             options => options.RelativePath = "/api/todolist");

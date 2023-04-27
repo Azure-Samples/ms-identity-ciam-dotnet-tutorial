@@ -260,10 +260,21 @@ Then, open a separate command terminal and run:
 
 ## Explore the sample
 
-> * Explain how to explore the sample.
-> * Insert a screenshot of the client application.
+After starting the application, go to the url `https://localhost:44321` in any web browse. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
 
-> :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
+![sign-in-screen](./ReadmeFiles/login-screen.png)
+
+After successfully signing in, you should see the home screen with a greeting label at the top and a navigation bar to the side.
+
+![home-screen](./ReadmeFiles/home-screen.png)
+
+You can click on the `To-Do's` button in the top navigation bar to see a todo list that interacts with your Azure AD CIAM protected API.
+
+![home-screen](./ReadmeFiles/todo-list.png)
+
+Each of the todo's displayed show a simple message from each todo post by the signed-in user. From here, you'll be able to read, create, update and delete individual to-do's.
+
+To sign-out of the application click the **Sign out** button in the upper right corner of the screen.
 
 ## We'd love your feedback!
 
@@ -284,8 +295,88 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-> * Describe where the code uses auth libraries, or calls the graph
-> * Describe specific aspects (e.g. caching, validation etc.)
+The setup for the main ASP.NET Core application happens in the `ToDoClient\Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD CIAM**.
+
+```Csharp
+builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
+        .EnableTokenAcquisitionToCallDownstreamApi()
+        .AddDownstreamApi("ToDoApi", builder.Configuration.GetSection("ToDoApi"))
+        .AddInMemoryTokenCaches();
+```
+
+Note that this sample uses the `Microsoft.Identity.Web.DownstreamApi` library to simplify making authenticated HTTP calls to your API and is already configured to cache access tokens for your requests. This will be discussed further down this section.
+
+The login controllers and navigation are configured for you automatically with the `Microsoft.Identity.Web.UI` library. The extra policies added ensure that only authenticated users can access the pages of the application.
+
+```Csharp
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddMicrosoftIdentityUI();
+```
+
+The user's todo's are displayed by files in the `ToDoListClient\Views\ToDoList` directory and retrieve their todo data from the endpoint created by the `ToDoListClient\Controller\ToDoListController.cs` file which interacts directly with the **ToDoListAPI**.
+
+As an example, looking at the `ToDoListClient\Views\ToDoList\Index.cshtml` file you can see that it renders a view of all the `ToDo` objects stored within its `Model`.
+
+```CSharp
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Remove", "Remove", new { id = item.Id })
+            </td>
+        </tr>
+}
+```
+
+What's happening here is it's basing it's model off of the data retrieved from the `ToDoListController` for the `Index` route. This data is retrieved directly from the **ToDoListAPI** and sent to the view to be rendered and sent to the client.
+
+```CSharp
+private IDownstreamApi _downstreamApi;
+
+// ... more code
+
+public async Task<ActionResult> Index()
+{
+    var toDos = await _downstreamApi.GetForUserAsync<IEnumerable<ToDo>>(
+        ServiceName,
+        options => options.RelativePath = "/api/todolist");
+
+    return View(toDos);
+}
+```
+
+This leverages the `IDownstreamApi` to make authenticated requests for your users. With the `IDownstreamApi` all request authentication is handled for you with respect to acquiring and providing access tokens with requests. It's also already configured to use tokens stored within the application's cache.
+
+The other files also leverage the `IDownstreamAPI` to make basic **POST**, **PATCH**, **PUT** and **DELETE** requests with the needed authentication as mentioned before. They are also configured to handle serialization for you to translate JSON responses into C# objects and vice versa.
+
+A good example can be found in the `Edit` route. After a user finishes editing a todo and submits their edit in the `ToDoListClient\Views\ToDoList\Edit.cshtml` page they'll trigger the `Edit` post method which takes the relevant data from the submission and creates a new `ToDo` object. This sample does not make use of the deserialized JSON response in this case but does serialize the C# `ToDo` object into JSON. After the **ToDoListAPI** responds to the **PUT** request made by the application the user is redirected to the todo list page to see the edits they made to their todo.
+
+```CSharp
+// ToDoListClient\Controllers\ToDoListController.cs
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<ActionResult> Edit(int id, [Bind("Description")] ToDo toDo)
+{
+    await _downstreamApi.PutForUserAsync<ToDo, ToDo>(
+        ServiceName,
+        toDo,
+        options => options.RelativePath = $"api/todolist/{id}");
+
+    return RedirectToAction("Index");
+}
+```
 
 ## How to deploy this sample to Azure
 
