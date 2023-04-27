@@ -277,7 +277,7 @@ Function ConfigureApplications
     $currentAppId = $serviceAadApplication.AppId
     $currentAppObjectId = $serviceAadApplication.Id
 
-     $serviceIdentifierUri = 'https://'+ $verifiedDomainName + "/" +$currentAppId
+     $serviceIdentifierUri = 'api://' + $currentAppId
      Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
     
     # create the service principal of the newly created application     
@@ -433,7 +433,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\ToDoListClient\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListClient\appsettings.json"))
     
-    $dictionary = @{ "[Enter here the scopes for your web API]" = "https://"+$verifiedDomainName+"/"+$serviceAadApplication.AppId+"/.default" };
+    $dictionary = @{ "[Enter here the scopes for your web API]" = "api://"+$serviceAadApplication.AppId+"/.default" };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary

@@ -129,7 +129,7 @@
             "Mappings": [
                 {
                     "key": "[Enter here the scopes for your web API]",
-                    "value": "\"https://\"+$verifiedDomainName+\"/\"+$serviceAadApplication.AppId+\"/.default\""
+                    "value": "\"api://\"+\"/\"+$serviceAadApplication.AppId+\"/.default\""
                 }
             ]
         }

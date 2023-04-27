@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
-using ToDoListAPI.Models;
+using ToDoListClient.Models;
 
 const string ServiceName = "ToDoApi";
 
