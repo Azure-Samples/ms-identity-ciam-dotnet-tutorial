@@ -252,6 +252,8 @@ Function ConfigureApplications
     # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
+
+    $domainPrefix = $verifiedDomain.Name.replace('.onmicrosoft.com', '')
     
     $dictionary = @{ "Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
 

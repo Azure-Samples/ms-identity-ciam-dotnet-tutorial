@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Abstractions;
-using ToDoListAPI.Models;
+using ToDoListClient.Models;
 
 namespace ToDoListClient.Pages.ToDoPages
 {

@@ -275,8 +275,8 @@ Function ConfigureApplications
     $currentAppId = $serviceAadApplication.AppId
     $currentAppObjectId = $serviceAadApplication.Id
 
-     $serviceIdentifierUri = 'https://'+ $verifiedDomainName + "/" +$currentAppId
-     Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
+    $serviceIdentifierUri = 'api://' + $currentAppId
+    Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
     
     # create the service principal of the newly created application     
     $serviceServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
@@ -449,7 +449,7 @@ Function ConfigureApplications
 
     UpdateTextFile -configFilePath $configFile -dictionary $dictionary
 
-    $dictionary = @{ "/* Populate this array with your claims */" = "[`"api://$($serviceAadApplication.AppId)/ToDoList.Read`", `"api://$($serviceAadApplication.AppId)/ToDoList.ReadWrite`"]"; };
+    $dictionary = @{ "/* Populate this array with your claims */" = "`"api://$($serviceAadApplication.AppId)/ToDoList.Read`", `"api://$($serviceAadApplication.AppId)/ToDoList.ReadWrite`""; };
 
     Write-Host "Replacing values in the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary

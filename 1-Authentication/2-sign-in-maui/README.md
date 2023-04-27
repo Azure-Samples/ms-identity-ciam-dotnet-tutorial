@@ -169,12 +169,30 @@ Clean the solution, rebuild the solution, and run it:
 
 ## Explore the sample
 
-- Click the sign-in button at the bottom of the application screen.
-- On the sign-in screen, you can sign-in with a microsoft account directly on the screen or through another flow like Facebook or Google if you have that set up on your tenant. See setting up workflows. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. During the sign in process, you will be prompted to grant various permissions (to allow the application to access your data).
-- Upon successful sign in and consent, the application screen will display the main page.
-- After you sign-in you will see a screen displaying the scopes available on the access token acquired after signing in.
-- On WinUI sessions are cached. You can close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
-- Sign out by clicking the sign out button.
+Click the sign-in button at the bottom of the application screen.
+
+![home screen](./ReadmeFiles/login-screen.png)
+
+On the sign-in screen, you can sign-in with a microsoft account directly on the screen or through another flow like Facebook or Google if you have that set up on your tenant.
+
+As examples:
+
+[Add Google as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/6-Add-Google-identity-provider.md)
+[Add Facebook as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/7-Add-Facebook-identity-provider.md)
+
+The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. During the sign in process, you will be prompted to grant various permissions (to allow the application to access your data).
+
+![Sign-in prompt](./ReadmeFiles/sign-in-prompt.png)
+
+Upon successful sign in and consent, the application screen will display the main page.
+
+After you sign-in you will see a screen displaying the scopes available on the access token acquired after signing in.
+
+![Sign-in prompt](./ReadmeFiles/after-login.png)
+
+On WinUI sessions are cached. You can close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
+
+Sign out by clicking the sign out button.
 
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
