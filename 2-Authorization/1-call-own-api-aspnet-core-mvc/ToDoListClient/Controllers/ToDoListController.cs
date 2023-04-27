@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
-using ToDoListAPI.Models;
+using ToDoListClient.Models;
 
 namespace ToDoListClient.Controllers;
 
