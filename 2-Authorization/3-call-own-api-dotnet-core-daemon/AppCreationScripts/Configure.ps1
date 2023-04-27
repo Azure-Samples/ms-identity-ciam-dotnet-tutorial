@@ -411,7 +411,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\ToDoListApi\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListApi\appsettings.json"))
     
-    $dictionary = @{ "Instance": "https://$domainPrefix.ciamlogin.com"; "TenantId" = $tenantId;"ClientId" = $serviceAadApplication.AppId };
+    $dictionary = @{ "Instance" = "https://$domainPrefix.ciamlogin.com"; "TenantId" = $tenantId;"ClientId" = $serviceAadApplication.AppId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
