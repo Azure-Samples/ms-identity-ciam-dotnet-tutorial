@@ -1,7 +1,7 @@
 ---
 page_type: sample
 name: How to secure a Blazor Server app with the Microsoft identity platform on CIAM
-description: This sample demonstrates an ASP.NET Core Web App signing-in a user and calling an ASP.NET Core Web API that is secured with Azure AD.
+description: This sample demonstrates an ASP.NET Core Web App signing-in a user and calling an ASP.NET Core Web API that is secured with Azure AD CIAM.
 languages:
  - csharp
 products:
@@ -14,7 +14,6 @@ extensions:
 - endpoint: AAD v2.0
 - level: 200
 - client: Blazor Server App
-- service: Microsoft Graph
 ---
 
 # How to secure a Blazor Server app with the Microsoft identity platform on CIAM
@@ -29,20 +28,18 @@ extensions:
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
 * [How to deploy this sample to Azure](#how-to-deploy-this-sample-to-azure)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
 ## Overview
 
-This sample demonstrates a Blazor Server App calling Microsoft Graph.
-
-> :information_source: To learn how applications integrate with [Microsoft Graph](https://aka.ms/graph), consider going through the recorded session:: [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A)
+This sample demonstrates an ASP.NET Core Web App signing-in a user and calling an ASP.NET Core Web API that is secured with Azure AD CIAM.
 
 ## Scenario
 
 1. The client Blazor Server App uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) and an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
-1. The **access token** is used as a *bearer* token to authorize the user to call the Microsoft Graph protected by **Azure AD CIAM**.
+1. The **access token** is used as a *bearer* token to authorize the user to call the .NET Core Web API protected by **Azure AD CIAM**.
+1. The service uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to protect the Web api, check permissions and validate tokens.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
@@ -135,7 +132,7 @@ Please refer to:
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. If you don't have a platform added, select **Add a platform** and select the **Web** option.
     1. In the **Redirect URI** section enter the following redirect URI:
-        1. ``
+        1. `https://localhost:44321/signin-oidc`
     1. Click **Save** to save your changes.
 1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
     1. Select **Set** next to the **Application ID URI** to generate a URI that is unique for this app.
@@ -230,7 +227,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `call-todo-api-blazor` app copied from the Azure portal.
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `call-todo-api-blazor` copied from the Azure portal.
-1. Find the key `Scopes` and replace the existing value with **"https://{tenantName}.onmicrosoft.com/{clientId}/ToDoList.Read https://{tenantName}.onmicrosoft.com/{clientId}/ToDoList.ReadWrite"**.
+1. Find the key `Scopes` and insert the following values in the array: **"api://<your_service_api_client_id>/ToDoList.Read"** and **"api://<your_service_api_client_id>/ToDoList.ReadWrite"**.
 1. Find the key `BaseAddress` and replace the existing value with the base address of `TodoListApi` (by default `https://localhost:44351`).
 
 ### Step 4: Running the sample
@@ -302,11 +299,6 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
 </details>
-
-## Next Steps
-
-Learn how to:
-
 
 ## Contributing
 
