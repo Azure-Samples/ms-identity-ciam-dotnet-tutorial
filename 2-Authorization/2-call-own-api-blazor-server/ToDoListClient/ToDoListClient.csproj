@@ -13,8 +13,4 @@
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.9.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ToDoListApi\ToDoListApi.csproj" />
-  </ItemGroup>
-
 </Project>
