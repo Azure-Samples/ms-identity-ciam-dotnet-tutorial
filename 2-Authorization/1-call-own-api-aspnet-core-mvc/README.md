@@ -139,7 +139,7 @@ Please refer to:
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
     1. Select **Set** next to the **Application ID URI** to generate a URI that is unique for this app.
-    1. For this sample, accept the proposed Application ID URI (`https://{tenantName}.onmicrosoft.com/{clientId}`) by selecting **Save**.
+    1. For this sample, set the proposed Application ID URI to use `api://` before the client id (`api://{clientId}`) by selecting the pencil icon, replacing the default value (usually of the form https://{tenantName}.onmicrosoft.com/{clientId}) then hit **Save**.
         > :information_source: Read more about Application ID URI at [Validation differences by supported account types (signInAudience)](https://docs.microsoft.com/azure/active-directory/develop/supported-accounts-validation).
     
 ##### Publish Delegated Permissions
@@ -239,7 +239,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `TodoListClient` app copied from the Azure portal.
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `TodoListClient` copied from the Azure portal.
-1. Find the key `Scopes` and replace the existing value with **"api://<your_service_api_client_id>/ToDoList.Read api://<your_service_api_client_id>/ToDoList.ReadWrite"**.
+1. Find the key `Scopes` and replace the existing values in the array with **"api://<your_service_api_client_id>/ToDoList.Read"** and **"api://<your_service_api_client_id>/ToDoList.ReadWrite"**.
 1. Find the key `BaseAddress` and replace the existing value with the base address of `TodoListApi` (by default `https://localhost:44351`).
 
 ### Step 4: Running the sample

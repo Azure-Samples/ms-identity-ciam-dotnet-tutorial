@@ -148,50 +148,58 @@ Finally, you need to modify the app's configuration files.
 
 > Perform the steps below for the client app (ciam-daemon-console-v2)
 
-1. Open the `ToDoListClient\appsettings.json` file.
-2. *Comment out* the next line:
+1. Open the `ToDoList\appsettings.json` file
+2. Find the app key `ClientCredentials` and insert the `CertificateDescription` properties of your certificate within the array of credentials. You can see some examples below and read more about how to configure specific certificate descriptions [here](https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates#specifying-certificates).
+
+#### Get certificate from certificate store
+
+You can retrieve a certificate from your local store by adding the configuration below to the `ClientCredentials` array in the `appsettings.json` file in the `ToDoList` directory replacing **<CERTIFICATE_STORE_PATH>** with the store path to your certificate and **<CERTIFICATE_STORE_PATH>** with the distinguished name of your certificate. You can read more about certificate stores [here](https://docs.microsoft.com/windows-hardware/drivers/install/certificate-stores).
 
 ```json
-    "ClientSecret": "[Copy the client secret added to the app from the Azure portal]"
+{
+  // ... 
+  "ClientCredentials": [
+    {
+      "SourceType":  "StoreWithDistinguishedName",
+      "CertificateStorePath":  "<CERTIFICATE_STORE_PATH>",
+      "CertificateDistinguishedName":  "<CERTIFICATE_DISTINGUISHED_NAME>"
+    }
+  ]
+}
 ```
 
-3. *Insert* the following lines and replace the default values:
+#### Get certificate from file path
+
+It's possible to get a certificate file, such as a **pfx** file, directly from a file path on your machine and load it into the application by using the configuration as shown below. Add a certificate descriptor in the `ClientCredentials` array of the `appsettings.json` file in the `ToDoListClient` directory with the snippet shown below replacing `<PATH_TO_YOUR_CERTIFICATE_FILE>` with the path to your certificate file and `<PATH_TO_YOUR_CERTIFICATE_FILE>` with that certificates password. If you like, you can use configure the `Certificate` property to reference this file and use it as a credential.
 
 ```json
-    "ClientCertificates": [
-        {
-            "SourceType": "Path",
-            "CertificateDiskPath": "<path to certificate e.g. c:\Users\diego\Desktop\ciam-daemon-console-v2.pfx",
-            "CertificateThumbprint": "<the thumbprint of the certificate, e.g. 962D129A...D18EFEB6961684>"
-        }
-    ]
+{
+  // ... 
+  "ClientCredentials": [
+    {
+      "SourceType":  "Path",
+      "CertificateDiskPath":  "<PATH_TO_YOUR_CERTIFICATE_FILE>",
+      "CertificatePassword":  "<CERTIFICATE_PASSWORD>"
+    }
+  ]
+}
 ```
 
-> :information_source: For other alternatives, see: [Using certificates with Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates#specifying-certificates)
+#### Get certificate from Key Vault
 
-You can now start the application as instructed in the [README](./README#setup-the-sample).
-
-#### Using an existing certificate from Key Vault
-
-> Perform the steps below for the client app (ciam-daemon-console-v2)
-
-1. Open the `ToDoListClient\appsettings.json` file.
-2. *Comment out* the next line:
+It's also possible to get certificates from an [Azure Key Vault](https://docs.microsoft.com/azure/key-vault/general/overview). Add a certificate descriptor in the `ClientCredentials` array of the `appsettings.json` file in the `ToDoListClient` directory with the snippet shown below replacing `<YOUR_KEY_VAULT_URL>` with the URL of the Key Vault holding your certificate and `<YOUR_KEY_VAULT_CERTIFICATE_NAME>` with the name of that certificate as shown in your Key Vault. See the [chapter 3 readme](../3-Using-KeyVault/README.md) for more information.
 
 ```json
-    "ClientSecret": "[Copy the client secret added to the app from the Azure portal]"
-```
-
-3. *Insert* the following lines and replace the default values:
-
-```json
-    "ClientCertificates": [
-        {
-            "SourceType": "KeyVault",
-            "KeyVaultUrl": "https://example.vault.azure.net",
-            "KeyVaultCertificateName": "ExampleCert"
-        }
-    ]
+{
+  // ... 
+  "ClientCredentials": [
+    {
+      "SourceType":  "KeyVault",
+      "KeyVaultUrl":  "<YOUR_KEY_VAULT_URL>",
+      "KeyVaultCertificateName":  "<YOUR_KEY_VAULT_CERTIFICATE_NAME>"
+    }
+  ]
+}
 ```
 
 > :information_source: For other alternatives, see: [Using certificates with Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates#specifying-certificates)

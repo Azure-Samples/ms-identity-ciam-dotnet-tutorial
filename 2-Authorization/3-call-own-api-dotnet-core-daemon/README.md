@@ -194,7 +194,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `ciam-daemon-console-v2` copied from the Azure portal.
 
 1. Open the `ToDoClient\appsettings.json` file.
-1. Find the key `[Enter here the scopes for your web API]` and replace the existing value with `api:///<YOUR_API_CLIENT_ID>/.default`.
+1. Find the value `[Enter here the scopes for your web API]` and it with `api:///<YOUR_API_CLIENT_ID>/.default`.
 
 ### Step 4: Running the sample
 
