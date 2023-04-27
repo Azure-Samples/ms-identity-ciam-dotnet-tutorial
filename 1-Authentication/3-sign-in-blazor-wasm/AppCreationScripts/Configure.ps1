@@ -11,6 +11,7 @@ param(
 <#
  This script creates the Azure AD applications needed for this sample and updates the configuration files
  for the visual Studio projects from the data in the Azure AD applications.
+
  In case you don't have Microsoft.Graph.Applications already installed, the script will automatically install it for the current user
  
  There are two ways to run this script. For more information, read the AppCreationScripts.md file in the same folder as this script.
@@ -70,6 +71,7 @@ Function GetRequiredPermissions([string] $applicationDisplayName, [string] $requ
     return $requiredAccess
 }
 
+
 <#.Description
    This function takes a string input as a single line, matches a key value and replaces with the replacement value
 #> 
@@ -108,6 +110,23 @@ Function UpdateTextFile([string] $configFilePath, [System.Collections.HashTable]
     }
 
     Set-Content -Path $configFilePath -Value $lines -Force
+}
+
+<#.Description
+   This function takes a string as input and creates an instance of an Optional claim object
+#> 
+Function CreateOptionalClaim([string] $name)
+{
+    <#.Description
+    This function creates a new Azure AD optional claims  with default and provided values
+    #>  
+
+    $appClaim = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim
+    $appClaim.AdditionalProperties =  New-Object System.Collections.Generic.List[string]
+    $appClaim.Source =  $null
+    $appClaim.Essential = $false
+    $appClaim.Name = $name
+    return $appClaim
 }
 
 <#.Description
@@ -152,45 +171,58 @@ Function ConfigureApplications
 
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
-   # Create the webApp AAD application
-   Write-Host "Creating the AAD application (WebApp-blazor-wasm-ciam)"
+   # Create the spa AAD application
+   Write-Host "Creating the AAD application (spa-blazor-wasm-ciam)"
    # create the application 
-   $webAppAadApplication = New-MgApplication -DisplayName "WebApp-blazor-wasm-ciam" `
-                                                      -Spa `
-                                                      @{ `
-                                                          RedirectUris = "https://localhost:44314/authentication/login-callback"; `
-                                                        } `
-                                                       -SignInAudience AzureADMyOrg `
-                                                      #end of command
+   $spaAadApplication = New-MgApplication -DisplayName "spa-blazor-wasm-ciam" `
+                                                   -Spa `
+                                                   @{ `
+                                                       RedirectUris = "https://localhost:44314/authentication/login-callback"; `
+                                                     } `
+                                                    -SignInAudience AzureADMyOrg `
+                                                   #end of command
 
-    $currentAppId = $webAppAadApplication.AppId
-    $currentAppObjectId = $webAppAadApplication.Id
+    $currentAppId = $spaAadApplication.AppId
+    $currentAppObjectId = $spaAadApplication.Id
 
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/WebApp-blazor-wasm-ciam")
+    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/spa-blazor-wasm-ciam")
     
     # create the service principal of the newly created application     
-    $webAppServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+    $spaServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
     # add the user running the script as an app owner if needed
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($webAppServicePrincipal.DisplayName)'"
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($spaServicePrincipal.DisplayName)'"
     }
-    Write-Host "Done creating the webApp application (WebApp-blazor-wasm-ciam)"
+
+    # Add Claims
+
+    $optionalClaims = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaims
+    $optionalClaims.AccessToken = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
+    $optionalClaims.IdToken = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
+    $optionalClaims.Saml2Token = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphOptionalClaim]
+
+    # Add Optional Claims
+
+    $newClaim =  CreateOptionalClaim  -name "idtyp" 
+    $optionalClaims.AccessToken += ($newClaim)
+    Update-MgApplication -ApplicationId $currentAppObjectId -OptionalClaims $optionalClaims
+    Write-Host "Done creating the spa application (spa-blazor-wasm-ciam)"
 
     # URL of the AAD application in the Azure portal
-    # Future? $webAppPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $webAppPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
+    # Future? $spaPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
+    $spaPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>webApp</td><td>$currentAppId</td><td><a href='$webAppPortalUrl'>WebApp-blazor-wasm-ciam</a></td></tr>" -Path createdApps.html
-        # Declare a list to hold RRA items    
+    Add-Content -Value "<tr><td>spa</td><td>$currentAppId</td><td><a href='$spaPortalUrl'>spa-blazor-wasm-ciam</a></td></tr>" -Path createdApps.html
+    # Declare a list to hold RRA items    
     $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
 
-        # Add Required Resources Access (from 'client' to 'Microsoft Graph')
-    Write-Host "Getting access from 'client' to 'Microsoft Graph'"
+    # Add Required Resources Access (from 'spa' to 'Microsoft Graph')
+    Write-Host "Getting access from 'spa' to 'Microsoft Graph'"
     $requiredPermission = GetRequiredPermissions -applicationDisplayName "Microsoft Graph"`
         -requiredDelegatedPermissions "openid|offline_access"
 
@@ -202,26 +234,30 @@ Function ConfigureApplications
     
     Update-MgApplication -ApplicationId $currentAppObjectId -RequiredResourceAccess $requiredResourcesAccess
     Write-Host "Granted permissions."
+    
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'WebApp-blazor-wasm-ciam' at `n $webAppPortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'spa-blazor-wasm-ciam' at `n $spaPortalUrl" -ForegroundColor Green 
     
-    # Update config file for 'webApp'
+    # Update config file for 'spa'
     # $configFile = $pwd.Path + "\..\wwwroot\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\wwwroot\appsettings.json"))
-
-    $tenantDomainPrefix = $verifiedDomainName.replace(".onmicrosoft.com", "")
     
-    $dictionary = @{ "ClientId" = $webAppAadApplication.AppId;"`"Authority`"" = "https://$tenantDomainPrefix.ciamlogin.com/"+$tenantId;"ValidateAuthority" = 'true' };
+    $dictionary = @{ "ClientId" = $spaAadApplication.AppId;"Authority" = 'https://'+$tenantName.Split(".onmicrosoft.com")[0]+'.ciamlogin.com/'+$tenantId;"ValidateAuthority" = 'true' };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
     Write-Host "-----------------"
 
     UpdateTextFile -configFilePath $configFile -dictionary $dictionary
-    Write-Host "- App webApp  - created at $webAppPortalUrl"
-
-
+    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
+    Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
+    Write-Host "- For spa"
+    Write-Host "  - Navigate to $spaPortalUrl"
+    Write-Host "  - Navigate to your tenant and create user flows to allow users to sign up for the application." -ForegroundColor Red 
+    Write-Host "  - The delegated permissions for the 'spa' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
+    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
+   
 Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  
 } # end of ConfigureApplications function
 

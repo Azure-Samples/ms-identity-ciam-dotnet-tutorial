@@ -57,20 +57,20 @@ Function Cleanup
     # Removes the applications
     Write-Host "Cleaning-up applications from tenant '$tenantId'"
 
-    Write-Host "Removing 'webApp' (WebApp-blazor-wasm-ciam) if needed"
+    Write-Host "Removing 'spa' (spa-blazor-wasm-ciam) if needed"
     try
     {
-        Get-MgApplication -Filter "DisplayName eq 'WebApp-blazor-wasm-ciam'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
+        Get-MgApplication -Filter "DisplayName eq 'spa-blazor-wasm-ciam'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'WebApp-blazor-wasm-ciam'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove the application 'spa-blazor-wasm-ciam'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
     }
 
-    Write-Host "Making sure there are no more (WebApp-blazor-wasm-ciam) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'WebApp-blazor-wasm-ciam'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
+    Write-Host "Making sure there are no more (spa-blazor-wasm-ciam) applications found, will remove if needed..."
+    $apps = Get-MgApplication -Filter "DisplayName eq 'spa-blazor-wasm-ciam'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
     
     if ($apps)
     {
@@ -80,19 +80,19 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed WebApp-blazor-wasm-ciam.."
+        Write-Host "Removed spa-blazor-wasm-ciam.."
     }
 
     # also remove service principals of this app
     try
     {
-        Get-MgServicePrincipal -filter "DisplayName eq 'WebApp-blazor-wasm-ciam'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
+        Get-MgServicePrincipal -filter "DisplayName eq 'spa-blazor-wasm-ciam'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'WebApp-blazor-wasm-ciam'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove ServicePrincipal 'spa-blazor-wasm-ciam'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
     }
 }
 
