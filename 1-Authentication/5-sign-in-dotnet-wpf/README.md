@@ -14,7 +14,6 @@ extensions:
 - endpoint: AAD v2.0
 - level: 100
 - client: WPF .NET Core app
-- service: 
 ---
 
 # A WPF application authenticating users against Azure AD CIAM using .NET Core
@@ -28,7 +27,6 @@ extensions:
 * [Explore the sample](#explore-the-sample)
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
@@ -279,14 +277,6 @@ private async void SignOutButton_Click(object sender, RoutedEventArgs e)
 ```
 
 </details>
-
-## Next Steps
-
-Learn how to:
-
-* [Change your app to sign-in users from any organization or Microsoft accounts](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-3-AnyOrgOrPersonal)
-* [Enable users from National clouds to sign-in to your application](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-4-Sovereign)
-* [Enable your web app to call a web API on behalf of the signed-in user](https://github.com/Azure-Samples/ms-identity-dotnetcore-ca-auth-context-app)
 
 ## Contributing
 

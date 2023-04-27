@@ -22,7 +22,6 @@
   - [Four ways to run the script](#four-ways-to-run-the-script)
     - [Option 1 (interactive)](#option-1-interactive)
     - [Option 2 (Interactive, but create apps in a specified tenant)](#option-3-Interactive-but-create-apps-in-a-specified-tenant)
-  - [Running the script on Azure Sovereign clouds](#running-the-script-on-Azure-Sovereign-clouds)
 
 ## Goal of the provided scripts
 

@@ -11,6 +11,7 @@
             "microsoft-identity"
         ],
         "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+        "description": "This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application",
         "Endpoint": "AAD v2.0",
         "Provider": "CIAM"
     },
