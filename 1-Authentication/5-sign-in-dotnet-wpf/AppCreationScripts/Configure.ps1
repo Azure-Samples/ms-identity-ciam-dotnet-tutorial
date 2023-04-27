@@ -255,7 +255,7 @@ Function ConfigureApplications
 
     $tenantDomainPrefix = $verifiedDomainName.replace(".onmicrosoft.com", "")
     
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Id_Here" = $tenantId; "Enter_Domain_Name_Here" = $tenantDomainPrefix };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Id_Here" = $tenantId; "Enter_the_Tenant_Name_Here" = $tenantDomainPrefix };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
