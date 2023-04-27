@@ -404,12 +404,14 @@ Function ConfigureApplications
 
     # print the registered app portal URL for any further navigation
     Write-Host "Successfully registered and configured that app registration for 'ciam-daemon-console-v2' at `n $clientPortalUrl" -ForegroundColor Green 
-    
+
+    $domainPrefix = $verifiedDomain.Name.replace('.onmicrosoft.com', '')
+
     # Update config file for 'service'
     # $configFile = $pwd.Path + "\..\ToDoListApi\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListApi\appsettings.json"))
     
-    $dictionary = @{ "TenantId" = $tenantId;"ClientId" = $serviceAadApplication.AppId };
+    $dictionary = @{ "Instance": "https://$domainPrefix.ciamlogin.com"; "TenantId" = $tenantId;"ClientId" = $serviceAadApplication.AppId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
@@ -421,7 +423,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\ToDoListClient\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListClient\appsettings.json"))
     
-    $dictionary = @{ "Tenant" = $tenantId;"ClientId" = $clientAadApplication.AppId;"ClientSecret`":" = $clientAppKey };
+    $dictionary = @{ "Instance": "https://$domainPrefix.ciamlogin.com"; "Tenant" = $tenantId;"ClientId" = $clientAadApplication.AppId;"ClientSecret`":" = $clientAppKey };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
