@@ -39,6 +39,14 @@ Please refer to each sample's README for sample-specific recommendations.
 | <img src="./1-Authentication/4-sign-in-device-code/ReadmeFiles/topology.png" width="200"> | [**Sign-in using device code flow**](./1-Authentication/4-sign-in-device-code/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with a **browserless device code flow**. Learn to integrate with **user-flows** and **external identity providers**. |
 | <img src="./1-Authentication/5-sign-in-dotnet-wpf/ReadmeFiles/topology.png" width="200"> | [**Sign-in using WPF**](./1-Authentication/3-sign-in-blazor-wasm/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with **ID Tokens** using **desktop applications**. Learn to integrate with **user-flows** and **external identity providers**. |
 
+### Chapter 2: Protect an API and call the API from your client app
+
+|               |               |
+|---------------|---------------|
+| <img src="./2-Authorization/1-call-own-api-aspnet-core-mvc/ReadmeFiles/topology.png" width="200"> | [**Use an ASP.NET Core web application and call a protected web API on Azure AD CIAM**](./2-Authorization/1-call-own-api-aspnet-core-mvc/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
+| <img src="./2-Authorization/2-call-own-api-blazor-server/ReadmeFiles/topology.png" width="200"> | [**Use a Blazor Server application and call a protected web API on Azure AD CIAM**](./2-Authorization/2-call-own-api-blazor-server/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
+| <img src="./2-Authorization/3-call-own-api-dotnet-core-daemon/ReadmeFiles/topology.png" width="200"> | [**Use a daemon application to send and receive data from a protected web API on Azure AD CIAM**](./2-Authorization/3-call-own-api-dotnet-core-daemon/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a daemon application to acquire an **Access Token** for your web API and call your protected web API. |
+
 ## We'd love your feedback
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR_ivMYEeUKlEq8CxnMPgdNZUNDlUTTk2NVNYQkZSSjdaTk5KT1o4V1VVNS4u).
