@@ -22,7 +22,7 @@ namespace SignInMaui.Views
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("scopeview");
+                    await Shell.Current.GoToAsync("claimsview");
                 }
             });
         }
@@ -30,7 +30,7 @@ namespace SignInMaui.Views
         private async void OnSignInClicked(object sender, EventArgs e)
         {
             await PublicClientSingleton.Instance.AcquireTokenSilentAsync();
-            await Shell.Current.GoToAsync("scopeview");
+            await Shell.Current.GoToAsync("claimsview");
         }
         protected override bool OnBackButtonPressed() { return true; }
 

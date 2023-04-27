@@ -1,25 +1,22 @@
 ---
 page_type: sample
-name: A .NET MAUI app using MSAL.NET to sign-in users and calling MS Graph Api
+name: A .NET MAUI app using MSAL.NET to authenticate users with Azure AD for Customers
 description: Sign in to a CIAM tenant using MAUI
 languages:
  - csharp
 products:
- - maui
- - azure-active-directory-maui
-urlFragment: active-directory-xamarin-native-v2
+ - msal-net
+ - azure-active-directory
+urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
 - services: ms-identity
-- platform: MAUI
+- platform: DotNet
 - endpoint: AAD v2.0
-- level: 200
-- client: MAUI (iOS, Android, WinUI)
-- service: Microsoft Graph
+- level: 100
+- client: MAUI App
 ---
 
-# A .NET MAUI app using MSAL.NET to sign-in users and calling MS Graph Api
-
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
+# A .NET MAUI cross-platform app using MSAL.NET to authenticate users against Azure AD for Customers
 
 * [Overview](#overview)
 * [Scenario](#scenario)
@@ -33,22 +30,22 @@ extensions:
 
 ## Overview
 
-This sample demonstrates a MAUI (iOS, Android, WinUI) calling Microsoft Graph.
+This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that authenticates users with the Azure AD for Customers.
 
-> :information_source: To learn how applications integrate with [Microsoft Graph](https://aka.ms/graph), consider going through the recorded session:: [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A)
+> :information_source: To learn how applications integrate with [Microsoft Graph](https://aka.ms/graph), consider going through the recorded session: [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A)
 
 ## Scenario
 
-1. The client MAUI (iOS, Android, WinUI) uses the [MSAL.NET](https://aka.ms/msal-net) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) and an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
-1. The **access token** is used as a *bearer* token to authorize the user to call the Microsoft Graph protected by **Azure AD CIAM**.
+1. The client MAUI App uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD CIAM**.
+1. The **ID Token** proves that the user has successfully authenticated against **Azure AD CIAM**.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
 ## Prerequisites
 
 * [Visual Studios](https://aka.ms/vsdownload) with the **MAUI** workload installed:
-  - [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
-  - [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
+  * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
+  * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
 
@@ -61,7 +58,7 @@ This sample demonstrates a MAUI (iOS, Android, WinUI) calling Microsoft Graph.
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/active-directory-xamarin-native-v2.git
+git clone https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial.git
 ```
 
 or download and extract the repository *.zip* file.
@@ -69,7 +66,10 @@ or download and extract the repository *.zip* file.
 > :warning: To avoid path length limitations on Windows, we recommend cloning into a directory near the root of your drive.
 
 ### Step 2: Navigate to project folder
-You don't have to change current folder. 
+
+```console
+cd 1-Authentication\2-sign-in-maui
+```
 
 ### Step 3: Register the sample application(s) in your tenant
 
@@ -87,6 +87,7 @@ There is one project in this sample. To register it, you can:
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
+1. Ensure that you have [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3) or later installed at.
 1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
@@ -96,7 +97,6 @@ There is one project in this sample. To register it, you can:
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
 
 </details>
 
@@ -125,15 +125,22 @@ Please refer to:
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `active-directory-maui-v2`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-maui`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. If you don't have a platform added, select **Add a platform** and select the **Public client (mobile & desktop)** option.
-    1. In the **Redirect URIs** section, add **msal{ClientId}://auth**.
-        The **ClientId** is the Id of the App Registration and can be found under **Overview/Application (client) ID**
+    1. In the **Redirect URIs** section, add **msal{ClientId}://auth**. The **ClientId** is the Id of the App Registration and can be found under **Overview/Application (client) ID**
     1. Click **Save** to save your changes.
+1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users.
+    1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
+    1. Select the **Add a permission** button and then:
+    1. Ensure that the **Microsoft APIs** tab is selected.
+    1. In the *Commonly used Microsoft APIs* section, select **Microsoft Graph**
+    1. In the **Delegated permissions** section, select **openid**, **offline_access** in the list. Use the search box if necessary.
+    1. Select the **Add permissions** button at the bottom.
+1. At this stage, the permissions are assigned correctly, but since it's a CIAM tenant, the users themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
 
 ##### Configure the client app (active-directory-maui-v2) to use your app registration
 
@@ -142,30 +149,25 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `Instance` and replace the existing value with the instance url of your CIAM tenant (in most cases you'll need to replace the value of `Your_Tenant_Name_Here` with the name of your tenant).
-1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `active-directory-maui-v2` app copied from the Azure portal.
-1. Find the key `CacheFileName` and replace the existing value with the name of the cache file you wish to use with WinUI caching (not used in Android nor iOS).
-1. Find the key `CacheDir` and replace the existing value with the directory path storing cache file you wish to use with WinUI caching (not used in Android nor iOS).
-1. Find the key `Scopes` and replace the existing value with the scopes (space separated) you wish to use in your application.
+1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
 1. Open the `Platforms\Android\MsalActivity.cs` file.
-1. Find the key `[REPLACE THIS WITH THE CLIENT ID OF YOUR APP]` and replace the existing value with the application ID (clientId) of `active-directory-maui-v2` app copied from the Azure portal.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
 1. Open the `Platforms\Android\AndroidManifest.xml` file.
-1. Find the key `[REPLACE THIS WITH THE CLIENT ID OF YOUR APP]` and replace the existing value with the application ID (clientId) of `active-directory-maui-v2` app copied from the Azure portal.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
 1. Open the `Platforms\iOS\AppDelegate.cs` file.
-1. Find the key `[REPLACE THIS WITH THE CLIENT ID OF YOUR APP]` and replace the existing value with the application ID (clientId) of `active-directory-maui-v2` app copied from the Azure portal.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
 ### Step 4: Running the sample
 
 Choose the platform you want to work on by setting the startup project in the Solution Explorer. Make sure that your platform of choice is marked for build and deploy in the Configuration Manager.
+
 Clean the solution, rebuild the solution, and run it:
 
-
 ## Explore the sample
-
 
 Click the sign-in button at the bottom of the application screen.
 
@@ -192,19 +194,11 @@ On WinUI sessions are cached. You can close the application and reopen it. You w
 
 Sign out by clicking the sign out button.
 
-
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
-
-Could not find a part of the path 'C:\GitHub\AzureSamples\ms-identity-ciam-dotnet-tutorial\1-Authentication\2-sign-in-maui\ReadmeFiles\TroubleShooting.md'.
-
-Could not find a part of the path 'C:\GitHub\AzureSamples\ms-identity-ciam-dotnet-tutorial\1-Authentication\2-sign-in-maui\ReadmeFiles\AboutTheCode.md'.
-</details>
-
-Could not find a part of the path 'C:\GitHub\AzureSamples\ms-identity-ciam-dotnet-tutorial\1-Authentication\2-sign-in-maui\ReadmeFiles\NextSteps.md'.
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/DesignPageV2.aspx?subpage=design&m2=1&id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUMlJETFFSQVQ4SjBGQk9aVUhPS0JUOUJUUi4u).
 
 ## About the code
 
@@ -296,5 +290,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 * [Customize sign-in strings](https://github.com/microsoft/entra-previews/blob/PP2/docs/8-Customize-sign-in-strings.md)
 * [Building Zero Trust ready apps](https://aka.ms/ztdevsession)
 [Public client and confidential client applications](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-client-applications)
-[Token cache serialization in MSAL\.NET](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization)
-
+[Token cache serialization in MSAL.NET](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization)
