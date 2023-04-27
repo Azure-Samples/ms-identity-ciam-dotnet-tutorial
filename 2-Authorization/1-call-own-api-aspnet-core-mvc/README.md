@@ -29,7 +29,6 @@ extensions:
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
 * [How to deploy this sample to Azure](#how-to-deploy-this-sample-to-azure)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
@@ -268,7 +267,7 @@ Then, open a separate command terminal and run:
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUMEhKWUE4N1VUVVFDTVc2U0lFNFpJRU5OTy4u).
 
 
 ## Troubleshooting
@@ -360,14 +359,6 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
 </details>
-
-## Next Steps
-
-Learn how to:
-
-* [Change your app to sign-in users from any organization or Microsoft accounts](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-3-AnyOrgOrPersonal)
-* [Enable users from National clouds to sign-in to your application](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-4-Sovereign)
-* [Enable your web app to call a web API on behalf of the signed-in user](https://github.com/Azure-Samples/ms-identity-dotnetcore-ca-auth-context-app)
 
 ## Contributing
 

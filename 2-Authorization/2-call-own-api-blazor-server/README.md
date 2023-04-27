@@ -245,7 +245,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUOE1ZQjlJR0M2NDQ0SUFHSExLNTBLTzlFTC4u).
 
 
 ## Troubleshooting
