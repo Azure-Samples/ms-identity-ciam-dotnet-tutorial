@@ -27,7 +27,7 @@ public partial class ClaimsView : ContentPage
 
         catch (MsalUiRequiredException)
         {
-            await Shell.Current.GoToAsync("scopeview");
+            await Shell.Current.GoToAsync("claimsview");
         }
     }
 
