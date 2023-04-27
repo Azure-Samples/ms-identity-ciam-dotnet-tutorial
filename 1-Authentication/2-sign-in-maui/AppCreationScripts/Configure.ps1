@@ -198,7 +198,6 @@ Function ConfigureApplications
    $clientAadApplication = New-MgApplication -DisplayName "ciam-dotnet-maui" `
                                                       -PublicClient `
                                                       @{ `
-                                                          RedirectUris = "http://localhost"; `
                                                         } `
                                                        -SignInAudience AzureADMyOrg `
                                                       #end of command
@@ -206,7 +205,7 @@ Function ConfigureApplications
     $currentAppId = $clientAadApplication.AppId
     $currentAppObjectId = $clientAadApplication.Id
 
-    $replyUrlsForApp = "http://localhost", "msal$currentAppId`://auth"
+    $replyUrlsForApp = "msal$currentAppId`://auth", "msal$currentAppId://auth"
     Update-MgApplication -ApplicationId $currentAppObjectId -PublicClient @{RedirectUris=$replyUrlsForApp}
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
     #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-dotnet-maui")
@@ -252,8 +251,6 @@ Function ConfigureApplications
     # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
-
-    $domainPrefix = $verifiedDomain.Name.replace('.onmicrosoft.com', '')
     
     $dictionary = @{ "Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
 

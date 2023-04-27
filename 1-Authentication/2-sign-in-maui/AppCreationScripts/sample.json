@@ -20,7 +20,6 @@
             "Id": "client",
             "Name": "ciam-dotnet-maui",
             "Kind": "Mobile",
-            "ReplyUrls": "http://localhost",
             "SampleSubPath": "1-Authentication\\2-sign-in-maui",
             "RequiredResourcesAccess": [
                 {
