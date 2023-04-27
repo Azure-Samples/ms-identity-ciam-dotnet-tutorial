@@ -148,12 +148,12 @@ Finally, you need to modify the app's configuration files.
 
 > Perform the steps below for the client app (ciam-daemon-console-v2)
 
-1. Open the `ToDoList\appsettings.json` file
+1. Open the `ToDoListClient\appsettings.json` file
 2. Find the app key `ClientCredentials` and insert the `CertificateDescription` properties of your certificate within the array of credentials. You can see some examples below and read more about how to configure specific certificate descriptions [here](https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates#specifying-certificates).
 
 #### Get certificate from certificate store
 
-You can retrieve a certificate from your local store by adding the configuration below to the `ClientCredentials` array in the `appsettings.json` file in the `ToDoList` directory replacing **<CERTIFICATE_STORE_PATH>** with the store path to your certificate and **<CERTIFICATE_STORE_PATH>** with the distinguished name of your certificate. You can read more about certificate stores [here](https://docs.microsoft.com/windows-hardware/drivers/install/certificate-stores).
+You can retrieve a certificate from your local store by adding the configuration below to the `ClientCredentials` array in the `appsettings.json` file in the `ToDoListClient` directory replacing **<CERTIFICATE_STORE_PATH>** with the store path to your certificate and **<CERTIFICATE_STORE_PATH>** with the distinguished name of your certificate. You can read more about certificate stores [here](https://docs.microsoft.com/windows-hardware/drivers/install/certificate-stores).
 
 ```json
 {
