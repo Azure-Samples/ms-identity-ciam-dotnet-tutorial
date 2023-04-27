@@ -6,6 +6,8 @@ languages:
  - csharp
 products:
  - azure-active-directory
+ - msal-net
+ - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
 - services: ms-identity
@@ -28,7 +30,6 @@ extensions:
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
 * [How to deploy this sample to Azure](#how-to-deploy-this-sample-to-azure)
-* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
@@ -38,7 +39,7 @@ This sample demonstrates a .NET Core (Console) calling a .NET Core Web API that 
 
 ## Scenario
 
-1. The client .NET Core (Console) uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) and an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
+1. The client .NET Core (Console) uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
 1. The **access token** is used as a *bearer* token to authorize the user to call the .NET Core Web API protected by **Azure AD CIAM**.
 1. The service uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to protect the Web api, check permissions and validate tokens.
 
@@ -109,19 +110,6 @@ To manually register the apps, as a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
 
-#### Create User Flows
-
-Please refer to: [Tutorial: Create user flow in Azure Active Directory CIAM](https://github.com/microsoft/entra-previews/blob/PP2/docs/3-Create-sign-up-and-sign-in-user-flow.md)
-
-> :information_source: To enable password reset in Customer Identity Access Management (CIAM) in Azure Active Directory (Azure AD), please refer to: [Tutorial: Enable self-service password reset](https://github.com/microsoft/entra-previews/blob/PP2/docs/4-Enable-password-reset.md)
-
-#### Add External Identity Providers
-
-Please refer to:
-
-* [Tutorial: Add Google as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/6-Add-Google-identity-provider.md)
-* [Tutorial: Add Facebook as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/7-Add-Facebook-identity-provider.md)
-
 #### Register the service app (ciam-todolist-webapi-daemon-v2)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
@@ -131,10 +119,6 @@ Please refer to:
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
-1. In the app's registration screen, select the **Authentication** blade to the left.
-1. If you don't have a platform added, select **Add a platform** and select the **Web** option.
-    1. You can leave the **Redirect URI** section empty.
-    1. Click **Save** to save your changes.
 
 ##### Publish Application Permissions
 
@@ -210,9 +194,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `ciam-daemon-console-v2` copied from the Azure portal.
 
 1. Open the `ToDoClient\appsettings.json` file.
-1. Find the key `[Enter here the scopes for your web API]` and replace the existing value with `https://<YOUR_CIAM_DOMAIN>/<YOUR_API_CLIENT_ID>/.default`.
-    * Replace `<YOUR_CIAM_DOMAIN>` with the domain of your CIAM tenant, e.g. `yourtenant.onmicrosoft.com`
-    * Replace `<YOUR_API_CLIENT_ID>` with the **Client ID** of your API application.
+1. Find the key `[Enter here the scopes for your web API]` and replace the existing value with `api:///<YOUR_API_CLIENT_ID>/.default`.
 
 ### Step 4: Running the sample
 
@@ -271,7 +253,7 @@ There are no to-do's in server
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUM1ZBMFc0S1VFUjhKOU4xVDNMWkRRSk5ZRS4u).
 
 
 ## Troubleshooting
@@ -368,14 +350,6 @@ Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visua
 > * On the API blade, select **CORS**. Check the box **Enable Access-Control-Allow-Credentials**.
 > * Under **Allowed origins**, add the URL of your published web app **that will call this web API**.
 </details>
-
-## Next Steps
-
-Learn how to:
-
-* [Change your app to sign-in users from any organization or Microsoft accounts](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-3-AnyOrgOrPersonal)
-* [Enable users from National clouds to sign-in to your application](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-4-Sovereign)
-* [Enable your web app to call a web API on behalf of the signed-in user](https://github.com/Azure-Samples/ms-identity-dotnetcore-ca-auth-context-app)
 
 ## Contributing
 
