@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 using Foundation;
-using MAUI.MSALClient;
+using SignInMaui.MSALClient;
 using Microsoft.Identity.Client;
 using UIKit;
 
@@ -10,7 +10,6 @@ namespace SignInMaui
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate
     {
-        private const string iOSRedirectURI = "msauth.com.companyname.mauiappbasic://auth"; // TODO - Replace with your redirectURI
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
