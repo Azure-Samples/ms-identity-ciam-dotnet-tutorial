@@ -248,7 +248,7 @@ Then, open a separate command terminal and run:
 
 ## Explore the sample
 
-After starting the application, go to the url `https://localhost:44321` in any web browse. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
+After starting the application, go to the url `https://localhost:44321` in any web browser. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
 
 ![sign-in-screen](./ReadmeFiles/login-screen.png)
 
