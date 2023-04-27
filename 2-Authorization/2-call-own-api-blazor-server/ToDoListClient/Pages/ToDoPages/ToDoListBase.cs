@@ -30,7 +30,6 @@ namespace ToDoListClient.Pages.ToDoPages
         /// Gets all todo list items.
         /// </summary>
         /// <returns></returns>
-        [AuthorizeForScopes(ScopeKeySection = "TodoList:TodoListScope")]
         private async Task GetToDoListService()
         {
             try

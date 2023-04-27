@@ -232,13 +232,37 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 ### Step 4: Running the sample
 
+From your shell or command line, execute the following commands:
+
+```console
+    cd 2-Authorization\2-call-own-api-blazor-server\TodoListApi
+    dotnet run
+```
+
+Then, open a separate command terminal and run:
+
+```console
+    cd 2-Authorization\2-call-own-api-blazor-server\ToDoListClient
+    dotnet run
+```
 
 ## Explore the sample
 
-> * Explain how to explore the sample.
-> * Insert a screenshot of the client application.
+After starting the application, go to the url `https://localhost:44321` in any web browse. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
 
-> :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
+![sign-in-screen](./ReadmeFiles/login-screen.png)
+
+After successfully signing in, you should see the home screen with a greeting label at the top and a navigation bar to the side.
+
+![home-screen](./ReadmeFiles/home-screen.png)
+
+You can click on the `Todo list` button in the side navigation bar to see a todo list that interacts with your Azure AD CIAM protected API.
+
+![home-screen](./ReadmeFiles/todo-list.png)
+
+Each of the todo's displayed show a simple message along with an [object id](https://learn.microsoft.com/en-us/partner-center/find-ids-and-domain-names#find-the-user-object-id) for the user who posted the to-do. From the to-do list screen you'll be able to read, create, update and delete individual to-do's.
+
+To sign-out of the application click the **Log out** button in the upper right corner of the screen.
 
 ## We'd love your feedback!
 
@@ -256,8 +280,93 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-> * Describe where the code uses auth libraries, or calls the graph
-> * Describe specific aspects (e.g. caching, validation etc.)
+The setup for the main Blazor application happens in the `Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD CIAM**.
+
+```Csharp
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration)
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddDownstreamApi("ToDoApi", builder.Configuration.GetSection("ToDoApi"))
+    .AddInMemoryTokenCaches();
+```
+
+Note that this sample uses the `Microsoft.Identity.Web.DownstreamApi` library to simplify making authenticated HTTP calls to your API and is already configured to cache access tokens for your requests. This will be discussed further down this section.
+
+The login controllers and navigation are configured for you automatically with the `Microsoft.Identity.Web.UI` library.
+
+```Csharp
+builder.Services.AddControllersWithViews()
+        .AddMicrosoftIdentityUI();
+```
+
+The part of the application responsible for calling the todo API is found within the `ToDoListClient\Pages\ToDoPages` directory of the project.
+
+The `ToDoList.razor` file is responsible for displaying all todo's stored in the **ToDoListAPI** by using to-do's retrieved by the `ToDoListBase.cs` file. It will only show to-do's affiliated with the logged-in user and fetches these to-do's using an injected `IDownstreamApi` interface. With the `IDownstreamApi` all request authentication is handled for you with respect to acquiring and providing access tokens with requests. It's also already configured to use tokens stored within the application's cache.
+
+```Csharp
+// ToDoListBase.cs
+
+/// <summary>
+/// Gets all todo list items.
+/// </summary>
+/// <returns></returns>
+private async Task GetToDoListService()
+{
+    try
+    {
+        toDoList = (await DownstreamApi.GetForUserAsync<IEnumerable<ToDo>>(
+            ServiceName,
+            options => options.RelativePath = "/api/todolist"))!;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+
+        // Process the exception from a user challenge
+        ConsentHandler.HandleException(ex);
+    }
+}
+```
+
+```Razor
+<!-- Fetch the values stored in the 'toDoList' variable and display them to the user -->
+<tbody>
+    @foreach (var item in toDoList)
+    {
+        <tr>
+            <td>
+                @item.Id
+            </td>
+            <td>
+                @item.Description
+            </td>
+            <td>
+                @item.Owner
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/edit/@item.Id">Edit</a>
+                <button class="btn btn-danger" @onclick="@(() => DeleteItem(item.Id))">Delete</button>
+            </td>
+        </tr>
+    }
+</tbody>
+```
+
+The other files also leverage the `IDownstreamAPI` to make basic **POST**, **PATCH**, **PUT** and **DELETE** requests with the needed authentication as mentioned before. They are also configured to handle serialization for you to translate JSON responses into C# objects and vice versa.
+
+A good example can be found in the `ToDoListClient\Pages\ToDoPages\Edit.razor` file. After a user finishes editing a todo and submits their edit they'll trigger the `EditTask` method which takes in the C# `ToDo` object, converts it to JSON and sends it to the API. The method also returns a deserialized `ToDo` object from the JSON response from the API even though it is not used directly here.
+
+```CSharp
+protected async Task EditTask()
+{
+    await _downstreamApi.PutForUserAsync<ToDo, ToDo>(
+        ServiceName,
+        toDo,
+        options => options.RelativePath = $"api/todolist/{Id}");
+
+    Navigation.NavigateTo("todolist");
+}
+```
 
 ## How to deploy this sample to Azure
 
