@@ -260,9 +260,9 @@ Function ConfigureApplications
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
    # Create the service AAD application
-   Write-Host "Creating the AAD application (ciam-todolist-webapi-daemon-v2)"
+   Write-Host "Creating the AAD application (ciam-todolist-webapi)"
    # create the application 
-   $serviceAadApplication = New-MgApplication -DisplayName "ciam-todolist-webapi-daemon-v2" `
+   $serviceAadApplication = New-MgApplication -DisplayName "ciam-todolist-webapi" `
                                                        -Web `
                                                        @{ `
                                                            HomePageUrl = "https://localhost:44372"; `
@@ -306,9 +306,9 @@ Function ConfigureApplications
     
     # Publish Application Permissions
     $appRoles = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphAppRole]
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi-daemon-v2'"
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi'"
     $appRoles.Add($newRole)
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi-daemon-v2'"
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi'"
     $appRoles.Add($newRole)
     Update-MgApplication -ApplicationId $currentAppObjectId -AppRoles $appRoles
     
@@ -333,16 +333,16 @@ Function ConfigureApplications
     
     # add/update scopes
     Update-MgApplication -ApplicationId $currentAppObjectId -Api @{Oauth2PermissionScopes = @($scopes)}
-    Write-Host "Done creating the service application (ciam-todolist-webapi-daemon-v2)"
+    Write-Host "Done creating the service application (ciam-todolist-webapi)"
 
     # URL of the AAD application in the Azure portal
     # Future? $servicePortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
     $servicePortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>service</td><td>$currentAppId</td><td><a href='$servicePortalUrl'>ciam-todolist-webapi-daemon-v2</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>service</td><td>$currentAppId</td><td><a href='$servicePortalUrl'>ciam-todolist-webapi</a></td></tr>" -Path createdApps.html
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'ciam-todolist-webapi-daemon-v2' at `n $servicePortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'ciam-todolist-webapi' at `n $servicePortalUrl" -ForegroundColor Green 
    # Create the client AAD application
    Write-Host "Creating the AAD application (ciam-daemon-console-v2)"
    # Get a 6 months application key for the client Application
@@ -389,7 +389,7 @@ Function ConfigureApplications
 
     # Add Required Resources Access (from 'client' to 'service')
     Write-Host "Getting access from 'client' to 'service'"
-    $requiredPermission = GetRequiredPermissions -applicationDisplayName "ciam-todolist-webapi-daemon-v2"`
+    $requiredPermission = GetRequiredPermissions -applicationDisplayName "ciam-todolist-webapi"`
         -requiredApplicationPermissions "ToDoList.Read.All|ToDoList.ReadWrite.All"
 
     $requiredResourcesAccess.Add($requiredPermission)

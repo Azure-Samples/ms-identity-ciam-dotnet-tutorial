@@ -110,12 +110,12 @@ To manually register the apps, as a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
 
-#### Register the service app (ciam-todolist-webapi-daemon-v2)
+#### Register the service app (ciam-todolist-webapi)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-todolist-webapi-daemon-v2`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-todolist-webapi`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
@@ -141,7 +141,7 @@ To manually register the apps, as a first step you'll need to:
     > Indicates token type. This claim is the most accurate way for an API to determine if a token is an app token or an app+user token. This is not issued in tokens issued to users.
     1. Select **Add** to save your changes.
 
-##### Configure the service app (ciam-todolist-webapi-daemon-v2) to use your app registration
+##### Configure the service app (ciam-todolist-webapi) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
@@ -149,7 +149,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 1. Open the `ToDoListApi\appsettings.json` file.
 1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-todolist-webapi-daemon-v2` app copied from the Azure portal.
+1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-todolist-webapi` app copied from the Azure portal.
 
 #### Register the client app (ciam-daemon-console-v2)
 
@@ -176,7 +176,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
     1. Select the **Add a permission** button and then:
     1. Ensure that the **My APIs** tab is selected.
-    1. In the list of APIs, select the API `ciam-todolist-webapi-daemon-v2`.
+    1. In the list of APIs, select the API `ciam-todolist-webapi`.
         1. We will select “Application permissions”, which should be the type of permissions that apps should use when they are authenticating just as themselves and not signing-in users. 
    1. In the **Application permissions** section, select the **ToDoList.Read.All**, **ToDoList.ReadWrite.All** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
@@ -216,7 +216,7 @@ Then, open a separate command terminal and run:
 
 This is a very simple sample showing how to perform basic create, read, update and delete operations agains an API protected with MSAL and Azure AD.
 
-If you configured the sample correctly, running the sample should produce the following output in your terminal:
+If you configured the sample correctly, running the sample with `dotnet run` should produce the following output in your terminal:
 
 ```
 Posting a to-do...
@@ -329,7 +329,7 @@ There is one web API in this sample. To deploy it to **Azure App Services**, you
 
 > :warning: Please make sure that you have not switched on the *[Automatic authentication provided by App Service](https://docs.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service)*. It interferes the authentication code used in this code example.
 
-#### Publish your files (ciam-todolist-webapi-daemon-v2)
+#### Publish your files (ciam-todolist-webapi)
 
 ##### Publish using Visual Studio
 

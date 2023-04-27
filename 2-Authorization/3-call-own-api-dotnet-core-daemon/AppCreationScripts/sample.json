@@ -25,7 +25,7 @@
     "AADApps": [
         {
             "Id": "service",
-            "Name": "ciam-todolist-webapi-daemon-v2",
+            "Name": "ciam-todolist-webapi",
             "Kind": "WebApi",
             "Audience": "AzureADMyOrg",
             "SDK": "MicrosoftIdentityWeb",

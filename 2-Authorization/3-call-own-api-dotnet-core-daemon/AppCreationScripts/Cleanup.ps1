@@ -57,20 +57,20 @@ Function Cleanup
     # Removes the applications
     Write-Host "Cleaning-up applications from tenant '$tenantId'"
 
-    Write-Host "Removing 'service' (ciam-todolist-webapi-daemon-v2) if needed"
+    Write-Host "Removing 'service' (ciam-todolist-webapi) if needed"
     try
     {
-        Get-MgApplication -Filter "DisplayName eq 'ciam-todolist-webapi-daemon-v2'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
+        Get-MgApplication -Filter "DisplayName eq 'ciam-todolist-webapi'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'ciam-todolist-webapi-daemon-v2'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove the application 'ciam-todolist-webapi'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
     }
 
-    Write-Host "Making sure there are no more (ciam-todolist-webapi-daemon-v2) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'ciam-todolist-webapi-daemon-v2'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
+    Write-Host "Making sure there are no more (ciam-todolist-webapi) applications found, will remove if needed..."
+    $apps = Get-MgApplication -Filter "DisplayName eq 'ciam-todolist-webapi'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
     
     if ($apps)
     {
@@ -80,19 +80,19 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed ciam-todolist-webapi-daemon-v2.."
+        Write-Host "Removed ciam-todolist-webapi.."
     }
 
     # also remove service principals of this app
     try
     {
-        Get-MgServicePrincipal -filter "DisplayName eq 'ciam-todolist-webapi-daemon-v2'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
+        Get-MgServicePrincipal -filter "DisplayName eq 'ciam-todolist-webapi'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'ciam-todolist-webapi-daemon-v2'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove ServicePrincipal 'ciam-todolist-webapi'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
     }
     Write-Host "Removing 'client' (ciam-daemon-console-v2) if needed"
     try
