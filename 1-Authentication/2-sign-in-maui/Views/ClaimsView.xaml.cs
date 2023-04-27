@@ -3,10 +3,10 @@ using Microsoft.Identity.Client;
 
 namespace SignInMaui.Views;
 
-public partial class ScopeView : ContentPage
+public partial class ClaimsView : ContentPage
 {
-    public IEnumerable<string> AccessTokenScopes { get; set; } = new string[] {"No scopes found in access token"};
-    public ScopeView()
+    public IEnumerable<string> IdTokenClaims { get; set; } = new string[] {"No claims found in ID token"};
+    public ClaimsView()
     {
         BindingContext = this;
         InitializeComponent();
@@ -20,16 +20,14 @@ public partial class ScopeView : ContentPage
         {
             _ = await PublicClientSingleton.Instance.AcquireTokenSilentAsync();
 
-            ExpiresAt.Text = PublicClientSingleton.Instance.MSALClientHelper.AuthResult.ExpiresOn.ToLocalTime().ToString();
-            AccessTokenScopes = PublicClientSingleton.Instance.MSALClientHelper.AuthResult.Scopes
-                .Select(s => s.Split("/").Last());
+            IdTokenClaims = PublicClientSingleton.Instance.MSALClientHelper.AuthResult.ClaimsPrincipal.Claims.Select(c => c.Value);
 
-            Scopes.ItemsSource = AccessTokenScopes;
+            Claims.ItemsSource = IdTokenClaims;
         }
 
         catch (MsalUiRequiredException)
         {
-            await Shell.Current.GoToAsync("scopeview");
+            await Shell.Current.GoToAsync("claimsview");
         }
     }
 
