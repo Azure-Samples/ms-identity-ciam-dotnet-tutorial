@@ -47,7 +47,7 @@ namespace sign_in_dotnet_wpf
 
         // Note: Tenant is important for the quickstart.
         private static string Tenant = "Enter_the_Tenant_Id_Here";
-        private static string Instance = "https://Enter_Domain_Name_Here.ciamlogin.com/";
+        private static string Instance = "https://Enter_the_Tenant_Name_Here.ciamlogin.com/";
         private static IPublicClientApplication _clientApp;
 
         public static IPublicClientApplication PublicClientApp { get { return _clientApp; } }

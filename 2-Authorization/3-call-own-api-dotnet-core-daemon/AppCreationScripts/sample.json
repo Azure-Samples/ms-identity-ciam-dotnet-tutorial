@@ -104,6 +104,17 @@
             ]
         },
         {
+            "App": "service",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\ToDoListApi\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Tenant_Name_Here",
+                    "value": "$tenantName"
+                }
+            ]
+        },
+        {
             "App": "client",
             "SettingKind": "JSon",
             "SettingFile": "\\..\\ToDoListClient\\appsettings.json",
