@@ -1,7 +1,7 @@
 ---
 page_type: sample
 name: A WPF application authenticating users against Azure AD CIAM using .NET Core
-description: 
+description: This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application
 languages:
  - csharp
 products:

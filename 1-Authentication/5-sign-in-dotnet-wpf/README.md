@@ -172,7 +172,7 @@ From your shell or command line, execute the following commands:
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUM0FSM0U1RjdMWU1HVlZRNEZDRlhRTUs5UC4u).
 
 
 ## Troubleshooting
