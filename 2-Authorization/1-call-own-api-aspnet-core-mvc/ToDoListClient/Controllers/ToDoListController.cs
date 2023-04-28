@@ -4,7 +4,6 @@ using Microsoft.Identity.Web;
 using ToDoListClient.Models;
 
 namespace ToDoListClient.Controllers;
-
 public class TodoListController : Controller
 {
     private IDownstreamApi _downstreamApi;
@@ -14,7 +13,6 @@ public class TodoListController : Controller
     {
         _downstreamApi = downstreamApi;
     }
-
     public async Task<ActionResult> Index()
     {
         var toDos = await _downstreamApi.GetForUserAsync<IEnumerable<ToDo>>(

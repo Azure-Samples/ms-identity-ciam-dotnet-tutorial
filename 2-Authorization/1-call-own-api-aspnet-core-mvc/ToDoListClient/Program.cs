@@ -6,7 +6,9 @@ using Microsoft.Identity.Web.UI;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
-        .EnableTokenAcquisitionToCallDownstreamApi()
+        .EnableTokenAcquisitionToCallDownstreamApi(
+            builder.Configuration.GetSection("ToDoApi:Scopes").Get<string[]>()
+        )
         .AddDownstreamApi("ToDoApi", builder.Configuration.GetSection("ToDoApi"))
         .AddInMemoryTokenCaches();
 

@@ -34,7 +34,7 @@ extensions:
 
 ## Overview
 
-This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API that is secured using Azure AD.
+This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API that is secured using Azure AD CIAM.
 
 ## Scenario
 
@@ -49,8 +49,6 @@ This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API t
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
-
->This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
 
 ## Setup the sample
 
@@ -102,7 +100,7 @@ There are two projects in this sample. Each needs to be separately registered in
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
+
 > :information_source: This sample can make use of client certificates. You can use **AppCreationScripts** to register an Azure AD application with certificates. See: [How to use certificates instead of client secrets](./README-use-certificate.md)
 
 </details>
@@ -127,21 +125,22 @@ Please refer to:
 * [Tutorial: Add Google as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/6-Add-Google-identity-provider.md)
 * [Tutorial: Add Facebook as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/7-Add-Facebook-identity-provider.md)
 
-#### Register the service app (TodoListApi)
+#### Register the service app (ciam-dotnet-api)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `TodoListApi`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-api`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
+    1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
     1. Select **Set** next to the **Application ID URI** to generate a URI that is unique for this app.
-    1. For this sample, set the proposed Application ID URI to use `api://` before the client id (`api://{clientId}`) by selecting the pencil icon, replacing the default value (usually of the form https://{tenantName}.onmicrosoft.com/{clientId}) then hit **Save**.
+    1. For this sample, accept the proposed Application ID URI (`api://{clientId}`) by selecting **Save**.
         > :information_source: Read more about Application ID URI at [Validation differences by supported account types (signInAudience)](https://docs.microsoft.com/azure/active-directory/develop/supported-accounts-validation).
-    
+
 ##### Publish Delegated Permissions
 
 1. All APIs must publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code), also called [Delegated Permission](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#permission-types), for the client apps to obtain an access token for a *user* successfully. To publish a scope, follow these steps:
@@ -151,7 +150,7 @@ Please refer to:
     1. For **Admin consent description** type in *Allow the app to read the user's ToDo list using the 'TodoListApi'*.
     1. Keep **State** as **Enabled**.
     1. Select the **Add scope** button on the bottom to save this scope.
-    > Repeat the steps above for another scope named **ToDoList.ReadWrite**
+    1. Repeat the steps above for another scope named **ToDoList.ReadWrite**
 1. Select the **Manifest** blade on the left.
     1. Set `accessTokenAcceptedVersion` property to **2**.
     1. Select on **Save**.
@@ -179,31 +178,32 @@ Please refer to:
     > Indicates token type. This claim is the most accurate way for an API to determine if a token is an app token or an app+user token. This is not issued in tokens issued to users.
     1. Select **Add** to save your changes.
 
-##### Configure the service app (TodoListApi) to use your app registration
+##### Configure the service app (ciam-dotnet-api) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `TodoListApi\appsettings.json` file.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
+1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
-1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `TodoListApi` app copied from the Azure portal.
 
-#### Register the client app (TodoListClient)
+#### Register the client app (ciam-aspnet-webapp)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `TodoListClient`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-aspnet-webapp`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. In the app's registration screen, select the **Authentication** blade to the left.
 1. If you don't have a platform added, select **Add a platform** and select the **Web** option.
     1. In the **Redirect URI** section enter the following redirect URI:
-        1. `https://localhost:44321/signin-oidc`
-    1. In the **Front-channel logout URL** section, set it to `https://localhost:44321/signout-oidc`.
+        1. `https://localhost:7274/`
+        1. `https://localhost:7274/signin-oidc`
+    1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-callback-oidc`.
     1. Click **Save** to save your changes.
 1. In the app's registration screen, select the **Certificates & secrets** blade in the left to open the page where you can generate secrets and upload certificates.
 1. In the **Client secrets** section, select **New client secret**:
@@ -216,7 +216,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
     1. Select the **Add a permission** button and then:
     1. Ensure that the **My APIs** tab is selected.
-    1. In the list of APIs, select the API `TodoListApi`.
+    1. In the list of APIs, select the API `ciam-dotnet-api`.
     1. In the **Delegated permissions** section, select **ToDoList.Read**, **ToDoList.ReadWrite** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly, but since it's a CIAM tenant, the users themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
@@ -238,18 +238,16 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 1. Open the `ToDoListClient\appsettings.json` file.
 1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
-1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `TodoListClient` app copied from the Azure portal.
-1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `TodoListClient` copied from the Azure portal.
-1. Find the key `Scopes` and replace the existing values in the array with **"api://<your_service_api_client_id>/ToDoList.Read"** and **"api://<your_service_api_client_id>/ToDoList.ReadWrite"**.
-1. Find the key `BaseAddress` and replace the existing value with the base address of `TodoListApi` (by default `https://localhost:44351`).
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
+1. Find the key `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-aspnet-webapp` copied from the Azure portal.
+1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 
 ### Step 4: Running the sample
 
 From your shell or command line, execute the following commands:
 
 ```console
-    cd 2-Authorization\1-call-own-api-aspnet-core-mvc\TodoListApi
+    cd 2-Authorization\1-call-own-api-aspnet-core-mvc\ToDoListApi
     dotnet run
 ```
 
@@ -394,7 +392,7 @@ There is one web API in this sample. To deploy it to **Azure App Services**, you
 
 > :warning: Please make sure that you have not switched on the *[Automatic authentication provided by App Service](https://docs.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service)*. It interferes the authentication code used in this code example.
 
-#### Publish your files (TodoListApi)
+#### Publish your files (ciam-dotnet-api)
 
 ##### Publish using Visual Studio
 
@@ -407,8 +405,8 @@ Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visua
 
 > :information_source: When calling the web API, your app may receive an error similar to the following:
 >
-> *Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://some-url-here. (Reason: additional information here).*
-> 
+> *Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at <https://some-url-here>. (Reason: additional information here).*
+>
 > If that's the case, you'll need enable [cross-origin resource sharing (CORS)](https://developer.mozilla.org/docs/Web/HTTP/CORS) for you web API. Follow the steps below to do this:
 >
 > * Go to [Azure portal](https://portal.azure.com), and locate the web API project that you've deployed to App Service.
@@ -419,11 +417,11 @@ Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visua
 
 There is one web app in this sample. To deploy it to **Azure App Services**, you'll need to:
 
-- create an **Azure App Service**
-- publish the projects to the **App Services**, and
-- update its client(s) to call the website instead of the local environment.
+* create an **Azure App Service**
+* publish the projects to the **App Services**, and
+* update its client(s) to call the website instead of the local environment.
 
-#### Publish your files (TodoListClient)
+#### Publish your files (ciam-aspnet-webapp)
 
 ##### Publish using Visual Studio
 
@@ -434,21 +432,22 @@ Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visua
 1. Install the Visual Studio Code extension [Azure App Service](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice).
 1. Follow the link to [Publish with Visual Studio Code](https://docs.microsoft.com/aspnet/core/tutorials/publish-to-azure-webapp-using-vscode)
 
-#### Update the CIAM app registration (TodoListClient)
+#### Update the CIAM app registration (ciam-aspnet-webapp)
 
 1. Navigate back to to the [Azure portal](https://portal.azure.com).
 In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations (Preview)**.
-1. In the resulting screen, select the `TodoListClient` application.
+1. In the resulting screen, select the `ciam-aspnet-webapp` application.
 1. In the app's registration screen, select **Authentication** in the menu.
     1. In the **Redirect URIs** section, update the reply URLs to match the site URL of your Azure deployment. For example:
-        1. `https://TodoListClient.azurewebsites.net/signin-oidc`
-    1. Update the **Front-channel logout URL** fields with the address of your service, for example [https://TodoListClient.azurewebsites.net](https://TodoListClient.azurewebsites.net)
+        1. `https://ciam-aspnet-webapp.azurewebsites.net/`
+        1. `https://ciam-aspnet-webapp.azurewebsites.net/signin-oidc`
+    1. Update the **Front-channel logout URL** fields with the address of your service, for example [https://ciam-aspnet-webapp.azurewebsites.net](https://ciam-aspnet-webapp.azurewebsites.net)
 
-#### Update authentication configuration parameters (TodoListClient)
+#### Update authentication configuration parameters (ciam-aspnet-webapp)
 
-1. In your IDE, locate the `TodoListClient` project. Then, open `ToDoListClient\appsettings.json`.
-2. Find the key for **redirect URI** and replace its value with the address of the web app you published, for example, [https://TodoListClient.azurewebsites.net/redirect](https://TodoListClient.azurewebsites.net/redirect).
-3. Find the key for **web API endpoint** and replace its value with the address of the web API you published, for example, [https://TodoListApi.azurewebsites.net/api](https://TodoListApi.azurewebsites.net/api).
+1. In your IDE, locate the `ciam-aspnet-webapp` project. Then, open `ToDoListClient\appsettings.json`.
+2. Find the key for **redirect URI** and replace its value with the address of the web app you published, for example, [https://ciam-aspnet-webapp.azurewebsites.net/redirect](https://ciam-aspnet-webapp.azurewebsites.net/redirect).
+3. Find the key for **web API endpoint** and replace its value with the address of the web API you published, for example, [https://ciam-dotnet-api.azurewebsites.net/api](https://ciam-dotnet-api.azurewebsites.net/api).
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
 </details>

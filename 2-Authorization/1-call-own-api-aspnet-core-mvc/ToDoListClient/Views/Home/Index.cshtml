@@ -2,14 +2,40 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        text-align: justify;
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+    }
+</style>
+
 <div class="text-center">
-    <h1>
-        Secure an ASP.NET Core Web API with the Microsoft identity platform using Azure Active Directory with CIAM!
-    </h1>
-    <p>
-        This sample shows how to secure a Web API built with ASP.NET Core using the Microsoft identity platform. The
-        client
-        uses OpenID Connect to sign in users. It leverages the ASP.NET Core OpenID Connect middleware
-        and Microsoft.Identity.Web.
-    </p>
+    <h1 class="display-4">Welcome</h1>
+
+    @if (@User.Identity is not null && @User.Identity.IsAuthenticated)
+    {
+        <p>You are signed in! Below are the claims in your ID token. For more information, visit: <a href="https://learn.microsoft.com/azure/active-directory/develop/id-tokens">Microsoft identity platform ID tokens</a></p>
+
+        <table>
+            <tbody>
+                @foreach (var item in @User.Claims)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td>@item.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <br />
+    <p>Learn about <a href="https://learn.microsoft.com/azure/active-directory/develop/v2-overview">building web apps with Microsoft identity platform</a>.</p>
 </div>
