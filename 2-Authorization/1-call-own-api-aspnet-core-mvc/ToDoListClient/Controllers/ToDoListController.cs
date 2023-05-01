@@ -4,6 +4,10 @@ using Microsoft.Identity.Web;
 using ToDoListClient.Models;
 
 namespace ToDoListClient.Controllers;
+[AuthorizeForScopes(Scopes = new string[] { 
+"api://Enter_the_Web_Api_Application_Id_Here/ToDoList.Read", 
+"api://Enter_the_Web_Api_Application_Id_Here/ToDoList.ReadWrite"
+ })]
 public class TodoListController : Controller
 {
     private IDownstreamApi _downstreamApi;

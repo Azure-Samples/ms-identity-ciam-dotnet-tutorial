@@ -242,6 +242,9 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-aspnet-webapp` copied from the Azure portal.
 1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 
+1. Open the `ToDoListClient\Controllers\ToDoListController.cs` file.
+1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
+
 ### Step 4: Running the sample
 
 From your shell or command line, execute the following commands:

@@ -119,6 +119,17 @@
               "value": "service.AppId"
           }
       ]
+    },
+    {
+      "App": "client",
+      "SettingKind": "Replace",
+      "SettingFile": "\\..\\ToDoListClient\\Controllers\\ToDoListController.cs",
+      "Mappings": [
+          {
+              "key": "Enter_the_Web_Api_Application_Id_Here",
+              "value": "service.AppId"
+          }
+      ]
     }
   ]
 }
