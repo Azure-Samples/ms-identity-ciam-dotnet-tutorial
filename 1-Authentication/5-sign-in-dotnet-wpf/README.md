@@ -1,7 +1,7 @@
 ---
 page_type: sample
 name: A WPF application authenticating users against Azure AD CIAM using .NET Core
-description: 
+description: This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application
 languages:
  - csharp
 products:
@@ -81,6 +81,7 @@ There is one project in this sample. To register it, you can:
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
+1. Ensure that you have PowerShell 7 or later which can be installed at [this link](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3).
 1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
@@ -184,24 +185,24 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 The main configuration for the public client application is handled within the `App.xaml.cs` file. A `PublicClientApplication` is initialized along with a cache for storeing access tokens.
 
 ```Csharp
-public static void CreateApplication(bool useWam)
-{
-    var builder = PublicClientApplicationBuilder.Create(ClientId)
-        .WithAuthority($"{Instance}{Tenant}")
-        .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
-        .WithDefaultRedirectUri();
+public static void CreateApplication()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("call_own_api_dotnet_wpf.appsettings.json");
+            AppConfiguration = new ConfigurationBuilder()
+               .AddJsonStream(stream)
+               .Build();
 
-    //Use of Broker Requires redirect URI "ms-appx-web://microsoft.aad.brokerplugin/{client_id}" in app registration
-    if (useWam)
-    {
-        BrokerOptions brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows);
-        brokerOptions.ListOperatingSystemAccounts = true;
-        builder.WithBroker(brokerOptions);
-    }
+            AzureAdConfig azureADConfig = AppConfiguration.GetSection("AzureAd").Get<AzureAdConfig>();
 
-    _clientApp = builder.Build();
-    TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
-}
+            var builder = PublicClientApplicationBuilder.Create(azureADConfig.ClientId)
+                .WithAuthority(azureADConfig.Authority)
+                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
+                .WithDefaultRedirectUri();
+
+            _clientApp = builder.Build();
+            TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
+        }
 ```
 
 You can see how the token cache is initialized in the `TokenCacheHelper.cs` file and can read more about token caching in Desktop applications [here](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/active-directory/develop/msal-net-token-cache-serialization.md#desktop-apps).
