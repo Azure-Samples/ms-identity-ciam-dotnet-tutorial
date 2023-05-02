@@ -2,8 +2,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// This is required to be instantiated before the OpenIdConnectOptions starts getting configured.
+// By default, the claims mapping will map claim names in the old format to accommodate older SAML applications.
+// For instance, 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role' instead of 'roles' claim.
+// This flag ensures that the ClaimsIdentity claims collection will be built from the claims in the token
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
         .EnableTokenAcquisitionToCallDownstreamApi(

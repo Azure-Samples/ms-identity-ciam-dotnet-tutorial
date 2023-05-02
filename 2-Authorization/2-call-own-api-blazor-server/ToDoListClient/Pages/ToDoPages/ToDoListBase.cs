@@ -16,8 +16,8 @@ namespace ToDoListClient.Pages.ToDoPages
 
         [Inject]
         NavigationManager Navigation { get; set; }
-
-        const string ServiceName = "ToDoApi";
+        
+        const string ServiceName = "DownstreamApi";
         protected IEnumerable<ToDo> toDoList = new List<ToDo>();
         protected ToDo toDo = new ToDo();
 

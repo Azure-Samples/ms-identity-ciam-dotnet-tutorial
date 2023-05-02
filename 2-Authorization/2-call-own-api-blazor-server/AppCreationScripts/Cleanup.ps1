@@ -57,20 +57,20 @@ Function Cleanup
     # Removes the applications
     Write-Host "Cleaning-up applications from tenant '$tenantId'"
 
-    Write-Host "Removing 'service' (TodoListApi) if needed"
+    Write-Host "Removing 'service' (ciam-dotnet-api) if needed"
     try
     {
-        Get-MgApplication -Filter "DisplayName eq 'TodoListApi'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
+        Get-MgApplication -Filter "DisplayName eq 'ciam-dotnet-api'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'TodoListApi'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove the application 'ciam-dotnet-api'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
     }
 
-    Write-Host "Making sure there are no more (TodoListApi) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'TodoListApi'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
+    Write-Host "Making sure there are no more (ciam-dotnet-api) applications found, will remove if needed..."
+    $apps = Get-MgApplication -Filter "DisplayName eq 'ciam-dotnet-api'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
     
     if ($apps)
     {
@@ -80,34 +80,34 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed TodoListApi.."
+        Write-Host "Removed ciam-dotnet-api.."
     }
 
     # also remove service principals of this app
     try
     {
-        Get-MgServicePrincipal -filter "DisplayName eq 'TodoListApi'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
+        Get-MgServicePrincipal -filter "DisplayName eq 'ciam-dotnet-api'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'TodoListApi'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove ServicePrincipal 'ciam-dotnet-api'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
     }
-    Write-Host "Removing 'client' (call-todo-api-blazor) if needed"
+    Write-Host "Removing 'client' (ciam-blazor-webapp) if needed"
     try
     {
-        Get-MgApplication -Filter "DisplayName eq 'call-todo-api-blazor'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
+        Get-MgApplication -Filter "DisplayName eq 'ciam-blazor-webapp'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'call-todo-api-blazor'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove the application 'ciam-blazor-webapp'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
     }
 
-    Write-Host "Making sure there are no more (call-todo-api-blazor) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'call-todo-api-blazor'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
+    Write-Host "Making sure there are no more (ciam-blazor-webapp) applications found, will remove if needed..."
+    $apps = Get-MgApplication -Filter "DisplayName eq 'ciam-blazor-webapp'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
     
     if ($apps)
     {
@@ -117,19 +117,19 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed call-todo-api-blazor.."
+        Write-Host "Removed ciam-blazor-webapp.."
     }
 
     # also remove service principals of this app
     try
     {
-        Get-MgServicePrincipal -filter "DisplayName eq 'call-todo-api-blazor'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
+        Get-MgServicePrincipal -filter "DisplayName eq 'ciam-blazor-webapp'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
     }
     catch
     {
         $message = $_
         Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'call-todo-api-blazor'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
+        Write-Host "Unable to remove ServicePrincipal 'ciam-blazor-webapp'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
     }
 }
 
