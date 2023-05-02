@@ -7,9 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
         .EnableTokenAcquisitionToCallDownstreamApi(
-            builder.Configuration.GetSection("ToDoApi:Scopes").Get<string[]>()
+            new string[] { 
+                builder.Configuration.GetSection("DownstreamApi:Scopes:Read").Get<string>()!, 
+                builder.Configuration.GetSection("DownstreamApi:Scopes:Write").Get<string>()!
+            }
         )
-        .AddDownstreamApi("ToDoApi", builder.Configuration.GetSection("ToDoApi"))
+        .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
         .AddInMemoryTokenCaches();
 
 builder.Services.AddControllersWithViews(options =>

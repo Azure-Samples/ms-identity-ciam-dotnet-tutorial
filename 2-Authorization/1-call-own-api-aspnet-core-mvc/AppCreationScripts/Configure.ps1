@@ -474,18 +474,6 @@ Function ConfigureApplications
     Write-Host "-----------------"
 
     ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\ToDoListClient\Controllers\ToDoListController.cs"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListClient\Controllers\ToDoListController.cs"))
-    
-    $dictionary = @{ "Enter_the_Web_Api_Application_Id_Here" = $serviceAadApplication.AppId};
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
     Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
     Write-Host "- For service"
@@ -495,7 +483,6 @@ Function ConfigureApplications
     Write-Host "- For client"
     Write-Host "  - Navigate to $clientPortalUrl"
     Write-Host "  - Navigate to the API Permissions page and select 'Grant admin consent for (your tenant)'" -ForegroundColor Red 
-    Write-Host "  - Navigate to your tenant and create user flows to allow users to sign up for the application." -ForegroundColor Red 
     Write-Host "  - The delegated permissions for the 'client' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
     Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
    

@@ -19,8 +19,6 @@ extensions:
 
 # How to secure an ASP.NET Core Web API with the Microsoft identity platform
 
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
-
 * [Overview](#overview)
 * [Scenario](#scenario)
 * [Prerequisites](#prerequisites)
@@ -242,15 +240,12 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the key `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-aspnet-webapp` copied from the Azure portal.
 1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 
-1. Open the `ToDoListClient\Controllers\ToDoListController.cs` file.
-1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
-
 ### Step 4: Running the sample
 
 From your shell or command line, execute the following commands:
 
 ```console
-    cd 2-Authorization\1-call-own-api-aspnet-core-mvc\ToDoListApi
+    cd 2-Authorization\1-call-own-api-aspnet-core-mvc\ToDoListAPI
     dotnet run
 ```
 
@@ -282,7 +277,6 @@ To sign-out of the application click the **Sign out** button in the upper right 
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUMEhKWUE4N1VUVVFDTVc2U0lFNFpJRU5OTy4u).
-
 
 ## Troubleshooting
 

@@ -70,9 +70,6 @@
         "ManualSteps": [
             {
                 "Comment": "Navigate to the API Permissions page and select 'Grant admin consent for (your tenant)'"
-            },
-            {
-                "Comment": "Navigate to your tenant and create user flows to allow users to sign up for the application."
             }
         ]
     }
@@ -114,17 +111,6 @@
               "key": "Enter_the_Client_Secret_Here",
               "value": ".AppKey"
           },
-          {
-              "key": "Enter_the_Web_Api_Application_Id_Here",
-              "value": "service.AppId"
-          }
-      ]
-    },
-    {
-      "App": "client",
-      "SettingKind": "Replace",
-      "SettingFile": "\\..\\ToDoListClient\\Controllers\\ToDoListController.cs",
-      "Mappings": [
           {
               "key": "Enter_the_Web_Api_Application_Id_Here",
               "value": "service.AppId"
