@@ -107,9 +107,7 @@ namespace sign_in_dotnet_wpf
             if (authResult != null)
             {
                 TokenInfoText.Text += $"Username: {authResult.Account.Username}" + Environment.NewLine;
-                TokenInfoText.Text += $"IdentityProvider: {authResult.Account.Environment}" + Environment.NewLine;
                 TokenInfoText.Text += $"{authResult.Account.HomeAccountId}" + Environment.NewLine;
-                TokenInfoText.Text += $"Token Expires: {authResult.ExpiresOn.ToLocalTime()}" + Environment.NewLine;
             }
         }
     }
