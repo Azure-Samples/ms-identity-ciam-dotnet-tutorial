@@ -1,7 +1,28 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home page</PageTitle>
 
 <h1>Welcome to your CIAM app!</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <table>
+                <tbody>
+                    @foreach (var item in @context.User.Claims)
+                    {
+                        <tr>
+                            <td>@item.Type</td>
+                            <td>@item.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <p>Learn about <a href="https://learn.microsoft.com/azure/active-directory/develop/v2-overview">building web apps with Microsoft identity platform</a>.</p>
+        </Authorized>
+        <NotAuthorized>
+            <a href="MicrosoftIdentity/Account/SignIn">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>

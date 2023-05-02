@@ -1,14 +1,18 @@
 @using Microsoft.Identity.Web
+<ul class="navbar-nav">
 @if (User.Identity is not null && User.Identity.IsAuthenticated)
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li class="navbar-text">Hello @User.GetDisplayName()!</li>
-        <li><a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
-    </ul>
+    <li class="nav-item">
+        <span class="nav-link text-dark">Hello @User.Claims.First(c => c.Type == "preferred_username").Value</span>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a>
+    </li>
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li><a  class="nav-link text-dark"asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a></li>
-    </ul>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a>
+    </li>
 }
+</ul>
