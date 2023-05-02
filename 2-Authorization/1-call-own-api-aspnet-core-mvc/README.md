@@ -165,7 +165,7 @@ Please refer to:
     1. For **Value**, enter **ToDoList.Read.All**.
     1. For **Description**, enter *Allow the app to read every user's ToDo list using the 'TodoListApi'*.
     1. Select **Apply** to save your changes.
-    > Repeat the steps above for another app permission named **ToDoList.ReadWrite.All**
+    1. Repeat the steps above for another app permission named **ToDoList.ReadWrite.All**
 
 ##### Configure Optional Claims
 
