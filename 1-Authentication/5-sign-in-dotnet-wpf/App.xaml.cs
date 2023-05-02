@@ -1,6 +1,9 @@
 using System.Windows;
+using System.Reflection;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace sign_in_dotnet_wpf
 {
@@ -13,43 +16,30 @@ namespace sign_in_dotnet_wpf
     {
         static App()
         {
-            CreateApplication(true);
+            CreateApplication();
         }
 
-        public static void CreateApplication(bool useWam)
+        public static void CreateApplication()
         {
-            var builder = PublicClientApplicationBuilder.Create(ClientId)
-                .WithAuthority($"{Instance}{Tenant}")
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("call_own_api_dotnet_wpf.appsettings.json");
+            AppConfiguration = new ConfigurationBuilder()
+               .AddJsonStream(stream)
+               .Build();
+
+            AzureAdConfig azureADConfig = AppConfiguration.GetSection("AzureAd").Get<AzureAdConfig>();
+
+            var builder = PublicClientApplicationBuilder.Create(azureADConfig.ClientId)
+                .WithAuthority(azureADConfig.Authority)
                 .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithDefaultRedirectUri();
-
-            //Use of Broker Requires redirect URI "ms-appx-web://microsoft.aad.brokerplugin/{client_id}" in app registration
-            if (useWam)
-            {
-                BrokerOptions brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows);
-                brokerOptions.ListOperatingSystemAccounts = true;
-                builder.WithBroker(brokerOptions);
-            }
 
             _clientApp = builder.Build();
             TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
         }
-
-        // Below are the clientId (Application Id) of your app registration and the tenant information. 
-        // You have to replace:
-        // - the content of ClientID with the Application Id for your app registration
-        // - The content of Tenant by the information about the accounts allowed to sign-in in your application:
-        //   - For Work or School account in your org, use your tenant ID, or domain
-        //   - for any Work or School accounts, use organizations
-        //   - for any Work or School accounts, or Microsoft personal account, use common
-        //   - for Microsoft Personal account, use consumers
-        private static string ClientId = "Enter_the_Application_Id_Here";
-
-        // Note: Tenant is important for the quickstart.
-        private static string Tenant = "Enter_the_Tenant_Id_Here";
-        private static string Instance = "https://Enter_the_Tenant_Name_Here.ciamlogin.com/";
+        
         private static IPublicClientApplication _clientApp;
-
+        private static IConfiguration AppConfiguration;
         public static IPublicClientApplication PublicClientApp { get { return _clientApp; } }
     }
 }

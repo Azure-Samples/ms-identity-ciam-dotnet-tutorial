@@ -1,7 +1,7 @@
 ---
 page_type: sample
 name: A WPF application authenticating users against Azure AD CIAM using .NET Core
-description: 
+description: This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application
 languages:
  - csharp
 products:
@@ -47,8 +47,6 @@ This sample demonstrates a WPF .NET Core app that authenticates users against Az
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
 
->This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
-
 ## Setup the sample
 
 ### Step 1: Clone or download this repository
@@ -83,6 +81,7 @@ There is one project in this sample. To register it, you can:
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
+1. Ensure that you have PowerShell 7 or later which can be installed at [this link](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3).
 1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
@@ -92,8 +91,6 @@ There is one project in this sample. To register it, you can:
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
-
 </details>
 
 #### Choose the Azure AD CIAM tenant where you want to create your applications
@@ -144,10 +141,9 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-1. Open the `App.xaml.cs` file.
+1. Open the `appsettings.json` file.
 1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-wpf-sign-in` app copied from the Azure portal.
-1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 
 ### Step 4: Running the sample
 
@@ -160,21 +156,17 @@ From your shell or command line, execute the following commands:
 
 ## Explore the sample
 
-* After you launch the sample you should see a window with a `Sign-In` button and a combo-bo showing the options:
-  - `Use account used to sign in to Windows (WAM)Use account used to sign` which will attempt to use the current account signed into your computer to sign-in to Azure.
-  - `Use one of the Accounts known by Windows (WAM)` which will force the user to sign-in
-  - `Use any account (Azure AD)` which will try to sign the user in with any account that is available in the cache. Otherwise, the user will be forced to sign-in.
-
-![](./ReadmeFiles/SignInScreen.png)
+* After you launch the sample you should see a window with a `Sign-In` button. Click the `Sign-In` button.
+  
+![SignIn](./ReadmeFiles/SignInScreen.png)
 
 * After signing in you, the user should see a screen displaying that they have successfully signed-in and basic information about their account stored in the retrieved token.
 
-![](./ReadmeFiles/UserDisplay.png)
+![UserDisplay](./ReadmeFiles/UserDisplay.png)
 
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUM0FSM0U1RjdMWU1HVlZRNEZDRlhRTUs5UC4u).
-
 
 ## Troubleshooting
 
@@ -193,24 +185,24 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 The main configuration for the public client application is handled within the `App.xaml.cs` file. A `PublicClientApplication` is initialized along with a cache for storeing access tokens.
 
 ```Csharp
-public static void CreateApplication(bool useWam)
-{
-    var builder = PublicClientApplicationBuilder.Create(ClientId)
-        .WithAuthority($"{Instance}{Tenant}")
-        .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
-        .WithDefaultRedirectUri();
+public static void CreateApplication()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("call_own_api_dotnet_wpf.appsettings.json");
+            AppConfiguration = new ConfigurationBuilder()
+               .AddJsonStream(stream)
+               .Build();
 
-    //Use of Broker Requires redirect URI "ms-appx-web://microsoft.aad.brokerplugin/{client_id}" in app registration
-    if (useWam)
-    {
-        BrokerOptions brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows);
-        brokerOptions.ListOperatingSystemAccounts = true;
-        builder.WithBroker(brokerOptions);
-    }
+            AzureAdConfig azureADConfig = AppConfiguration.GetSection("AzureAd").Get<AzureAdConfig>();
 
-    _clientApp = builder.Build();
-    TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
-}
+            var builder = PublicClientApplicationBuilder.Create(azureADConfig.ClientId)
+                .WithAuthority(azureADConfig.Authority)
+                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
+                .WithDefaultRedirectUri();
+
+            _clientApp = builder.Build();
+            TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
+        }
 ```
 
 You can see how the token cache is initialized in the `TokenCacheHelper.cs` file and can read more about token caching in Desktop applications [here](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/active-directory/develop/msal-net-token-cache-serialization.md#desktop-apps).

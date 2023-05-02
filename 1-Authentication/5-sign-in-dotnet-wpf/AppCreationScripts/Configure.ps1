@@ -218,7 +218,7 @@ Function ConfigureApplications
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
         Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($clientServicePrincipal.DisplayName)'"
     }
     Write-Host "Done creating the client application (ciam-wpf-sign-in)"
@@ -250,12 +250,10 @@ Function ConfigureApplications
     Write-Host "Successfully registered and configured that app registration for 'ciam-wpf-sign-in' at `n $clientPortalUrl" -ForegroundColor Green 
     
     # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\App.xaml.cs"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\App.xaml.cs"))
-
-    $tenantDomainPrefix = $verifiedDomainName.replace(".onmicrosoft.com", "")
+    # $configFile = $pwd.Path + "\..\appsettings.json"
+    $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Id_Here" = $tenantId; "Enter_the_Tenant_Name_Here" = $tenantDomainPrefix };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0] };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
