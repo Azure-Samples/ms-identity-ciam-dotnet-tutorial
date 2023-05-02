@@ -11,7 +11,7 @@
 <CommonForm ButtonText="Add Task" ToDoItem="@toDo" OnValidSubmit="@AddTask" />
 
 @code {
-    const string ServiceName = "ToDoApi";
+    const string ServiceName = "DownstreamApi";
     protected ToDo toDo = new ToDo();
     protected async Task AddTask()
     {

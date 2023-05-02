@@ -19,8 +19,6 @@ extensions:
 
 # How to secure a Blazor Server app with the Microsoft identity platform on CIAM
 
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
-
 * [Overview](#overview)
 * [Scenario](#scenario)
 * [Prerequisites](#prerequisites)
@@ -67,7 +65,7 @@ or download and extract the repository *.zip* file.
 ### Step 2: Navigate to project folder
 
 ```console
-cd 2-Authorization\2-call-own-api-blazor-server\TodoListApi
+cd 2-Authorization\2-call-own-api-blazor-server\ToDoListAPI
 ```
 
 ```console
@@ -181,7 +179,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-1. Open the `TodoListApi\appsettings.json` file.
+1. Open the `ToDoListAPI\appsettings.json` file.
 1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with your Azure AD tenant domain.
@@ -249,7 +247,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 From your shell or command line, execute the following commands:
 
 ```console
-    cd 2-Authorization\2-call-own-api-blazor-server\TodoListApi
+    cd 2-Authorization\2-call-own-api-blazor-server\ToDoListAPI
     dotnet run
 ```
 
