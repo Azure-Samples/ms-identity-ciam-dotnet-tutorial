@@ -260,9 +260,9 @@ Function ConfigureApplications
     Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
 
    # Create the service AAD application
-   Write-Host "Creating the AAD application (ciam-todolist-webapi)"
+   Write-Host "Creating the AAD application (ciam-dotnet-api)"
    # create the application 
-   $serviceAadApplication = New-MgApplication -DisplayName "ciam-todolist-webapi" `
+   $serviceAadApplication = New-MgApplication -DisplayName "ciam-dotnet-api" `
                                                        -Web `
                                                        @{ `
                                                            HomePageUrl = "https://localhost:44372"; `
@@ -277,8 +277,8 @@ Function ConfigureApplications
     $currentAppId = $serviceAadApplication.AppId
     $currentAppObjectId = $serviceAadApplication.Id
 
-     $serviceIdentifierUri = 'api://' + $currentAppId
-     Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
+    $serviceIdentifierUri = 'api://'+$currentAppId
+    Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @($serviceIdentifierUri)
     
     # create the service principal of the newly created application     
     $serviceServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
@@ -287,7 +287,7 @@ Function ConfigureApplications
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
         Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($serviceServicePrincipal.DisplayName)'"
     }
 
@@ -306,9 +306,9 @@ Function ConfigureApplications
     
     # Publish Application Permissions
     $appRoles = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphAppRole]
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi'"
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.Read.All" -description "Allow the app to read every user's ToDo list using the 'ciam-dotnet-api'"
     $appRoles.Add($newRole)
-    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'ciam-todolist-webapi'"
+    $newRole = CreateAppRole -types "Application" -name "ToDoList.ReadWrite.All" -description "Allow the app to read every user's ToDo list using the 'ciam-dotnet-api'"
     $appRoles.Add($newRole)
     Update-MgApplication -ApplicationId $currentAppObjectId -AppRoles $appRoles
     
@@ -330,27 +330,45 @@ Function ConfigureApplications
     }
 
     $scopes = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphPermissionScope]
+    $scope = CreateScope -value ToDoList.Read  `
+        -userConsentDisplayName "Read users ToDo list using the 'ciam-dotnet-api'"  `
+        -userConsentDescription "Allow the app to read your ToDo list items via the 'ciam-dotnet-api'"  `
+        -adminConsentDisplayName "Read users ToDo list using the 'ciam-dotnet-api'"  `
+        -adminConsentDescription "Allow the app to read the user's ToDo list using the 'ciam-dotnet-api'" `
+        -consentType "Admin" `
+        
+            
+    $scopes.Add($scope)
+    $scope = CreateScope -value ToDoList.ReadWrite  `
+        -userConsentDisplayName "Read and Write user's ToDo list using the 'ciam-dotnet-api'"  `
+        -userConsentDescription "Allow the app to read and write your ToDo list items via the 'ciam-dotnet-api'"  `
+        -adminConsentDisplayName "Read and Write user's ToDo list using the 'ciam-dotnet-api'"  `
+        -adminConsentDescription "Allow the app to read and write user's ToDo list using the 'ciam-dotnet-api'" `
+        -consentType "Admin" `
+        
+            
+    $scopes.Add($scope)
     
     # add/update scopes
     Update-MgApplication -ApplicationId $currentAppObjectId -Api @{Oauth2PermissionScopes = @($scopes)}
-    Write-Host "Done creating the service application (ciam-todolist-webapi)"
+    Write-Host "Done creating the service application (ciam-dotnet-api)"
 
     # URL of the AAD application in the Azure portal
     # Future? $servicePortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
     $servicePortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>service</td><td>$currentAppId</td><td><a href='$servicePortalUrl'>ciam-todolist-webapi</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>service</td><td>$currentAppId</td><td><a href='$servicePortalUrl'>ciam-dotnet-api</a></td></tr>" -Path createdApps.html
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'ciam-todolist-webapi' at `n $servicePortalUrl" -ForegroundColor Green 
+    Write-Host "Successfully registered and configured that app registration for 'ciam-dotnet-api' at `n $servicePortalUrl" -ForegroundColor Green 
    # Create the client AAD application
-   Write-Host "Creating the AAD application (ciam-daemon-console-v2)"
+   Write-Host "Creating the AAD application (ciam-dotnet-daemon)"
    # Get a 6 months application key for the client Application
    $fromDate = [DateTime]::Now;
    $key = CreateAppKey -fromDate $fromDate -durationInMonths 6
    
    # create the application 
-   $clientAadApplication = New-MgApplication -DisplayName "ciam-daemon-console-v2" `
+   $clientAadApplication = New-MgApplication -DisplayName "ciam-dotnet-daemon" `
                                                       -Web `
                                                       @{ `
                                                         } `
@@ -365,7 +383,7 @@ Function ConfigureApplications
     $currentAppObjectId = $clientAadApplication.Id
 
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-daemon-console-v2")
+    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-dotnet-daemon")
     
     # create the service principal of the newly created application     
     $clientServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
@@ -374,22 +392,22 @@ Function ConfigureApplications
     $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
     if ($owner -eq $null)
     { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter = @{"@odata.id" = "htps://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
+        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
         Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($clientServicePrincipal.DisplayName)'"
     }
-    Write-Host "Done creating the client application (ciam-daemon-console-v2)"
+    Write-Host "Done creating the client application (ciam-dotnet-daemon)"
 
     # URL of the AAD application in the Azure portal
     # Future? $clientPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
     $clientPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
 
-    Add-Content -Value "<tr><td>client</td><td>$currentAppId</td><td><a href='$clientPortalUrl'>ciam-daemon-console-v2</a></td></tr>" -Path createdApps.html
+    Add-Content -Value "<tr><td>client</td><td>$currentAppId</td><td><a href='$clientPortalUrl'>ciam-dotnet-daemon</a></td></tr>" -Path createdApps.html
     # Declare a list to hold RRA items    
     $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
 
     # Add Required Resources Access (from 'client' to 'service')
     Write-Host "Getting access from 'client' to 'service'"
-    $requiredPermission = GetRequiredPermissions -applicationDisplayName "ciam-todolist-webapi"`
+    $requiredPermission = GetRequiredPermissions -applicationDisplayName "ciam-dotnet-api"`
         -requiredApplicationPermissions "ToDoList.Read.All|ToDoList.ReadWrite.All"
 
     $requiredResourcesAccess.Add($requiredPermission)
@@ -403,39 +421,25 @@ Function ConfigureApplications
     
 
     # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'ciam-daemon-console-v2' at `n $clientPortalUrl" -ForegroundColor Green 
-
-    $domainPrefix = $verifiedDomain.Name.replace('.onmicrosoft.com', '')
-
+    Write-Host "Successfully registered and configured that app registration for 'ciam-dotnet-daemon' at `n $clientPortalUrl" -ForegroundColor Green 
+    
     # Update config file for 'service'
     # $configFile = $pwd.Path + "\..\ToDoListApi\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListApi\appsettings.json"))
     
-    $dictionary = @{ "Instance" = "https://$domainPrefix.ciamlogin.com"; "TenantId" = $tenantId;"ClientId" = $serviceAadApplication.AppId };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $serviceAadApplication.AppId;"Enter_the_Tenant_Id_Here" = $tenantId;"Enter_the_Tenant_Name_Here" = $tenantName.$tenantName.Split(".onmicrosoft.com")[0] };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
     Write-Host "-----------------"
 
-    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
+    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
     
     # Update config file for 'client'
     # $configFile = $pwd.Path + "\..\ToDoListClient\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListClient\appsettings.json"))
     
-    $dictionary = @{ "Tenant" = $tenantId;"ClientId" = $clientAadApplication.AppId;"ClientSecret`":" = $clientAppKey };
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    UpdateTextFile -configFilePath $configFile -dictionary $dictionary
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\ToDoListClient\appsettings.json"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\ToDoListClient\appsettings.json"))
-    
-    $dictionary = @{ "[Enter here the scopes for your web API]" = "api://"+$serviceAadApplication.AppId+"/.default" };
+    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId;"Enter_the_Tenant_Name_Here" = $tenantName;"Enter_the_Client_Secret_Here" = $clientAppKey;"Enter_the_Web_Api_Application_Id_Here" = $serviceAadApplication.AppId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
@@ -447,6 +451,7 @@ Function ConfigureApplications
     Write-Host "- For service"
     Write-Host "  - Navigate to $servicePortalUrl"
     Write-Host "  - Application 'service' publishes application permissions. Do remember to navigate to any client app(s) registration in the app portal and consent for those, (if required)" -ForegroundColor Red 
+    Write-Host "  - Application 'service' publishes delegated permissions. Do remember to navigate to any client app(s) registration in the app portal and consent for those, (if required)" -ForegroundColor Red 
     Write-Host "- For client"
     Write-Host "  - Navigate to $clientPortalUrl"
     Write-Host "  - Navigate to the API permissions page and click on 'Grant admin consent for {tenant}'" -ForegroundColor Red 

@@ -1,26 +1,22 @@
 ---
 page_type: sample
-name: A .NET Core daemon console application calling a custom Web API with its own identit using a CIAM tenant
-description: This sample demonstrates an ASP.NET Core Web App signing-in a user and calling an ASP.NET Core Web API that is secured with Azure AD using an application registered with a CIAM tenant.
+name: A .NET Core daemon application calling a custom Web API with its own identity using a CIAM tenant
+description: This sample demonstrates a .NET Core daemon app calling a ASP.NET Core Web API that is secured using Azure AD CIAM.
 languages:
  - csharp
 products:
  - azure-active-directory
- - msal-net
- - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
 - services: ms-identity
 - platform: DotNetCore
 - endpoint: AAD v2.0
 - level: 200
-- client: .NET Core (Console)
+- client: .NET Core daemon app
 - service: .NET Core Web API
 ---
 
-# A .NET Core daemon console application calling a custom Web API with its own identit using a CIAM tenant
-
-[![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
+# A .NET Core daemon application calling a custom Web API with its own identity using a CIAM tenant
 
 * [Overview](#overview)
 * [Scenario](#scenario)
@@ -35,11 +31,11 @@ extensions:
 
 ## Overview
 
-This sample demonstrates a .NET Core (Console) calling a .NET Core Web API that is secured using Azure AD.
+This sample demonstrates a .NET Core daemon app calling a .NET Core Web API that is secured using Azure AD CIAM.
 
 ## Scenario
 
-1. The client .NET Core (Console) uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
+1. The client .NET Core daemon app  obtains a JWT [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
 1. The **access token** is used as a *bearer* token to authorize the user to call the .NET Core Web API protected by **Azure AD CIAM**.
 1. The service uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to protect the Web api, check permissions and validate tokens.
 
@@ -50,8 +46,6 @@ This sample demonstrates a .NET Core (Console) calling a .NET Core Web API that 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
-
->This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
 
 ## Setup the sample
 
@@ -75,8 +69,6 @@ cd 2-Authorization\3-call-own-api-dotnet-core-daemon\ToDoListClient
 
 ### Step 3: Register the sample application(s) in your tenant
 
-> :information_source: While there are multiple projects in this sample, we'd register just one app with Azure AD and use the registered app's *client id* in both apps. This reuse of app ids (client ids) is used when the apps themselves are just components of one larger app topology.  
-
 There are two projects in this sample. Each needs to be separately registered in your Azure AD tenant. To register these projects, you can:
 
 - follow the steps below for manually register your apps
@@ -89,6 +81,7 @@ There are two projects in this sample. Each needs to be separately registered in
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
+1. Ensure that you have PowerShell 7 or later which can be installed at [this link]([this link](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3)).
 1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
@@ -98,7 +91,7 @@ There are two projects in this sample. Each needs to be separately registered in
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
-    
+
 > :information_source: This sample can make use of client certificates. You can use **AppCreationScripts** to register an Azure AD application with certificates. See: [How to use certificates instead of client secrets](./README-use-certificate.md)
 
 </details>
@@ -110,15 +103,35 @@ To manually register the apps, as a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
 
-#### Register the service app (ciam-todolist-webapi)
+#### Register the service app (ciam-dotnet-api)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-todolist-webapi`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-api`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
+1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
+    1. Select **Set** next to the **Application ID URI** to generate a URI that is unique for this app.
+    1. For this sample, accept the proposed Application ID URI (`api://{clientId}`) by selecting **Save**.
+        > :information_source: Read more about Application ID URI at [Validation differences by supported account types (signInAudience)](https://docs.microsoft.com/azure/active-directory/develop/supported-accounts-validation).
+
+##### Publish Delegated Permissions
+
+1. All APIs must publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code), also called [Delegated Permission](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#permission-types), for the client apps to obtain an access token for a *user* successfully. To publish a scope, follow these steps:
+1. Select **Add a scope** button open the **Add a scope** screen and Enter the values as indicated below:
+    1. For **Scope name**, use `ToDoList.Read`.
+    1. For **Admin consent display name** type in *Read users ToDo list using the 'ciam-dotnet-api'*.
+    1. For **Admin consent description** type in *Allow the app to read the user's ToDo list using the 'ciam-dotnet-api'*.
+    1. Keep **State** as **Enabled**.
+    1. Select the **Add scope** button on the bottom to save this scope.
+    1. Repeat the steps above for another scope named **ToDoList.ReadWrite**
+1. Select the **Manifest** blade on the left.
+    1. Set `accessTokenAcceptedVersion` property to **2**.
+    1. Select on **Save**.
+
+> :information_source:  Follow [the principle of least privilege when publishing permissions](https://learn.microsoft.com/security/zero-trust/develop/protected-api-example) for a web API.
 
 ##### Publish Application Permissions
 
@@ -128,9 +141,9 @@ To manually register the apps, as a first step you'll need to:
     1. For **Display name**, enter a suitable name for your application permission, for instance **ToDoList.Read.All**.
     1. For **Allowed member types**, choose **Application** to ensure other applications can be granted this permission.
     1. For **Value**, enter **ToDoList.Read.All**.
-    1. For **Description**, enter *e.g. Allows the app to read the signed-in user's files.*.
+    1. For **Description**, enter *Allow the app to read every user's ToDo list using the 'ciam-dotnet-api'*.
     1. Select **Apply** to save your changes.
-    > Repeat the steps above for another app permission named **ToDoList.ReadWrite.All**
+    1. Repeat the steps above for another app permission named **ToDoList.ReadWrite.All**
 
 ##### Configure Optional Claims
 
@@ -141,31 +154,26 @@ To manually register the apps, as a first step you'll need to:
     > Indicates token type. This claim is the most accurate way for an API to determine if a token is an app token or an app+user token. This is not issued in tokens issued to users.
     1. Select **Add** to save your changes.
 
-##### Configure the service app (ciam-todolist-webapi) to use your app registration
+##### Configure the service app (ciam-dotnet-api) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `ToDoListApi\appsettings.json` file.
-1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
-1. Find the key `TenantId` and replace the existing value with your Azure AD tenant/directory ID.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-todolist-webapi` app copied from the Azure portal.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
+1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
+1. Find the key `Enter_the_Tenant_Name_Here` and replacxe the existing value with your Azure AD tenant domain.
 
-#### Register the client app (ciam-daemon-console-v2)
+#### Register the client app (ciam-dotnet-daemon)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-daemon-console-v2`.
+    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-daemon`.
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
-1. In the app's registration screen, select the **Authentication** blade to the left.
-1. If you don't have a platform added, select **Add a platform** and select the **Web** option.
-  
-    1. You can leave the **Redirect URI** field empty.
-    1. Click **Save** to save your changes.
 1. In the app's registration screen, select the **Certificates & secrets** blade in the left to open the page where you can generate secrets and upload certificates.
 1. In the **Client secrets** section, select **New client secret**:
     1. Type a key description (for instance `app secret`).
@@ -177,25 +185,23 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
     1. Select the **Add a permission** button and then:
     1. Ensure that the **My APIs** tab is selected.
-    1. In the list of APIs, select the API `ciam-todolist-webapi`.
-        1. We will select “Application permissions”, which should be the type of permissions that apps should use when they are authenticating just as themselves and not signing-in users. 
+    1. In the list of APIs, select the API `ciam-dotnet-api`.
+        1. We will select “Application permissions”, which should be the type of permissions that apps should use when they are authenticating just as themselves and not signing-in users.
    1. In the **Application permissions** section, select the **ToDoList.Read.All**, **ToDoList.ReadWrite.All** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly but since the client app does not allow users to interact, the users' themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
 
-##### Configure the client app (ciam-daemon-console-v2) to use your app registration
+##### Configure the client app (ciam-dotnet-daemon) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `ToDoListClient\appsettings.json` file.
-1. Find the key `Tenant` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
-1. Find the key `ClientId` and replace the existing value with the application ID (clientId) of `ciam-daemon-console-v2` app copied from the Azure portal.
-1. Find the key `ClientSecret` and replace the existing value with the generated secret that you saved during the creation of `ciam-daemon-console-v2` copied from the Azure portal.
-
-1. Open the `ToDoClient\appsettings.json` file.
-1. Find the value `[Enter here the scopes for your web API]` and it with `api:///<YOUR_API_CLIENT_ID>/.default`.
+1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-daemon` app copied from the Azure portal.
+1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value.
+1. Find the key `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-dotnet-daemon` copied from the Azure portal.
+1. Find the key `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 
 ### Step 4: Running the sample
 
@@ -219,7 +225,7 @@ This is a very simple sample showing how to perform basic create, read, update a
 
 If you configured the sample correctly, running the sample with `dotnet run` should produce the following output in your terminal:
 
-```
+```console
 Posting a to-do...
 Retrieving to-do's from server...
 To-do data:
@@ -252,10 +258,11 @@ Retrieving to-do's from server...
 There are no to-do's in server
 ```
 
+> :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
+
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUM1ZBMFc0S1VFUjhKOU4xVDNMWkRRSk5ZRS4u).
-
 
 ## Troubleshooting
 
@@ -296,7 +303,7 @@ var serviceProvider = tokenAcquirerFactory.Build();
 var toDoApiClient = serviceProvider.GetRequiredService<IDownstreamApi>();
 ```
 
-The `toDoApiClient` is already loaded with an in-memory cache for tokens and the configurations held within the `ToDoListClient\appsettings.json` file and the client credentials stored within that same file to immediately make calls to the `ToDoListApi`. 
+The `toDoApiClient` is already loaded with an in-memory cache for tokens and the configurations held within the `ToDoListClient\appsettings.json` file and the client credentials stored within that same file to immediately make calls to the `ToDoListApi`.
 
 The client can also make requests using the credentials out of the box for requests like **GET**, **POST** and **DELETE**. You can see examples of this throughout the code that can also deserialize JSON from request responses into C# objects with no further configuration.
 
@@ -330,7 +337,7 @@ There is one web API in this sample. To deploy it to **Azure App Services**, you
 
 > :warning: Please make sure that you have not switched on the *[Automatic authentication provided by App Service](https://docs.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service)*. It interferes the authentication code used in this code example.
 
-#### Publish your files (ciam-todolist-webapi)
+#### Publish your files (ciam-dotnet-api)
 
 ##### Publish using Visual Studio
 
