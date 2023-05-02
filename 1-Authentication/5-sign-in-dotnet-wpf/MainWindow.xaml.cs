@@ -24,7 +24,7 @@ namespace sign_in_dotnet_wpf
         /// <summary>
         /// Flow for acquiring an access token
         /// </summary>
-        private async void CallApiButton_Click(object sender, RoutedEventArgs e)
+        private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
@@ -32,29 +32,9 @@ namespace sign_in_dotnet_wpf
             TokenInfoText.Text = string.Empty;
 
             IAccount firstAccount;
-
-            switch(howToSignIn.SelectedIndex)
-            {
-                // 0: Use account used to signed-in in Windows (WAM)
-                case 0:
-                    // WAM will always get an account in the cache. So if we want
-                    // to have a chance to select the accounts interactively, we need to
-                    // force the non-account
-                    firstAccount = PublicClientApplication.OperatingSystemAccount;
-                    break;
-
-                //  1: Use one of the Accounts known by Windows(WAM)
-                case 1:
-                    // We force WAM to display the dialog with the accounts
-                    firstAccount = null;
-                    break;
-
-                //  Use any account(Azure AD). It's not using WAM
-                default:
-                    var accounts = await app.GetAccountsAsync();
-                    firstAccount = accounts.FirstOrDefault();
-                    break;
-            }
+            
+            var accounts = await app.GetAccountsAsync();
+            firstAccount = accounts.FirstOrDefault();
 
             try
             {
@@ -90,7 +70,7 @@ namespace sign_in_dotnet_wpf
             {
                 ResultText.Text = "Sign in was successful.";
                 DisplayBasicTokenInfo(authResult);
-                this.CallApiButton.Visibility = Visibility.Collapsed;
+                this.SignInButton.Visibility = Visibility.Collapsed;
                 this.SignOutButton.Visibility = Visibility.Visible;
             }
         }
@@ -108,7 +88,7 @@ namespace sign_in_dotnet_wpf
                     await App.PublicClientApp.RemoveAsync(accounts.FirstOrDefault());
                     this.ResultText.Text = "User has signed-out";
                     this.TokenInfoText.Text = string.Empty;
-                    this.CallApiButton.Visibility = Visibility.Visible;
+                    this.SignInButton.Visibility = Visibility.Visible;
                     this.SignOutButton.Visibility = Visibility.Collapsed;
                 }
                 catch (MsalException ex)
@@ -119,7 +99,7 @@ namespace sign_in_dotnet_wpf
         }
 
         /// <summary>
-        /// Display basic information contained in the token
+        /// Display basic information contained in the User 
         /// </summary>
         private void DisplayBasicTokenInfo(AuthenticationResult authResult)
         {
@@ -127,14 +107,10 @@ namespace sign_in_dotnet_wpf
             if (authResult != null)
             {
                 TokenInfoText.Text += $"Username: {authResult.Account.Username}" + Environment.NewLine;
+                TokenInfoText.Text += $"IdentityProvider: {authResult.Account.Environment}" + Environment.NewLine;
+                TokenInfoText.Text += $"{authResult.Account.HomeAccountId}" + Environment.NewLine;
                 TokenInfoText.Text += $"Token Expires: {authResult.ExpiresOn.ToLocalTime()}" + Environment.NewLine;
             }
-        }
-
-        private void UseWam_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            SignOutButton_Click(sender, e);
-            App.CreateApplication(howToSignIn.SelectedIndex != 2); // Not Azure AD accounts (that is use WAM accounts)
         }
     }
 }

@@ -1,7 +1,7 @@
 ---
 page_type: sample
 name: A WPF application authenticating users against Azure AD CIAM using .NET Core
-description: 
+description: This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application
 languages:
  - csharp
 products:
@@ -14,6 +14,7 @@ extensions:
 - endpoint: AAD v2.0
 - level: 100
 - client: WPF .NET Core app
+- service: 
 ---
 
 # A WPF application authenticating users against Azure AD CIAM using .NET Core
@@ -27,6 +28,7 @@ extensions:
 * [Explore the sample](#explore-the-sample)
 * [Troubleshooting](#troubleshooting)
 * [About the code](#about-the-code)
+* [Next Steps](#next-steps)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
@@ -46,6 +48,8 @@ This sample demonstrates a WPF .NET Core app that authenticates users against Az
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
 * An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
 * A user account in your **Azure AD CIAM** tenant.
+
+>This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
 
 ## Setup the sample
 
@@ -81,6 +85,7 @@ There is one project in this sample. To register it, you can:
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
+1. Ensure that you have PowerShell 7 or later which can be installed at [this link]([this link](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3)).
 1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
@@ -90,6 +95,8 @@ There is one project in this sample. To register it, you can:
     ```
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
+    
+
 </details>
 
 #### Choose the Azure AD CIAM tenant where you want to create your applications
@@ -141,8 +148,8 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-wpf-sign-in` app copied from the Azure portal.
+1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with your Azure AD tenant domain, ex. `contoso.onmicrosoft.com`.
 
 ### Step 4: Running the sample
 
@@ -155,17 +162,15 @@ From your shell or command line, execute the following commands:
 
 ## Explore the sample
 
-* After you launch the sample you should see a window with a `Sign-In` button and a combo-bo showing the options:
+> * Explain how to explore the sample.
+> * Insert a screenshot of the client application.
 
-![SignIn](./ReadmeFiles/SignInScreen.png)
-
-* After signing in you, the user should see a screen displaying that they have successfully signed-in and basic information about their account stored in the retrieved token.
-
-![UserDisplay](./ReadmeFiles/UserDisplay.png)
+> :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9p5WmglDttMunCjrD00y3NUM0FSM0U1RjdMWU1HVlZRNEZDRlhRTUs5UC4u).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](Enter_Survey_Form_Link).
+
 
 ## Troubleshooting
 
@@ -181,94 +186,18 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-The main configuration for the public client application is handled within the `App.xaml.cs` file. A `PublicClientApplication` is initialized along with a cache for storeing access tokens.
-
-```Csharp
-public static void CreateApplication(bool useWam)
-{
-    var builder = PublicClientApplicationBuilder.Create(ClientId)
-        .WithAuthority($"{Instance}{Tenant}")
-        .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
-        .WithDefaultRedirectUri();
-
-    //Use of Broker Requires redirect URI "ms-appx-web://microsoft.aad.brokerplugin/{client_id}" in app registration
-    if (useWam)
-    {
-        BrokerOptions brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows);
-        brokerOptions.ListOperatingSystemAccounts = true;
-        builder.WithBroker(brokerOptions);
-    }
-
-    _clientApp = builder.Build();
-    TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
-}
-```
-
-You can see how the token cache is initialized in the `TokenCacheHelper.cs` file and can read more about token caching in Desktop applications [here](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/active-directory/develop/msal-net-token-cache-serialization.md#desktop-apps).
-
-One important note is that in `CIAM` applications the authority `https://tenant.ciamlogin.com/` instead of `https://login.microsoft.com/` is used. (at time of writing `.WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")` is necessary to ensure the proper CIAM test slice is being used)
-
-Within the `MainWindow.xaml.cs` file you'll see the main workflow for signing users in.
-
-```Csharp
-try
-{
-    authResult = await app.AcquireTokenSilent(scopes, firstAccount)
-        .ExecuteAsync();
-}
-catch (MsalUiRequiredException ex)
-{
-    // A MsalUiRequiredException happened on AcquireTokenSilent. 
-    // This indicates you need to call AcquireTokenInteractive to acquire a token
-    System.Diagnostics.Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
-
-    try
-    {
-        authResult = await app.AcquireTokenInteractive(scopes)
-            .WithAccount(firstAccount)
-            .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle) // optional, used to center the browser on the window
-            .WithPrompt(Prompt.SelectAccount)
-            .ExecuteAsync();
-    }
-    catch (MsalException msalex)
-    {
-        ResultText.Text = $"Error Acquiring Token:{System.Environment.NewLine}{msalex}";
-    }
-}
-catch (Exception ex)
-{
-    ResultText.Text = $"Error Acquiring Token Silently:{System.Environment.NewLine}{ex}";
-    return;
-}
-```
-
-First, what the application will attempt to do is see if there's a cached token that can be used to sign the user in. Failing this, the user will be prompted to provide credentials and sign-in.
-
-Upon signing-out, the cache is cleared of all accounts and all corresponding access tokens.
-
-```Csharp
-private async void SignOutButton_Click(object sender, RoutedEventArgs e)
-{
-    var accounts = await App.PublicClientApp.GetAccountsAsync();
-    if (accounts.Any())
-    {
-        try
-        {
-            await App.PublicClientApp.RemoveAsync(accounts.FirstOrDefault());
-            this.ResultText.Text = "User has signed-out";
-            this.TokenInfoText.Text = string.Empty;
-            this.CallApiButton.Visibility = Visibility.Visible;
-            this.SignOutButton.Visibility = Visibility.Collapsed;
-        }
-        catch (MsalException ex)
-        {
-            ResultText.Text = $"Error signing-out user: {ex.Message}";
-        }
-    }
-}
-```
+> * Describe where the code uses auth libraries, or calls the graph
+> * Describe specific aspects (e.g. caching, validation etc.)
 
 </details>
+
+## Next Steps
+
+Learn how to:
+
+* [Change your app to sign-in users from any organization or Microsoft accounts](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-3-AnyOrgOrPersonal)
+* [Enable users from National clouds to sign-in to your application](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/1-WebApp-OIDC/1-4-Sovereign)
+* [Enable your web app to call a web API on behalf of the signed-in user](https://github.com/Azure-Samples/ms-identity-dotnetcore-ca-auth-context-app)
 
 ## Contributing
 
