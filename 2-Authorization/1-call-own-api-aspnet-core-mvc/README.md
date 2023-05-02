@@ -217,6 +217,11 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. In the list of APIs, select the API `ciam-dotnet-api`.
     1. In the **Delegated permissions** section, select **ToDoList.Read**, **ToDoList.ReadWrite** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
+    1. Select the **Add a permission** button and then:
+    1. Ensure that the **Microsoft APIs** tab is selected.
+    1. In the *Commonly used Microsoft APIs* section, select **Microsoft Graph**
+    1. In the **Delegated permissions** section, select **openid**, **offline_access** in the list. Use the search box if necessary.
+    1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly, but since it's a CIAM tenant, the users themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
 
 ##### Configure Optional Claims
@@ -228,7 +233,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     > Provides user's account status in tenant. If the user is a **member** of the tenant, the value is *0*. If they're a **guest**, the value is *1*.
     1. Select **Add** to save your changes.
 
-##### Configure the client app (TodoListClient) to use your app registration
+##### Configure the client app (ciam-aspnet-webapp) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
