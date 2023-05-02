@@ -156,8 +156,8 @@ From your shell or command line, execute the following commands:
 
 ## Explore the sample
 
-* After you launch the sample you should see a window with a `Sign-In` button and a combo-bo showing the options:
-
+* After you launch the sample you should see a window with a `Sign-In` button. Click the `Sign-In` button.
+  
 ![SignIn](./ReadmeFiles/SignInScreen.png)
 
 * After signing in you, the user should see a screen displaying that they have successfully signed-in and basic information about their account stored in the retrieved token.
