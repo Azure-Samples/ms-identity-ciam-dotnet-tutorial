@@ -160,7 +160,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-1. Open the `ToDoListApi\appsettings.json` file.
+1. Open the `ToDoListAPI\appsettings.json` file.
 1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
 1. Find the key `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the key `Enter_the_Tenant_Name_Here` and replacxe the existing value with your Azure AD tenant domain.
@@ -187,7 +187,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. Ensure that the **My APIs** tab is selected.
     1. In the list of APIs, select the API `ciam-dotnet-api`.
         1. We will select “Application permissions”, which should be the type of permissions that apps should use when they are authenticating just as themselves and not signing-in users.
-   1. In the **Application permissions** section, select the **ToDoList.Read.All**, **ToDoList.ReadWrite.All** in the list. Use the search box if necessary.
+    1. In the **Application permissions** section, select the **ToDoList.Read.All**, **ToDoList.ReadWrite.All** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly but since the client app does not allow users to interact, the users' themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
 
@@ -215,7 +215,7 @@ From your shell or command line, execute the following commands:
 Then, open a separate command terminal and run:
 
 ```console
-    cd 2-Authorization\3-call-own-api-dotnet-core-daemon\ToDoListApi
+    cd 2-Authorization\3-call-own-api-dotnet-core-daemon\ToDoListAPI
     dotnet run
 ```
 
@@ -303,7 +303,7 @@ var serviceProvider = tokenAcquirerFactory.Build();
 var toDoApiClient = serviceProvider.GetRequiredService<IDownstreamApi>();
 ```
 
-The `toDoApiClient` is already loaded with an in-memory cache for tokens and the configurations held within the `ToDoListClient\appsettings.json` file and the client credentials stored within that same file to immediately make calls to the `ToDoListApi`.
+The `toDoApiClient` is already loaded with an in-memory cache for tokens and the configurations held within the `ToDoListClient\appsettings.json` file and the client credentials stored within that same file to immediately make calls to the `ToDoListAPI`.
 
 The client can also make requests using the credentials out of the box for requests like **GET**, **POST** and **DELETE**. You can see examples of this throughout the code that can also deserialize JSON from request responses into C# objects with no further configuration.
 
@@ -319,9 +319,9 @@ var firstNewToDo = await toDoApiClient.PostForAppAsync<ToDo, ToDo>(
             });
 ```
 
-Please bare in mind that the `UserId` in this sample is generated for the sake of demonstration. In actual scenarios you would want to use the actual [Object ID](https://learn.microsoft.com/en-us/partner-center/find-ids-and-domain-names#find-the-user-object-id) of user's if you wanted a key to reference them.
+Please bare in mind that the `UserId` in this sample is generated for the sake of demonstration. In actual scenarios you would want to use the actual [Object ID](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id) of user's if you wanted a key to reference them.
 
-For further reading see the `IDownsIDownstreamApi` documentaiton [here](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identity.abstractions.idownstreamapi?view=msal-model-dotnet-latest).
+For further reading see the `IDownsIDownstreamApi` documentaiton [here](https://learn.microsoft.com/dotnet/api/microsoft.identity.abstractions.idownstreamapi?view=msal-model-dotnet-latest).
 
 ## How to deploy this sample to Azure
 

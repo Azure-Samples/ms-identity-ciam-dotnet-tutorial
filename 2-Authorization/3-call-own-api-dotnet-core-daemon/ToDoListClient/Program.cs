@@ -3,7 +3,7 @@ using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 using ToDoListClient.Models;
 
-const string ServiceName = "ToDoApi";
+const string ServiceName = "DownstreamApi";
 
 // Get the Token acquirer factory instance. By default it reads an appsettings.json
 // file if it exists in the same folder as the app (make sure that the 
@@ -13,7 +13,7 @@ var tokenAcquirerFactory = TokenAcquirerFactory.GetDefaultInstance();
 // Configure the application options to be read from the configuration
 // and add the services you need (Graph, token cache)
 tokenAcquirerFactory.Services.AddDownstreamApi(ServiceName,
-    tokenAcquirerFactory.Configuration.GetSection("ToDoApi"));
+    tokenAcquirerFactory.Configuration.GetSection("DownstreamApi"));
 
 // By default, you get an in-memory token cache.
 // For more token cache serialization options, see https://aka.ms/msal-net-token-cache-serialization
