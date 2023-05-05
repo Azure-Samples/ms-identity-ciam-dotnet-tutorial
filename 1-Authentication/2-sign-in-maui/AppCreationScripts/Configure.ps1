@@ -205,7 +205,7 @@ Function ConfigureApplications
     $currentAppId = $clientAadApplication.AppId
     $currentAppObjectId = $clientAadApplication.Id
 
-    $replyUrlsForApp = "msal$currentAppId`://auth", "msal$currentAppId://auth"
+    $replyUrlsForApp = "msal$currentAppId`://auth", "msal$currentAppId`://auth"
     Update-MgApplication -ApplicationId $currentAppObjectId -PublicClient @{RedirectUris=$replyUrlsForApp}
     $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
     #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-dotnet-maui")
@@ -252,7 +252,7 @@ Function ConfigureApplications
     # $configFile = $pwd.Path + "\..\appsettings.json"
     $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
     
-    $dictionary = @{ "Enter_the_Tenant_Name_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
+    $dictionary = @{ "Enter_the_Tenant_Subdomain_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
 
     Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
     $dictionary
