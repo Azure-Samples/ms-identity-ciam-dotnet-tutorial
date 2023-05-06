@@ -135,8 +135,8 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `appsettings.json` file.
-1. Find the key `Enter_the_Tenant_Name_Here` and replace the existing value with the name of your Azure AD for Customers tenant.
-1. Find the key `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `msal-dotnet-browserless` app copied from the Azure portal.
+1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
+1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `msal-dotnet-browserless` app copied from the Azure portal.
 
 ### Step 3: Running the sample
 

@@ -37,7 +37,7 @@
             "SettingFile": "\\..\\appsettings.json",
             "Mappings": [
                 {
-                    "key": "Enter_the_Tenant_Name_Here",
+                    "key": "Enter_the_Tenant_Subdomain_Here",
                     "value": "$tenantName"
                 },
                 {
