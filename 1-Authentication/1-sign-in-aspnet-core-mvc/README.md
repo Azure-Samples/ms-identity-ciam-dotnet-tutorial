@@ -7,7 +7,7 @@ languages:
 products:
  - azure-active-directory
  - microsoft-identity-web
-urlFragment: ms-identity-ciam-dotnet-tutorial
+urlFragment: ms-identity-ciam-dotnet-tutorial-1-sign-in-aspnet-core-mvc
 extensions:
     services: 
     - ms-identity
