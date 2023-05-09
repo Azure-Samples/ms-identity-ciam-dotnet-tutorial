@@ -7,7 +7,7 @@ languages:
 products:
  - azure-active-directory
  - msal-net
-urlFragment: ms-identity-ciam-dotnet-tutorial.git
+urlFragment: ms-identity-ciam-dotnet-tutorial-4-sign-in-device-code
 extensions:
     services: 
     - ms-identity
