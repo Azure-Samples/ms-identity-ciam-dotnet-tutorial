@@ -9,11 +9,16 @@ products:
  - microsoft-identity
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: DotNet
-- endpoint: AAD v2.0
-- level: 100
-- client: WPF .NET Core app
+    services: 
+    - ms-identity
+    platform: 
+    - DotNet
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 100
+    client: 
+    - WPF .NET Core app
 ---
 
 # A WPF application authenticating users against Azure AD CIAM using .NET Core
