@@ -8,12 +8,18 @@ products:
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: DotNetCore
-- endpoint: AAD v2.0
-- level: 200
-- client: .NET Core daemon app
-- service: .NET Core Web API
+    services: 
+    - ms-identity
+    platform: 
+    - DotNetCore
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 200
+    client: 
+    - .NET Core daemon app
+    service: 
+    - .NET Core Web API
 ---
 
 # A .NET Core daemon application calling a custom Web API with its own identity using a CIAM tenant

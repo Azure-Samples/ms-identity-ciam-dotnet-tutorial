@@ -9,12 +9,18 @@ products:
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: AspNetCore
-- endpoint: AAD v2.0
-- level: 200
-- client: ASP.NET Core Web App
-- service: ASP.NET Core Web API
+    services: 
+    - ms-identity
+    platform: 
+    - AspNetCore
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 200
+    client: 
+    - ASP.NET Core Web App
+    service: 
+    - ASP.NET Core Web API
 ---
 
 # How to secure an ASP.NET Core Web API with the Microsoft identity platform

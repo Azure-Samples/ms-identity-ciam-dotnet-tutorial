@@ -9,11 +9,16 @@ products:
  - msal-net
 urlFragment: ms-identity-ciam-dotnet-tutorial.git
 extensions:
-- services: ms-identity
-- platform: DotNet
-- endpoint: AAD v2.0
-- level: 100
-- client: Dotnet browserless application
+    services: 
+    - ms-identity
+    platform: 
+    - DotNet
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 100
+    client: 
+    - Dotnet browserless application
 ---
 
 # .NET browserless application using MSAL.NET to authenticate users with the device code flow against Azure AD for Customers

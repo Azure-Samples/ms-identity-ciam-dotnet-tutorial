@@ -9,12 +9,18 @@ products:
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: DotNetCore
-- endpoint: AAD v2.0
-- level: 200
-- client: Blazor Server App
-- service: ASP.NET Core Web API
+    services: 
+    - ms-identity
+    platform: 
+    - DotNetCore
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 200
+    client: 
+    - Blazor Server App
+    service: 
+    - ASP.NET Core Web API
 ---
 
 # How to secure a Blazor Server app with the Microsoft identity platform on CIAM

@@ -9,11 +9,16 @@ products:
  - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: DotNet
-- endpoint: AAD v2.0
-- level: 100
-- client: ASP.NET Core web app
+    services: 
+    - ms-identity
+    platform: 
+    - DotNet
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 100
+    client: 
+    - ASP.NET Core web app
 ---
 
 # An ASP.NET Core web app authenticating users against Azure AD CIAM using Microsoft Identity Web
