@@ -25,5 +25,5 @@ ms.date: 04/19/2023
 >    dotnet run
 >    ```
 >
-> 1. Visit `http://locahost:7274` in your browser, then follow the prompts.
+> 1. Visit `http://localhost:7274` in your browser, then follow the prompts.
 >
