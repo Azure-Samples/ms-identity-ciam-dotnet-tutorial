@@ -7,7 +7,7 @@ languages:
 products:
  - blazor-server
  - azure-active-directory
-urlFragment: ms-identity-ciam-dotnet-tutorial
+urlFragment: ms-identity-ciam-dotnet-tutorial-2-call-own-api-blazor-server
 extensions:
     services: 
     - ms-identity
