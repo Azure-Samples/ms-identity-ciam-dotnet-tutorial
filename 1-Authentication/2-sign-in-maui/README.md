@@ -9,11 +9,16 @@ products:
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial
 extensions:
-- services: ms-identity
-- platform: DotNet
-- endpoint: AAD v2.0
-- level: 100
-- client: MAUI App
+    services: 
+    - ms-identity
+    platform: 
+    - DotNet
+    endpoint: 
+    - AAD v2.0
+    level: 
+    - 100
+    client: 
+    - MAUI App
 ---
 
 # A .NET MAUI cross-platform app using MSAL.NET to authenticate users against Azure AD for Customers
