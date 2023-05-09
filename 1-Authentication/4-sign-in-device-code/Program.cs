@@ -6,7 +6,7 @@ var configuration =  new ConfigurationBuilder()
             
 var config = configuration.Build();
 var publicClientOptions = config.GetSection("AzureAd");
-var scopes = new string[] { };
+var scopes = new string[] { }; // by default, MSAL attaches OIDC scopes to every token request
 
 var app = PublicClientApplicationBuilder.Create(publicClientOptions.GetValue<string>("ClientId"))
     .WithAuthority(publicClientOptions.GetValue<string>("Authority"))
