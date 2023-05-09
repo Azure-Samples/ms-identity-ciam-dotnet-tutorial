@@ -4,6 +4,7 @@ languages:
 - csharp
 products:
 - microsoft-identity-web
+- msalnet
 description: "Tutorial: Enable your .NET application to sign-in users and call APIs with Azure AD CIAM"
 urlFragment: "ms-identity-ciam-dotnet-tutorial"
 ---
