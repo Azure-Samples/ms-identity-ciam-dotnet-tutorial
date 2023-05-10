@@ -5,7 +5,7 @@ description: This sample demonstrates a Blazor Server App calling a ASP.NET Core
 languages:
  - csharp
 products:
- - blazor-server
+ - blazor
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial-2-call-own-api-blazor-server
 extensions:
