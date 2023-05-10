@@ -5,7 +5,7 @@ description: Sign in to a CIAM tenant using MAUI
 languages:
  - csharp
 products:
- - msal-net
+ - msalnet
  - azure-active-directory
 urlFragment: ms-identity-ciam-dotnet-tutorial-2-sign-in-maui
 extensions:
