@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - azure-active-directory
-urlFragment: ms-identity-ciam-dotnet-tutorial
+urlFragment: ms-identity-ciam-dotnet-tutorial-3-call-own-api-dotnet-core-daemon
 extensions:
     services: 
     - ms-identity

@@ -7,7 +7,7 @@ languages:
 products:
  - aspnet-core
  - azure-active-directory
-urlFragment: ms-identity-ciam-dotnet-tutorial
+urlFragment: ms-identity-ciam-dotnet-tutorial-1-call-own-api-aspnet-core-mvc
 extensions:
     services: 
     - ms-identity
