@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - azure-active-directory
- - msal-net
+ - msalnet
 urlFragment: ms-identity-ciam-dotnet-tutorial-4-sign-in-device-code
 extensions:
     services: 
