@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - azure-active-directory
- - microsoft-identity
+ - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial-5-sign-in-dotnet-wpf
 extensions:
     services: 
