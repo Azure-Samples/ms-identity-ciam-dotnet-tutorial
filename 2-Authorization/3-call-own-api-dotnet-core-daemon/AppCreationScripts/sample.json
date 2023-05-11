@@ -6,7 +6,7 @@
         "Service": ".NET Core Web API",
         "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
         "Endpoint": "AAD v2.0",
-        "Description": "This sample demonstrates a .NET Core daemon app calling a ASP.NET Core Web API that is secured using Azure AD CIAM.",
+        "Description": "This sample demonstrates a .NET Core daemon app calling a ASP.NET Core Web API that is secured using Azure AD for Customers.",
         "Languages": [
             "csharp"
         ],

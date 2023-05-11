@@ -1,7 +1,7 @@
 ---
 page_type: sample
-name: A WPF application authenticating users against Azure AD CIAM using .NET Core
-description: This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application
+name: A WPF application authenticating users against Azure AD for Customers using .NET Core
+description: This sample demonstrates how to authenticate users using Azure AD for Customers and a WPF application
 languages:
  - csharp
 products:
@@ -21,7 +21,7 @@ extensions:
     - WPF .NET Core app
 ---
 
-# A WPF application authenticating users against Azure AD CIAM using .NET Core
+# A WPF application authenticating users against Azure AD for Customers using .NET Core
 
 [![Build status](https://identitydivision.visualstudio.com/IDDP/_apis/build/status/AAD%20Samples/.NET%20client%20samples/ASP.NET%20Core%20Web%20App%20tutorial)](https://identitydivision.visualstudio.com/IDDP/_build/latest?definitionId=XXX)
 
@@ -41,16 +41,16 @@ This sample demonstrates a WPF .NET Core app that authenticates users against Az
 
 ## Scenario
 
-1. The client WPF .NET Core app uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD CIAM**.
-1. The **ID Token** proves that the user has successfully authenticated against **Azure AD CIAM**.
+1. The client WPF .NET Core app uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
+1. The **ID Token** proves that the user has successfully authenticated against **Azure AD for Customers**.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
-* A user account in your **Azure AD CIAM** tenant.
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* A user account in your **Azure AD for Customers** tenant.
 
 ## Setup the sample
 
@@ -98,12 +98,12 @@ There is one project in this sample. To register it, you can:
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
 </details>
 
-#### Choose the Azure AD CIAM tenant where you want to create your applications
+#### Choose the Azure AD for Customers tenant where you want to create your applications
 
 To manually register the apps, as a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
+1. If your account is present in more than one Azure AD for Customers tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD for Customers tenant.
 
 #### Create User Flows
 
@@ -120,7 +120,7 @@ Please refer to:
 
 #### Register the client app (ciam-wpf-sign-in)
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
+1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
     1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-wpf-sign-in`.
