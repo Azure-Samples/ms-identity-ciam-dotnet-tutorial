@@ -5,11 +5,11 @@ languages:
 products:
 - microsoft-identity-web
 - msalnet
-description: "Tutorial: Enable your .NET application to sign-in users and call APIs with Azure AD CIAM"
+description: "Tutorial: Enable your .NET application to sign-in users and call APIs with Azure AD for Customers"
 urlFragment: "ms-identity-ciam-dotnet-tutorial"
 ---
 
-# Tutorial: Enable your .NET application to sign-in users and call APIs with Azure AD CIAM
+# Tutorial: Enable your .NET application to sign-in users and call APIs with Azure AD for Customers
 
 This tutorial aims to take you through the fundamentals of modern authentication with Azure AD Consumer Identity and Access Management (CIAM), using the [Microsoft Authentication Library for .NET](https://github.com/AzureAD/microsoft-authentication-library-for-js) and [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web).
 
@@ -33,18 +33,18 @@ Please refer to each sample's README for sample-specific recommendations.
 
 |               |               |
 |---------------|---------------|
-| <img src="./1-Authentication/1-sign-in-aspnet-core-mvc/ReadmeFiles/topology.png" width="200"> | [**Sign-in using ASP.NET Core web app**](./1-Authentication/1-sign-in-aspnet-core-mvc/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with **ID Tokens**. Learn how **single sign-on (SSO)** works. Learn to integrate with **user-flows** and **external identity providers**. |
-| <img src="./1-Authentication/2-sign-in-maui/ReadmeFiles/topology.png" width="200"> | [**Sign-in using MAUI Desktop app**](./1-Authentication/2-sign-in-maui/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with **ID Tokens**. Learn how **single sign-on (SSO)** works. Learn to integrate with **user-flows** and **external identity providers**. |
-| <img src="./1-Authentication/4-sign-in-device-code/ReadmeFiles/topology.png" width="200"> | [**Sign-in using device code flow**](./1-Authentication/4-sign-in-device-code/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with a **browserless device code flow**. Learn to integrate with **user-flows** and **external identity providers**. |
-| <img src="./1-Authentication/5-sign-in-dotnet-wpf/ReadmeFiles/topology.png" width="200"> | [**Sign-in using WPF**](./1-Authentication/5-sign-in-dotnet-wpf/README.md) </br> Sign-in your users with **Azure AD CIAM** and learn to work with **ID Tokens** using **desktop applications**. Learn to integrate with **user-flows** and **external identity providers**. |
+| <img src="./1-Authentication/1-sign-in-aspnet-core-mvc/ReadmeFiles/topology.png" width="200"> | [**Sign-in using ASP.NET Core web app**](./1-Authentication/1-sign-in-aspnet-core-mvc/README.md) </br> Sign-in your users with **Azure AD for Customers** and learn to work with **ID Tokens**. Learn how **single sign-on (SSO)** works. Learn to integrate with **user-flows** and **external identity providers**. |
+| <img src="./1-Authentication/2-sign-in-maui/ReadmeFiles/topology.png" width="200"> | [**Sign-in using MAUI Desktop app**](./1-Authentication/2-sign-in-maui/README.md) </br> Sign-in your users with **Azure AD for Customers** and learn to work with **ID Tokens**. Learn how **single sign-on (SSO)** works. Learn to integrate with **user-flows** and **external identity providers**. |
+| <img src="./1-Authentication/4-sign-in-device-code/ReadmeFiles/topology.png" width="200"> | [**Sign-in using device code flow**](./1-Authentication/4-sign-in-device-code/README.md) </br> Sign-in your users with **Azure AD for Customers** and learn to work with a **browserless device code flow**. Learn to integrate with **user-flows** and **external identity providers**. |
+| <img src="./1-Authentication/5-sign-in-dotnet-wpf/ReadmeFiles/topology.png" width="200"> | [**Sign-in using WPF**](./1-Authentication/5-sign-in-dotnet-wpf/README.md) </br> Sign-in your users with **Azure AD for Customers** and learn to work with **ID Tokens** using **desktop applications**. Learn to integrate with **user-flows** and **external identity providers**. |
 
 ### Chapter 2: Protect an API and call the API from your client app
 
 |               |               |
 |---------------|---------------|
-| <img src="./2-Authorization/1-call-own-api-aspnet-core-mvc/ReadmeFiles/topology.png" width="200"> | [**Use an ASP.NET Core web application and call a protected web API on Azure AD CIAM**](./2-Authorization/1-call-own-api-aspnet-core-mvc/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
-| <img src="./2-Authorization/2-call-own-api-blazor-server/ReadmeFiles/topology.png" width="200"> | [**Use a Blazor Server application and call a protected web API on Azure AD CIAM**](./2-Authorization/2-call-own-api-blazor-server/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD CIAM**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
-| <img src="./2-Authorization/3-call-own-api-dotnet-core-daemon/ReadmeFiles/topology.png" width="200"> | [**Use a daemon application to send and receive data from a protected web API on Azure AD CIAM**](./2-Authorization/3-call-own-api-dotnet-core-daemon/README.md) </br> Protect your web API with the **Azure AD CIAM**. Use a daemon application to acquire an **Access Token** for your web API and call your protected web API. |
+| <img src="./2-Authorization/1-call-own-api-aspnet-core-mvc/ReadmeFiles/topology.png" width="200"> | [**Use an ASP.NET Core web application and call a protected web API on Azure AD for Customers**](./2-Authorization/1-call-own-api-aspnet-core-mvc/README.md) </br> Protect your web API with the **Azure AD for Customers**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD for Customers**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
+| <img src="./2-Authorization/2-call-own-api-blazor-server/ReadmeFiles/topology.png" width="200"> | [**Use a Blazor Server application and call a protected web API on Azure AD for Customers**](./2-Authorization/2-call-own-api-blazor-server/README.md) </br> Protect your web API with the **Azure AD for Customers**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API.* | </br> Protect your web API with the **Azure AD for Customers**. Use a client application to sign-in a user, acquire an **Access Token** for your web API and call your protected web API. |
+| <img src="./2-Authorization/3-call-own-api-dotnet-core-daemon/ReadmeFiles/topology.png" width="200"> | [**Use a daemon application to send and receive data from a protected web API on Azure AD for Customers**](./2-Authorization/3-call-own-api-dotnet-core-daemon/README.md) </br> Protect your web API with the **Azure AD for Customers**. Use a daemon application to acquire an **Access Token** for your web API and call your protected web API. |
 
 ## We'd love your feedback
 

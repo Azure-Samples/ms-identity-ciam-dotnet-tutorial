@@ -1,6 +1,6 @@
 {
     "Sample": {
-        "Title": "An ASP.NET Core web app authenticating users against Azure AD CIAM using Microsoft Identity Web",
+        "Title": "An ASP.NET Core web app authenticating users against Azure AD for Customers using Microsoft Identity Web",
         "Level": 100,
         "Client": "ASP.NET Core web app",
         "Languages": [

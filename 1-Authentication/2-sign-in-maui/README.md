@@ -41,8 +41,8 @@ This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that au
 
 ## Scenario
 
-1. The client MAUI App uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD CIAM**.
-1. The **ID Token** proves that the user has successfully authenticated against **Azure AD CIAM**.
+1. The client MAUI App uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
+1. The **ID Token** proves that the user has successfully authenticated against **Azure AD for Customers**.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
@@ -51,8 +51,8 @@ This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that au
 * [Visual Studios](https://aka.ms/vsdownload) with the **MAUI** workload installed:
   * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
   * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
-* An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
-* A user account in your **Azure AD CIAM** tenant.
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* A user account in your **Azure AD for Customers** tenant.
 
 >This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
 
@@ -105,12 +105,12 @@ There is one project in this sample. To register it, you can:
 
 </details>
 
-#### Choose the Azure AD CIAM tenant where you want to create your applications
+#### Choose the Azure AD for Customers tenant where you want to create your applications
 
 To manually register the apps, as a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
+1. If your account is present in more than one Azure AD for Customers tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD for Customers tenant.
 
 #### Create User Flows
 
@@ -127,7 +127,7 @@ Please refer to:
 
 #### Register the client app (active-directory-maui-v2)
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
+1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
     1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-maui`.

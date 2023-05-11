@@ -1,6 +1,6 @@
 ---
 page_type: sample
-name: An ASP.NET Core web app authenticating users against Azure AD CIAM using Microsoft Identity Web
+name: An ASP.NET Core web app authenticating users against Azure AD for Customers using Microsoft Identity Web
 description: 
 languages:
  - csharp
@@ -21,7 +21,7 @@ extensions:
     - ASP.NET Core web app
 ---
 
-# An ASP.NET Core web app authenticating users against Azure AD CIAM using Microsoft Identity Web
+# An ASP.NET Core web app authenticating users against Azure AD for Customers using Microsoft Identity Web
 
 * [Overview](#overview)
 * [Scenario](#scenario)
@@ -35,20 +35,20 @@ extensions:
 
 ## Overview
 
-This sample demonstrates an ASP.NET Core web app that authenticates users against Azure AD CIAM with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web)
+This sample demonstrates an ASP.NET Core web app that authenticates users against Azure AD for Customers with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web)
 
 ## Scenario
 
-1. The client ASP.NET Core web app uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD CIAM**.
-1. The **ID Token** proves that the user has successfully authenticated against **Azure AD CIAM**.
+1. The client ASP.NET Core web app uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
+1. The **ID Token** proves that the user has successfully authenticated against **Azure AD for Customers**.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
-* A user account in your **Azure AD CIAM** tenant.
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* A user account in your **Azure AD for Customers** tenant.
 
 ## Setup the sample
 
@@ -99,12 +99,12 @@ There is one project in this sample. To register it, you can:
 
 </details>
 
-#### Choose the Azure AD CIAM tenant where you want to create your applications
+#### Choose the Azure AD for Customers tenant where you want to create your applications
 
 To manually register the apps, as a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
+1. If your account is present in more than one Azure AD for Customers tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD for Customers tenant.
 
 #### Create User Flows
 
@@ -121,7 +121,7 @@ Please refer to:
 
 #### Register the client app (ciam-aspnet-webapp)
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
+1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
     1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-aspnet-webapp`.
@@ -200,7 +200,7 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single Azure AD CIAM tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
+This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single Azure AD for Customers tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
 
 - Downloading the Azure AD metadata, finding the signing keys, and finding the issuer name for the tenant.
 - Processing OpenID Connect sign-in responses by validating the signature and issuer in an incoming JWT, extracting the user's claims, and putting the claims in `ClaimsPrincipal.Current`.

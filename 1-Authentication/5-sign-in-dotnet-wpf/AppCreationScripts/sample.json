@@ -1,6 +1,6 @@
 {
     "Sample": {
-        "Title": "A WPF application authenticating users against Azure AD CIAM using .NET Core",
+        "Title": "A WPF application authenticating users against Azure AD for Customers using .NET Core",
         "Level": 100,
         "Client": "WPF .NET Core app",
         "Languages": [
@@ -11,7 +11,7 @@
             "microsoft-identity"
         ],
         "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
-        "description": "This sample demonstrates how to authenticate users using Azure AD CIAM and a WPF application",
+        "description": "This sample demonstrates how to authenticate users using Azure AD for Customers and a WPF application",
         "Endpoint": "AAD v2.0",
         "Provider": "CIAM"
     },

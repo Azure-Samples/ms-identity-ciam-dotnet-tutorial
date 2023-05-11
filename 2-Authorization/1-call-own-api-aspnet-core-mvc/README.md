@@ -38,12 +38,12 @@ extensions:
 
 ## Overview
 
-This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API that is secured using Azure AD CIAM.
+This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API that is secured using Azure AD for Customers.
 
 ## Scenario
 
-1. The client ASP.NET Core Web App uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) and an [Access Token](https://aka.ms/access-tokens) from **Azure AD CIAM**.
-1. The **access token** is used as a *bearer* token to authorize the user to call the ASP.NET Core Web API protected by **Azure AD CIAM**.
+1. The client ASP.NET Core Web App uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) and an [Access Token](https://aka.ms/access-tokens) from **Azure AD for Customers**.
+1. The **access token** is used as a *bearer* token to authorize the user to call the ASP.NET Core Web API protected by **Azure AD for Customers**.
 1. The service uses the [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web) to protect the Web api, check permissions and validate tokens.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
@@ -51,8 +51,8 @@ This sample demonstrates a ASP.NET Core Web App calling a ASP.NET Core Web API t
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Azure AD CIAM** tenant. For more information, see: [How to get an Azure AD CIAM tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
-* A user account in your **Azure AD CIAM** tenant.
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* A user account in your **Azure AD for Customers** tenant.
 
 ## Setup the sample
 
@@ -109,12 +109,12 @@ There are two projects in this sample. Each needs to be separately registered in
 
 </details>
 
-#### Choose the Azure AD CIAM tenant where you want to create your applications
+#### Choose the Azure AD for Customers tenant where you want to create your applications
 
 To manually register the apps, as a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD CIAM tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD CIAM tenant.
+1. If your account is present in more than one Azure AD for Customers tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD for Customers tenant.
 
 #### Create User Flows
 
@@ -131,7 +131,7 @@ Please refer to:
 
 #### Register the service app (ciam-dotnet-api)
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
+1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
     1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-dotnet-api`.
@@ -195,7 +195,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 #### Register the client app (ciam-aspnet-webapp)
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD CIAM** service.
+1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
 1. Select the **App Registrations** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
     1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-aspnet-webapp`.
@@ -277,7 +277,7 @@ After successfully signing in, you should see the home screen with a greeting la
 
 ![home-screen](./ReadmeFiles/home-screen.png)
 
-You can click on the `To-Do's` button in the top navigation bar to see a todo list that interacts with your Azure AD CIAM protected API.
+You can click on the `To-Do's` button in the top navigation bar to see a todo list that interacts with your Azure AD for Customers protected API.
 
 ![home-screen](./ReadmeFiles/todo-list.png)
 
@@ -303,7 +303,7 @@ To provide feedback on or suggest features for Azure Active Directory, visit [Us
 
 ## About the code
 
-The setup for the main ASP.NET Core application happens in the `ToDoClient\Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD CIAM**.
+The setup for the main ASP.NET Core application happens in the `ToDoClient\Program.cs` file. An application is created and configured based on the settings found within the `appsettings.json` file including information such as the application's tenant id and the id for the application registered in **Azure AD for Customers**.
 
 ```Csharp
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
