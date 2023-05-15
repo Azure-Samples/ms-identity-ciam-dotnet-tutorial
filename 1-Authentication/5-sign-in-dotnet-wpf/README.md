@@ -202,7 +202,6 @@ public static void CreateApplication()
 
             var builder = PublicClientApplicationBuilder.Create(azureADConfig.ClientId)
                 .WithAuthority(azureADConfig.Authority)
-                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithDefaultRedirectUri();
 
             _clientApp = builder.Build();
@@ -211,8 +210,6 @@ public static void CreateApplication()
 ```
 
 You can see how the token cache is initialized in the `TokenCacheHelper.cs` file and can read more about token caching in Desktop applications [here](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/active-directory/develop/msal-net-token-cache-serialization.md#desktop-apps).
-
-One important note is that in `CIAM` applications the authority `https://tenant.ciamlogin.com/` instead of `https://login.microsoft.com/` is used. (at time of writing `.WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")` is necessary to ensure the proper CIAM test slice is being used)
 
 Within the `MainWindow.xaml.cs` file you'll see the main workflow for signing users in.
 
