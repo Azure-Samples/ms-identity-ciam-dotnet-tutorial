@@ -31,7 +31,6 @@ namespace sign_in_dotnet_wpf
 
             var builder = PublicClientApplicationBuilder.Create(azureADConfig.ClientId)
                 .WithAuthority(azureADConfig.Authority)
-                .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
                 .WithDefaultRedirectUri();
 
             _clientApp = builder.Build();

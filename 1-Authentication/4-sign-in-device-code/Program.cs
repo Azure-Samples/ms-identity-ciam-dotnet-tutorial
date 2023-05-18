@@ -10,7 +10,6 @@ var scopes = new string[] { }; // by default, MSAL attaches OIDC scopes to every
 
 var app = PublicClientApplicationBuilder.Create(publicClientOptions.GetValue<string>("ClientId"))
     .WithAuthority(publicClientOptions.GetValue<string>("Authority"))
-    .WithExtraQueryParameters("dc=ESTS-PUB-EUS-AZ1-FD000-TEST1")
     .Build();
 
 var result = await app.AcquireTokenWithDeviceCode(scopes, async deviceCode => {
