@@ -1,9 +1,7 @@
 using System.Windows;
 using System.Reflection;
 using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.Broker;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace sign_in_dotnet_wpf
 {
@@ -22,7 +20,7 @@ namespace sign_in_dotnet_wpf
         public static void CreateApplication()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using var stream = assembly.GetManifestResourceStream("call_own_api_dotnet_wpf.appsettings.json");
+            using var stream = assembly.GetManifestResourceStream("sign_in_dotnet_wpf.appsettings.json");
             AppConfiguration = new ConfigurationBuilder()
                .AddJsonStream(stream)
                .Build();
