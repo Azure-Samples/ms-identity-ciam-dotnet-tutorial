@@ -5,7 +5,7 @@ description:
 languages:
  - csharp
 products:
- - azure-active-directory
+ - entra-external-id
  - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial-1-sign-in-aspnet-core-mvc
 extensions:

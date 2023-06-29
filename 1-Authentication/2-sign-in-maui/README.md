@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - msalnet
- - azure-active-directory
+ - entra-external-id
 urlFragment: ms-identity-ciam-dotnet-tutorial-2-sign-in-maui
 extensions:
     services: 
