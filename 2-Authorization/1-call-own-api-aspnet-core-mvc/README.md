@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - aspnet-core
- - azure-active-directory
+ - entra-external-id
 urlFragment: ms-identity-ciam-dotnet-tutorial-1-call-own-api-aspnet-core-mvc
 extensions:
     services: 

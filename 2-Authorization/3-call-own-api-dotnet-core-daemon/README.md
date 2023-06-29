@@ -5,7 +5,7 @@ description: This sample demonstrates a .NET Core daemon app calling a ASP.NET C
 languages:
  - csharp
 products:
- - azure-active-directory
+ - entra-external-id
 urlFragment: ms-identity-ciam-dotnet-tutorial-3-call-own-api-dotnet-core-daemon
 extensions:
     services: 

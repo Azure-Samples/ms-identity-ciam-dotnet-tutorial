@@ -5,7 +5,7 @@ description: A .NET browserless application using MSAL.NET to authenticate users
 languages:
  - csharp
 products:
- - azure-active-directory
+ - entra-external-id
  - msalnet
 urlFragment: ms-identity-ciam-dotnet-tutorial-4-sign-in-device-code
 extensions:

@@ -6,7 +6,7 @@ languages:
  - csharp
 products:
  - blazor
- - azure-active-directory
+ - entra-external-id
 urlFragment: ms-identity-ciam-dotnet-tutorial-2-call-own-api-blazor-server
 extensions:
     services: 

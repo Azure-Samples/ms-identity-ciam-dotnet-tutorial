@@ -5,7 +5,7 @@ description: This sample demonstrates how to authenticate users using Azure AD f
 languages:
  - csharp
 products:
- - azure-active-directory
+ - entra-external-id
  - microsoft-identity-web
 urlFragment: ms-identity-ciam-dotnet-tutorial-5-sign-in-dotnet-wpf
 extensions:
