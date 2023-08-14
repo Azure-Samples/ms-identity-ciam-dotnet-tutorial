@@ -13,7 +13,7 @@ var app = PublicClientApplicationBuilder.Create(publicClientOptions.GetValue<str
     .Build();
 
 var result = await app.AcquireTokenWithDeviceCode(scopes, async deviceCode => {
-    Console.WriteLine($"In a broswer, navigate to the URL '{deviceCode.VerificationUrl}' and enter the code '{deviceCode.UserCode}'");
+    Console.WriteLine($"In a browser, navigate to the URL '{deviceCode.VerificationUrl}' and enter the code '{deviceCode.UserCode}'");
     await Task.FromResult(0);
 }).ExecuteAsync();
 
