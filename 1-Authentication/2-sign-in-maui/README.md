@@ -51,7 +51,7 @@ This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that au
 * [Visual Studios](https://aka.ms/vsdownload) with the **MAUI** workload installed:
   * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
   * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
-* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://learn.microsoft.com/entra/external-id/customers/how-to-create-customer-tenant-portal)
 * A user account in your **Azure AD for Customers** tenant.
 
 >This sample will not work with a **personal Microsoft account**. If you're signed in to the [Azure portal](https://portal.azure.com) with a personal Microsoft account and have not created a user account in your directory before, you will need to create one before proceeding.
