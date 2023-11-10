@@ -47,7 +47,7 @@ This sample demonstrates an ASP.NET Core web app that authenticates users agains
 ## Prerequisites
 
 * Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://github.com/microsoft/entra-previews/blob/PP2/docs/1-Create-a-CIAM-tenant.md)
+* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://learn.microsoft.com/entra/external-id/customers/overview-customers-ciam#create-a-dedicated-tenant-for-your-customer-scenarios)
 * A user account in your **Azure AD for Customers** tenant.
 
 ## Setup the sample
