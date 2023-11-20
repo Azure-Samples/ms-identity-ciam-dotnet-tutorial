@@ -40,24 +40,6 @@
                         "appId": "Enter_the_Application_Id_Here",
                         "tenantName": "Enter_the_Tenant_Subdomain_Here"
                     }
-                },
-                {
-                  "settingFile": "/Platforms/Android/MainActivity.cs",
-                  "replaceTokens": {
-                    "appId": "Enter_the_Application_Id_Here"
-                  }
-                },
-                {
-                  "settingFile": "/Platforms/Android/AndroidManifest.xml",
-                  "replaceTokens": {
-                    "appId": "Enter_the_Application_Id_Here"
-                  }
-                },
-                {
-                  "settingFile": "/Platforms/iOS/AppDelegate.cs",
-                  "replaceTokens": {
-                    "appId": "Enter_the_Application_Id_Here"
-                  }
                 }
             ]
         }
