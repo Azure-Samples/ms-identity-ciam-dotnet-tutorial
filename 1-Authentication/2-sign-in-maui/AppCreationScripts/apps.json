@@ -42,7 +42,7 @@
                     }
                 },
                 {
-                  "settingFile": "Platforms/Android/MainActivity.cs",
+                  "settingFile": "Platforms/Android/MsalActivity.cs",
                   "replaceTokens": {
                     "appId": "Enter_the_Application_Id_Here"
                   }
