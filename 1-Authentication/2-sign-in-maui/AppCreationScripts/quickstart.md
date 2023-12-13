@@ -24,8 +24,6 @@ ms.date: 12/08/2023
 >
 > - [.NET SDK v7](https://dotnet.microsoft.com/download/dotnet/7.0) or later.
 > - [Visual Studio 2022](https://aka.ms/vsdownloads) with the MAUI workload installed.
->    - [Instructions for Windows](/dotnet/maui/get-started/installation?tabs=vswin)
->    - [Instructions for macOS](/dotnet/maui/get-started/installation?tabs=vsmac)
 >
 > 1. Unzip the sample app.
 >
