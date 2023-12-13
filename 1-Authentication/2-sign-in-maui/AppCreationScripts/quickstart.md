@@ -26,8 +26,7 @@ ms.date: 12/08/2023
 > - [Visual Studio 2022](https://aka.ms/vsdownloads) with the MAUI workload installed.
 >
 > 1. Unzip the sample app.
->
-> .NET MAUI apps are designed to run on multiple operating systems and devices. You'll need to select which target you want to test and debug your app with.
+> 2. Open the solution in Visual Studio (/ms-identity-ciam-dotnet-tutorial/1-Authentication/2-sign-in-maui)
 
 ## Run and test .NET MAUI Windows app
 
