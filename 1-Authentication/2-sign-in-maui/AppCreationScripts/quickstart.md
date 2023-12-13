@@ -1,29 +1,60 @@
 ---
-title: "Portal quickstart for .NET MAUI cross-platform native app" 
-description: Learn how to run a sample .NET MAUI cross-platform native application to sign in users 
-services: active-directory 
-author: kengaderdus 
-manager: mwongerapk 
-ms.author: kengaderdus 
-ms.service: active-directory 
-ms.workload: identity 
-ROBOTS: NOINDEX 
-ms.subservice: ciam 
-ms.topic: portal 
-ms.date: 04/19/2023 
+title: "Quickstart: Run .NET MAUI sample app"
+description: Learn how to run .NET MAUI app to sign in and sign out users with Microsoft Entra External ID for customers tenant
+ 
+author: henrymbuguakiarie
+manager: mwongerapk
+ms.author: henrymbugua
+ms.service: active-directory
+ 
+ms.custom: devx-track-dotnet
+ROBOTS: NOINDEX
+ms.subservice: ciam
+ms.topic: conceptual
+ms.date: 12/08/2023
+#Customer intent: As a dev, devops, I want to learn how to run .NET MAUI app to sign in and sign out users with Microsoft Entra External ID for customers tenant
 ---
-# Portal quickstart for .NET MAUI app
 
-> In this quickstart, you download and run a code sample that demonstrates how a .NET MAUI cross-platform native app that can sign in users with Azure AD for Customers.
+# Portal quickstart for NET Multi-platform App UI
+
+> In this quickstart, you download and run a code sample that demonstrates how .NET Multi-platform App UI (.NET MAUI) can sign in users with Microsoft Entra External ID for customers.
 >
 > [!div renderon="portal" id="display-on-portal" class="sxs-lookup"]
+>1. Make sure you've installed:
 >
-> 1. Make sure you've installed [.NET SDK](https://dotnet.microsoft.com/download/dotnet/7.0) v7 or later.
-> 1. Unzip the downloaded file, locate the sample folder in your terminal, then run the following commands:
+> - [.NET SDK v7](https://dotnet.microsoft.com/download/dotnet/7.0) or later.
+> - [Visual Studio 2022](https://aka.ms/vsdownloads) with the MAUI workload installed.
 >
->    ```console
->    dotnet run
->    ```
+> 1. Unzip the sample app.
+> 2. Open the solution in Visual Studio (/ms-identity-ciam-dotnet-tutorial/1-Authentication/2-sign-in-maui)
+
+## Run and test .NET MAUI Windows app
+
+> The following steps demonstrate setting the **Debug Target** to _Windows_:
 >
-> 1. Wait for the app to launch, select **Sign-in** on the UI, then follow the prompts.
+> 1. Select **Debug Target** drop-down.
+> 1. Select **Framework**
+> 1. Select **net7.0-windows...**
 >
+> Run the app by pressing _F5_ or select the _play button_ at the top of Visual Studio.
+> After you run the app, the Windows app  appears automatically, then follow the prompts.
+
+## Run and test .NET MAUI Android app
+
+> The following steps demonstrate setting the **Debug Target** to Android:
+>
+> 1. Select **Debug Target** drop-down.
+> 1. Select **Android Emulators**.
+> 1. Select emulator device.
+> Run the app by pressing _F5_ or select the _play button_ at the top of Visual Studio.
+> After you run the app, the Android app window appears in an emulator, then follow the prompts.
+
+## Run and test .NET MAUI macOS app
+
+> The following steps demonstrate setting the **Debug Target** to _iOS Simulators_:
+>
+> 1. Select **Debug Target** drop-down.
+> 1. Select **iOS Simulators**.
+> 1. Select specific iOS simulator.
+> Select the _play button_ at the top of Visual Studio.
+> After you run the app, the iOS simulators window appears, then follow the prompts.
