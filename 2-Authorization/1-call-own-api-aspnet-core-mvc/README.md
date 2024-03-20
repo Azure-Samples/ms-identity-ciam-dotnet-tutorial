@@ -138,26 +138,24 @@ Please refer to:
     1. Under **Supported account types**, select **Accounts in this organizational directory only**
     1. Select **Register** to create the application.
 1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
-1. In the app's registration screen, select the **Authentication** blade to the left.
-1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
-    1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow the following steps:
-    1. Select **Set** next to the **Application ID URI** to generate a URI that is unique for this app.
+1. In the app's registration screen, select the **Expose an API** blade to the left to open the page where you can publish the permission as an API for which client applications can obtain [access tokens](https://aka.ms/access-tokens) for. The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI(Application ID URI), follow these steps:
+    1. Select **Add** next to the **Application ID URI** to generate a URI that is unique for this app.
     1. For this sample, accept the proposed Application ID URI (`api://{clientId}`) by selecting **Save**.
         > :information_source: Read more about Application ID URI at [Validation differences by supported account types (signInAudience)](https://docs.microsoft.com/azure/active-directory/develop/supported-accounts-validation).
 
 ##### Publish Delegated Permissions
 
 1. All APIs must publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code), also called [Delegated Permission](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#permission-types), for the client apps to obtain an access token for a *user* successfully. To publish a scope, follow these steps:
-1. Select **Add a scope** button open the **Add a scope** screen and Enter the values as indicated below:
-    1. For **Scope name**, use `ToDoList.Read`.
-    1. For **Admin consent display name** type in *Read users ToDo list using the 'TodoListApi'*.
-    1. For **Admin consent description** type in *Allow the app to read the user's ToDo list using the 'TodoListApi'*.
-    1. Keep **State** as **Enabled**.
-    1. Select the **Add scope** button on the bottom to save this scope.
-    1. Repeat the steps above for another scope named **ToDoList.ReadWrite**
-1. Select the **Manifest** blade on the left.
-    1. Set `accessTokenAcceptedVersion` property to **2**.
-    1. Select on **Save**.
+	1. Select **Add a scope** button open the **Add a scope** screen and Enter the values as indicated below:
+		1. For **Scope name**, use `ToDoList.Read`.
+		1. For **Admin consent display name** type in *Read users ToDo list using the 'TodoListApi'*.
+		1. For **Admin consent description** type in *Allow the app to read the user's ToDo list using the 'TodoListApi'*.
+		1. Keep **State** as **Enabled**.
+		1. Select the **Add scope** button on the bottom to save this scope.
+		1. Repeat the steps above for another scope named **ToDoList.ReadWrite**.
+	1. Select the **Manifest** blade on the left.
+		1. Set `accessTokenAcceptedVersion` property to **2**.
+		1. Select **Save**.
 
 > :information_source:  Follow [the principle of least privilege when publishing permissions](https://learn.microsoft.com/security/zero-trust/develop/protected-api-example) for a web API.
 
@@ -210,22 +208,21 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
     1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-callback-oidc`.
     1. Click **Save** to save your changes.
 1. In the app's registration screen, select the **Certificates & secrets** blade in the left to open the page where you can generate secrets and upload certificates.
-1. In the **Client secrets** section, select **New client secret**:
-    1. Type a key description (for instance `app secret`).
-    1. Select one of the available key durations (**6 months**, **12 months** or **Custom**) as per your security posture.
-    1. The generated key value will be displayed when you select the **Add** button. Copy and save the generated value for use in later steps.
-    1. You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
+	1. In the **Client secrets** section, select **New client secret**:
+	    1. Type a key description (for instance `app secret`).
+	    1. Select one of the available key durations (**6 months**, **12 months** or **Custom**) as per your security posture.
+	    1. The generated key value will be displayed when you select the **Add** button. Copy and save the generated value for use in later steps.
+	    1. You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
     > :warning: For enhanced security, consider using **certificates** instead of client secrets. See: [How to use certificates instead of secrets](./README-use-certificate.md).
-1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users.
-    1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
-    1. Select the **Add a permission** button and then:
-    1. Ensure that the **My APIs** tab is selected.
+1. Since this app signs-in users, we will now proceed to select **delegated permissions**, which is is required by apps signing-in users. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs:
+    1. Select the **Add a permission** button.
+    1. Ensure that the *APIs my organization uses* tab is selected.
     1. In the list of APIs, select the API `ciam-dotnet-api`.
     1. In the **Delegated permissions** section, select **ToDoList.Read**, **ToDoList.ReadWrite** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
-    1. Select the **Add a permission** button and then:
+    1. Select the **Add a permission** button again.
     1. Ensure that the **Microsoft APIs** tab is selected.
-    1. In the *Commonly used Microsoft APIs* section, select **Microsoft Graph**
+    1. In the *Microsoft APIs* tab, select **Microsoft Graph**
     1. In the **Delegated permissions** section, select **openid**, **offline_access** in the list. Use the search box if necessary.
     1. Select the **Add permissions** button at the bottom.
 1. At this stage, the permissions are assigned correctly, but since it's a CIAM tenant, the users themselves cannot consent to these permissions. To get around this problem, we'd let the [tenant administrator consent on behalf of all users in the tenant](https://docs.microsoft.com/azure/active-directory/develop/v2-admin-consent). Select the **Grant admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be a tenant admin to be able to carry out this operation.
@@ -269,7 +266,7 @@ Then, open a separate command terminal and run:
 
 ## Explore the sample
 
-After starting the application, go to the url `https://localhost:44321` in any web browse. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
+After starting the application, go to the url `https://localhost:7274` in any web browser. If you haven't signed in to a CIAM account already you will be prompted with a sign-in screen similar to what is shown below.
 
 ![sign-in-screen](./ReadmeFiles/login-screen.png)
 
@@ -307,8 +304,13 @@ The setup for the main ASP.NET Core application happens in the `ToDoClient\Progr
 
 ```Csharp
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
-        .EnableTokenAcquisitionToCallDownstreamApi()
-        .AddDownstreamApi("ToDoApi", builder.Configuration.GetSection("ToDoApi"))
+        .EnableTokenAcquisitionToCallDownstreamApi(
+            new string[] { 
+                builder.Configuration.GetSection("DownstreamApi:Scopes:Read").Get<string>()!, 
+                builder.Configuration.GetSection("DownstreamApi:Scopes:Write").Get<string>()!
+            }
+        )
+        .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
         .AddInMemoryTokenCaches();
 ```
 
