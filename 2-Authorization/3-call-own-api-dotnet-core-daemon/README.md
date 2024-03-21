@@ -171,8 +171,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the placeholder `Enter_the_Tenant_Id_Here` and replace the existing value with your Azure AD tenant/directory ID.
 1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
 
-    > [!IMPORTANT]  
-    > To use a CIAM custom domain instead, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
+    To use a CIAM custom domain instead, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
 
 #### Register the client app (ciam-dotnet-daemon)
 
@@ -210,8 +209,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-daemon` app copied from the Azure portal.
 1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
 
-    > [!IMPORTANT]  
-    > To use a CIAM custom domain instead, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
+    To use a CIAM custom domain instead, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
 
 1. Find the placeholder `Enter_the_Client_Secret_Here` and replace the existing value with the generated secret that you saved during the creation of `ciam-dotnet-daemon` copied from the Azure portal.
 1. Find the placeholder `Enter_the_Web_Api_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-api` app copied from the Azure portal.
