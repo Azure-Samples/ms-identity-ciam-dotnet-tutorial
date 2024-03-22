@@ -146,7 +146,8 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Open the `appsettings.json` file.
 1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
 1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
-    > To use a CIAM custom domain instead in the previous step, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
+
+    > ℹ️ To use a CIAM custom domain instead in the previous step, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
 
 ### Step 4: Running the sample
 
