@@ -37,7 +37,7 @@ extensions:
 
 ## Overview
 
-This sample demonstrates an ASP.NET Core web app that authenticates users against Microsoft Entra External ID with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web)
+This sample demonstrates an ASP.NET Core web app that authenticates users against Microsoft Entra External ID with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web).
 
 ## Scenario
 
@@ -56,7 +56,7 @@ This sample demonstrates an ASP.NET Core web app that authenticates users agains
 
 ## Register the web application in your tenant
 
-You can register an app in your tenant automatically by using Microsoft Graph PowerShell or via the Microsoft Entra Admin center.
+You can register an app in your tenant automatically by using Microsoft Graph PowerShell or via the Microsoft Entra admin center.
 
 When you use Microsoft Graph PowerShell, you automatically register the applications and related objects app secrets, then modify your project config files, so you can run the app without any further action:
 
@@ -97,7 +97,7 @@ To create a user flow a customer can use to sign in or sign up for an applicatio
 
 ## Clone or download sample web application
 
-To get the code for this sample web app, navigate to the **<> Code** icon on this page do either of the following
+To get the code for this sample web app, navigate to the **<> Code** icon on this page do either of the following;
 - Copy the **HTTPS** and clone using the URL in your terminal
 
     ```console
@@ -125,7 +125,8 @@ Were we successful in addressing your learning objective? Consider taking a mome
 <details>
 	<summary>Expand for troubleshooting info</summary>
 
-ASP.NET core applications create session cookies that represent the identity of the caller. Some Safari users using iOS 12 had issues which are described in ASP.NET Core #4467 and the Web kit bugs database Bug 188165 - iOS 12 Safari breaks ASP.NET Core 2.1 OIDC authentication.
+
+ASP.NET Core applications create session cookies that represent the identity of the caller. Some Safari users using iOS 12 had issues which are described in ASP.NET Core #4467 and the Web kit bugs database Bug 188165 - iOS 12 Safari breaks ASP.NET Core 2.1 OIDC authentication.
 
 If your web site needs to be accessed from users using iOS 12, you probably want to disable the SameSite protection, but also ensure that state changes are protected with CSRF anti-forgery mechanism. See the how to fix section of Microsoft Security Advisory: iOS12 breaks social, WSFed and OIDC logins #4647
 
@@ -151,7 +152,7 @@ These steps are encapsulated in the [Microsoft.Identity.Web](https://github.com/
 
 </details>
 
-### Deploying Web app to Azure App Service
+## Deploying Web app to Azure App Service
 
 There is one web app in this sample. To deploy it to **Azure App Services**, you'll need to:
 
@@ -162,18 +163,18 @@ There is one web app in this sample. To deploy it to **Azure App Services**, you
 <details>
 	<summary>Expand to learn more about how to publish your files</summary>
 
-#### Publish your files (ciam-aspnet-webapp)
+### Publish your files (ciam-aspnet-webapp)
 
-##### Publish using Visual Studio
+#### Publish using Visual Studio
 
 Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visualstudio/deployment/quickstart-deploy-to-azure).
 
-##### Publish using Visual Studio Code
+#### Publish using Visual Studio Code
 
 1. Install the Visual Studio Code extension [Azure App Service](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice).
 1. Follow the link to [Publish with Visual Studio Code](https://docs.microsoft.com/aspnet/core/tutorials/publish-to-azure-webapp-using-vscode)
 
-#### Update the CIAM app registration (ciam-aspnet-webapp)
+### Update the app registration
 
 1. Navigate back to to the [Azure portal](https://portal.azure.com).
 In the left-hand navigation pane, select the **Microsoft Entra ID** service, and then select **App registrations (Preview)**.
@@ -194,9 +195,9 @@ If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-## Learn More
+## See also
 
 * [Customize the default branding](https://learn.microsoft.com/en-us/entra/external-id/customers/how-to-customize-branding-customers)
 * [OAuth 2.0 device authorization grant flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code)
-* [Building Zero Trust ready apps](https://aka.ms/ztdevsession)
+* [Building Zero Trust ready apps](https://learn.microsoft.com/en-us/security/zero-trust/deploy/identity)
 * [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web)
