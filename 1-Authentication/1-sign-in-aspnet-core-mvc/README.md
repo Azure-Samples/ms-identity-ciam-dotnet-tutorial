@@ -43,11 +43,9 @@ This sample demonstrates an ASP.NET Core web app that authenticates users agains
 
 | Instruction | Description |
 | --- | --- |
-| **Use case** | A|
+| **Use case** | This code sample applies to external tenant configuration uses cases. For workforce use cases, refer to [Sign in users and call the Microsoft Graph API from an ASP.NET Core web app](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-web-app-dotnet-core-sign-in) |
 | **Scenario** | Sign-in a user to an ASP.NET Core web app using Microsoft Entra External ID |
-| **Add sign-in to your app** | TODO |
 | **Product documentation** | Explore  [Microsoft Entra External ID documentation](https://learn.microsoft.com/entra/external-id/customers/) |
-| **Clone the sample** | `git clone https://github.com/Azure-Samples/ms-identity-ciam-javascript-tutorial.git` |
 
 ## Prerequisites
 
@@ -187,6 +185,7 @@ In the left-hand navigation pane, select the **Microsoft Entra ID** service, and
     1. Update the **Front-channel logout URL** fields with the address of your service, for example [https://ciam-aspnet-webapp.azurewebsites.net](https://ciam-aspnet-webapp.azurewebsites.net)
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
+
 </details>
 
 ## Contributing
