@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Web" Version="2.*" />
-    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.*" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.18.0" />
+    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.18.0" />
   </ItemGroup>
 
   <PropertyGroup>
