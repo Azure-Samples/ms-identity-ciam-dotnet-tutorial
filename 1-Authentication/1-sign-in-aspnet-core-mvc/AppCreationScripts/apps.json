@@ -10,7 +10,7 @@
             "x-ms-name": "ms-identity-ciam-aspnet-webapp",
             "x-ms-version": "2.0",
             "oauth2AllowImplicitFlow": false,
-            "oauth2AllowIdTokenImplicitFlow": false,
+            "oauth2AllowIdTokenImplicitFlow": true,
             "x-ms-passwordCredentials": "Auto",
             "passwordCredentials": [
                 {
