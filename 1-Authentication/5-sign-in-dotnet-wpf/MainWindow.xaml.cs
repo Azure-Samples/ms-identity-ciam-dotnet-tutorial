@@ -9,12 +9,14 @@ namespace sign_in_dotnet_wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
- 
     public partial class MainWindow : Window
     {
-        // You can add more scopes to be retrieved within the access token here.
-        string[] scopes = new string[] { };
-
+        // By default, MSAL asks for the following scopes: 
+        // openid - to get an IdToken 
+        // profile - to get more details in the IdToken
+        // offline_access - to get a RefreshToken 
+        // If more scopes are needed, they can be specified in this array
+        private static readonly string[] s_scopes = [];
 
         public MainWindow()
         {
@@ -38,20 +40,22 @@ namespace sign_in_dotnet_wpf
 
             try
             {
-                authResult = await app.AcquireTokenSilent(scopes, firstAccount)
+                // Try to sign in silently the previously signed-in user
+                authResult = await app.AcquireTokenSilent(s_scopes, firstAccount)
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException ex)
             {
-                // A MsalUiRequiredException happened on AcquireTokenSilent. 
-                // This indicates you need to call AcquireTokenInteractive to acquire a token
+                // A MsalUiRequiredException happened on AcquireTokenSilent.
+                // This indicates you need to call AcquireTokenInteractive to acquire a token: 
+                // either the user never signed in, or the Identity Provider wants to run extra checks on the user, like MFA
                 System.Diagnostics.Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
 
                 try
                 {
-                    authResult = await app.AcquireTokenInteractive(scopes)
+                    authResult = await app.AcquireTokenInteractive(s_scopes)
                         .WithAccount(firstAccount)
-                        .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle) // optional, used to center the browser on the window
+                        .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle) 
                         .WithPrompt(Prompt.SelectAccount)
                         .ExecuteAsync();
                 }

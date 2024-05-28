@@ -2,6 +2,7 @@ using System.Windows;
 using System.Reflection;
 using Microsoft.Identity.Client;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace sign_in_dotnet_wpf
 {
@@ -16,6 +17,9 @@ namespace sign_in_dotnet_wpf
         {
             CreateApplication();
         }
+
+        public static IPublicClientApplication PublicClientApp { get { return _clientApp; } }
+
 
         public static void CreateApplication()
         {
@@ -32,11 +36,25 @@ namespace sign_in_dotnet_wpf
                 .WithDefaultRedirectUri();
 
             _clientApp = builder.Build();
-            TokenCacheHelper.EnableSerialization(_clientApp.UserTokenCache);
+
+            RegisterTokenCache();
         }
-        
+
+        private static void RegisterTokenCache()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var appName = assembly.GetName().Name;
+
+            // Configured only for Windows, but Mac and Linux options are available.
+            // On Windows, the data is encrypted using DPAPI
+            var storageProperties = new StorageCreationPropertiesBuilder(appName + ".msalcache.bin", MsalCacheHelper.UserRootDirectory)
+                   .Build();
+
+            var msalcachehelper = MsalCacheHelper.CreateAsync(storageProperties).GetAwaiter().GetResult();
+            msalcachehelper.RegisterCache(_clientApp.UserTokenCache);
+        }
+
         private static IPublicClientApplication _clientApp;
         private static IConfiguration AppConfiguration;
-        public static IPublicClientApplication PublicClientApp { get { return _clientApp; } }
     }
 }
