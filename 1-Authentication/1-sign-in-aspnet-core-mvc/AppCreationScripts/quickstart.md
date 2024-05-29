@@ -14,7 +14,7 @@ ms.date: 04/19/2023
 ---
 # Portal quickstart for ASP.NET Core Web App
 
-> In this quickstart, you download and run a code sample that demonstrates how an ASP.NET Core MVC web app can sign in users with Azure AD for Customers.
+> In this quickstart, you download and run a code sample that demonstrates how an ASP.NET Core MVC web app can sign in users with Microsoft Entra External ID.
 >
 > [!div renderon="portal" id="display-on-portal" class="sxs-lookup"]
 >

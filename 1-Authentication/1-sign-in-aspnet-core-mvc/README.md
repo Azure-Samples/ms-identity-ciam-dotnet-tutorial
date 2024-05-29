@@ -1,6 +1,6 @@
 ---
 page_type: sample
-name: An ASP.NET Core web app authenticating users against Azure AD for Customers using Microsoft Identity Web
+name: An ASP.NET Core web app authenticating users against Microsoft Entra External ID using Microsoft Identity Web
 description: 
 languages:
  - csharp
@@ -21,71 +21,55 @@ extensions:
     - ASP.NET Core web app
 ---
 
-# An ASP.NET Core web app authenticating users against Azure AD for Customers using Microsoft Identity Web
+# An ASP.NET Core web app authenticating users against Microsoft Entra External ID using Microsoft Identity Web
 
 * [Overview](#overview)
 * [Scenario](#scenario)
 * [Prerequisites](#prerequisites)
-* [Setup the sample](#setup-the-sample)
-* [Explore the sample](#explore-the-sample)
-* [Troubleshooting](#troubleshooting)
+* [Register the web app](#register-the-web-application-in-your-tenant)
+* [Add app client secret](#add-app-client-secret)
+* [Grant API permissions](#grant-api-permissions)
+* [Create a user flow](#create-a-user-flow)
+
 * [About the code](#about-the-code)
 * [Contributing](#contributing)
 * [Learn More](#learn-more)
 
 ## Overview
 
-This sample demonstrates an ASP.NET Core web app that authenticates users against Azure AD for Customers with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web)
+This sample demonstrates an ASP.NET Core web app that authenticates users against Microsoft Entra External ID with the help of [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web).
 
 ## Scenario
 
-1. The client ASP.NET Core web app uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
-1. The **ID Token** proves that the user has successfully authenticated against **Azure AD for Customers**.
-
-![Scenario Image](./ReadmeFiles/topology.png)
+| Instruction | Description |
+| --- | --- |
+| **Use case** | This code sample applies to external tenant configuration uses cases. For workforce use cases, refer to [Sign in users and call the Microsoft Graph API from an ASP.NET Core web app](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-web-app-dotnet-core-sign-in) |
+| **Scenario** | Sign-in a user to an ASP.NET Core web app using Microsoft Entra External ID |
+| **Product documentation** | Explore  [Microsoft Entra External ID documentation](https://learn.microsoft.com/entra/external-id/customers/) |
 
 ## Prerequisites
 
-* Either [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download) and [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Azure AD for Customers** tenant. For more information, see: [How to get an Azure AD for Customers tenant](https://learn.microsoft.com/entra/external-id/customers/how-to-create-customer-tenant-portal)
-* A user account in your **Azure AD for Customers** tenant.
+* An IDE such as [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download)
+* [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
+* An **Microsoft Entra External ID** tenant. For more information, see: [How to get a Microsoft Entra External ID tenant](https://learn.microsoft.com/entra/external-id/customers/how-to-create-customer-tenant-portal)
+* A user account in your **Microsoft Entra External ID** tenant.
 
-## Setup the sample
+## Register the web application in your tenant
 
-### Step 1: Clone or download this repository
+You can register an app in your tenant automatically by using Microsoft Graph PowerShell or via the Microsoft Entra admin center.
 
-From your shell or command line:
+When you use Microsoft Graph PowerShell, you automatically register the applications and related objects app secrets, then modify your project config files, so you can run the app without any further action:
 
-```console
-git clone https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial.git
-```
-
-or download and extract the repository *.zip* file.
-
-> :warning: To avoid path length limitations on Windows, we recommend cloning into a directory near the root of your drive.
-
-### Step 2: Navigate to project folder
-
-```console
-cd 1-Authentication\1-sign-in-aspnet-core-mvc
-```
-
-### Step 3: Register the sample application(s) in your tenant
-
-There is one project in this sample. To register it, you can:
-
-- follow the steps below for manually register your apps
-- or use PowerShell scripts that:
-  - **automatically** creates the Azure AD applications and related objects (passwords, permissions, dependencies) for you.
-  - modify the projects' configuration files.
+* To register your app in the Microsoft Entra admin center use the steps in [Sign in users for a sample ASP.NET web app in an external tenant](https://learn.microsoft.com/en-us/entra/external-id/customers/sample-web-app-dotnet-sign-in#register-the-web-app)
+* To register and configure your app automatically,
 
 <details>
-   <summary>Expand this section if you want to use this automation:</summary>
+   <summary>Expand this section</summary>
 
 > :warning: If you have never used **Microsoft Graph PowerShell** before, we recommend you go through the [App Creation Scripts Guide](./AppCreationScripts/AppCreationScripts.md) once to ensure that your environment is prepared correctly for this step.
 
 1. Ensure that you have [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3) or later.
-1. Run the script to create your Azure AD application and configure the code of the sample application accordingly.
+1. Run the script to create your Microsoft Entra application and configure the code of the sample application accordingly.
 1. For interactive process -in PowerShell, run:
 
     ```PowerShell
@@ -95,77 +79,40 @@ There is one project in this sample. To register it, you can:
 
 > Other ways of running the scripts are described in [App Creation Scripts guide](./AppCreationScripts/AppCreationScripts.md). The scripts also provide a guide to automated application registration, configuration and removal which can help in your CI/CD scenarios.
 
-> :information_source: This sample can make use of client certificates. You can use **AppCreationScripts** to register an Azure AD application with certificates. See: [How to use certificates instead of client secrets](./README-use-certificate.md)
+> :information_source: This sample can make use of client certificates. You can use **AppCreationScripts** to register a Microsoft Entra application with certificates. See: [How to use certificates instead of client secrets](./README-use-certificate.md)
 
 </details>
 
-#### Choose the Azure AD for Customers tenant where you want to create your applications
+## Add app client secret
 
-To manually register the apps, as a first step you'll need to:
+To create a client secret for the registered application, use the steps in [Add a client secret](https://learn.microsoft.com/en-us/entra/external-id/customers/sample-web-app-dotnet-sign-in#add-app-client-secret)
 
-1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD for Customers tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD for Customers tenant.
+## Grant API permissions
 
-#### Create User Flows
+To grant delegated permissions, use the steps in [Grant API permissions](https://learn.microsoft.com/en-us/entra/external-id/customers/sample-web-app-dotnet-sign-in#grant-api-permissions).
 
-Please refer to: [Tutorial: Create user flow in Azure Active Directory CIAM](https://github.com/microsoft/entra-previews/blob/PP2/docs/3-Create-sign-up-and-sign-in-user-flow.md)
+## Create a user flow
 
-> :information_source: To enable password reset in Customer Identity Access Management (CIAM) in Azure Active Directory (Azure AD), please refer to: [Tutorial: Enable self-service password reset](https://github.com/microsoft/entra-previews/blob/PP2/docs/4-Enable-password-reset.md)
+To create a user flow a customer can use to sign in or sign up for an application, use the steps in [Create a user flow](https://learn.microsoft.com/en-us/entra/external-id/customers/sample-web-app-dotnet-sign-in#create-a-user-flow)
 
-#### Add External Identity Providers
+## Clone or download sample web application
 
-Please refer to:
+To get the code for this sample web app, navigate to the **<> Code** icon on this page do either of the following;
+- Copy the **HTTPS** and clone using the URL in your terminal
 
-* [Tutorial: Add Google as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/6-Add-Google-identity-provider.md)
-* [Tutorial: Add Facebook as an identity provider](https://github.com/microsoft/entra-previews/blob/PP2/docs/7-Add-Facebook-identity-provider.md)
+    ```console
+    git clone https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial.git
+    ```
 
-#### Register the client app (ciam-aspnet-webapp)
+- [Download the .zip file](https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial/archive/refs/heads/main.zip) and extract it to a folder where the total length of the path is 260 or fewer characters.
 
-1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD for Customers** service.
-1. Select the **App Registrations** blade on the left, then select **New registration**.
-1. In the **Register an application page** that appears, enter your application's registration information:
-    1. In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ciam-aspnet-webapp`.
-    1. Under **Supported account types**, select **Accounts in this organizational directory only**
-    1. Select **Register** to create the application.
-1. In the **Overview** blade, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
-1. In the app's registration screen, select the **Authentication** blade to the left.
-1. If you don't have a platform added, select **Add a platform** and select the **Web** option.
-    1. In the **Redirect URI** section enter the following redirect URIs:
-        1. `https://localhost:7274/`
-        1. `https://localhost:7274/signin-oidc`
-    1. In the **Front-channel logout URL** section, set it to `https://localhost:7274/signout-callback-oidc`.
-    1. Enable **ID tokens** to be issued to the authorization endpoint.
-    1. Click **Save** to save your changes.
+## Configure the application
 
-##### Configure the client app (ciam-aspnet-webapp) to use your app registration
+You'll need to update your sample app so that it uses the settings of the web app that you registered. To do so, use the steps in [Configure the application](https://learn.microsoft.com/en-us/entra/external-id/customers/sample-web-app-dotnet-sign-in#configure-the-application).
 
-Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
+## Run and test the sample
 
-> In the steps below, "ClientID" is the same as "Application ID" or "AppId".
-
-1. Open the `appsettings.json` file.
-1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-aspnet-webapp` app copied from the Azure portal.
-1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
-
-    > ℹ️ To use a CIAM custom domain instead in the previous step, you can replace the entire `https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/` placeholder with the (custom domain)/tenant/v2.0. For instance, if you custom domain is *contoso.ciamcustom.com*, you can use `https://contoso.consotoextensibility.com/tenant/v2.0`.
-
-### Step 4: Running the sample
-
-From your shell or command line, execute the following commands:
-
-```console
-    cd 1-Authentication\1-sign-in-aspnet-core-mvc
-    dotnet run
-```
-
-## Explore the sample
-
-1. Open your web browser and navigate to <https://localhost:7274>.
-1. Sign-in with an account registered to the CIAM tenant.
-1. You should now see your display name next to a **Sign out** button.
-1. When you're done exploring you can end the session and sign out with the **Sign out** button
-
-![screenshot](./ReadmeFiles/mainpage.png)
+You can now test the sample web app. Open your web browser and navigate to <https://localhost:7274> and sign in with an account registered to the external tenant.
 
 > :information_source: Did the sample not work for you as expected? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
@@ -178,18 +125,22 @@ Were we successful in addressing your learning objective? Consider taking a mome
 <details>
 	<summary>Expand for troubleshooting info</summary>
 
-ASP.NET core applications create session cookies that represent the identity of the caller. Some Safari users using iOS 12 had issues which are described in ASP.NET Core #4467 and the Web kit bugs database Bug 188165 - iOS 12 Safari breaks ASP.NET Core 2.1 OIDC authentication.
+
+ASP.NET Core applications create session cookies that represent the identity of the caller. Some Safari users using iOS 12 had issues which are described in ASP.NET Core #4467 and the Web kit bugs database Bug 188165 - iOS 12 Safari breaks ASP.NET Core 2.1 OIDC authentication.
 
 If your web site needs to be accessed from users using iOS 12, you probably want to disable the SameSite protection, but also ensure that state changes are protected with CSRF anti-forgery mechanism. See the how to fix section of Microsoft Security Advisory: iOS12 breaks social, WSFed and OIDC logins #4647
 
-To provide feedback on or suggest features for Azure Active Directory, visit [User Voice page](https://feedback.azure.com/d365community/forum/79b1327d-d925-ec11-b6e6-000d3a4f06a4).
+To provide feedback on or suggest features for Microsoft Entra ID, visit [User Voice page](https://feedback.azure.com/d365community/forum/79b1327d-d925-ec11-b6e6-000d3a4f06a4).
 </details>
 
 ## About the code
 
-This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single Azure AD for Customers tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Azure AD tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
+<details>
+	<summary>Expand to learn more about the code</summary>
 
-- Downloading the Azure AD metadata, finding the signing keys, and finding the issuer name for the tenant.
+This sample shows how to use the OpenID Connect ASP.NET Core middleware to sign in users from a single Microsoft Entra External ID tenant. The middleware is initialized in the `Program.cs` file by passing it the Client ID of the app, and the URL of the Microsoft Entra tenant where the app is registered. These values are  read from the `appsettings.json` file. The middleware takes care of:
+
+- Downloading the Microsoft Entra metadata, finding the signing keys, and finding the issuer name for the tenant.
 - Processing OpenID Connect sign-in responses by validating the signature and issuer in an incoming JWT, extracting the user's claims, and putting the claims in `ClaimsPrincipal.Current`.
 - Integrating with the session cookie ASP.NET Core middleware to establish a session for the user.
 
@@ -199,7 +150,9 @@ The middleware in this project is created as a part of the open-source [ASP.NET 
 
 These steps are encapsulated in the [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web/wiki) library.
 
-### Deploying Web app to Azure App Service
+</details>
+
+## Deploying Web app to Azure App Service
 
 There is one web app in this sample. To deploy it to **Azure App Services**, you'll need to:
 
@@ -207,21 +160,24 @@ There is one web app in this sample. To deploy it to **Azure App Services**, you
 - publish the projects to the **App Services**, and
 - update its client(s) to call the website instead of the local environment.
 
-#### Publish your files (ciam-aspnet-webapp)
+<details>
+	<summary>Expand to learn more about how to publish your files</summary>
 
-##### Publish using Visual Studio
+### Publish your files (ciam-aspnet-webapp)
+
+#### Publish using Visual Studio
 
 Follow the link to [Publish with Visual Studio](https://docs.microsoft.com/visualstudio/deployment/quickstart-deploy-to-azure).
 
-##### Publish using Visual Studio Code
+#### Publish using Visual Studio Code
 
 1. Install the Visual Studio Code extension [Azure App Service](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice).
 1. Follow the link to [Publish with Visual Studio Code](https://docs.microsoft.com/aspnet/core/tutorials/publish-to-azure-webapp-using-vscode)
 
-#### Update the CIAM app registration (ciam-aspnet-webapp)
+### Update the app registration
 
 1. Navigate back to to the [Azure portal](https://portal.azure.com).
-In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations (Preview)**.
+In the left-hand navigation pane, select the **Microsoft Entra ID** service, and then select **App registrations (Preview)**.
 1. In the resulting screen, select the `ciam-aspnet-webapp` application.
 1. In the app's registration screen, select **Authentication** in the menu.
     1. In the **Redirect URIs** section, update the reply URLs to match the site URL of your Azure deployment. For example:
@@ -230,6 +186,7 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
     1. Update the **Front-channel logout URL** fields with the address of your service, for example [https://ciam-aspnet-webapp.azurewebsites.net](https://ciam-aspnet-webapp.azurewebsites.net)
 
 > :warning: If your app is using an *in-memory* storage, **Azure App Services** will spin down your web site if it is inactive, and any records that your app was keeping will be empty. In addition, if you increase the instance count of your website, requests will be distributed among the instances. Your app's records, therefore, will not be the same on each instance.
+
 </details>
 
 ## Contributing
@@ -238,10 +195,9 @@ If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-## Learn More
+## See also
 
-* [Customize the default branding](https://github.com/microsoft/entra-previews/blob/PP2/docs/5-Customize-default-branding.md)
-* [OAuth 2.0 device authorization grant flow](https://github.com/microsoft/entra-previews/blob/PP2/docs/9-OAuth2-device-code.md)
-* [Customize sign-in strings](https://github.com/microsoft/entra-previews/blob/PP2/docs/8-Customize-sign-in-strings.md)
-* [Building Zero Trust ready apps](https://aka.ms/ztdevsession)
+* [Customize the default branding](https://learn.microsoft.com/en-us/entra/external-id/customers/how-to-customize-branding-customers)
+* [OAuth 2.0 device authorization grant flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code)
+* [Building Zero Trust ready apps](https://learn.microsoft.com/en-us/security/zero-trust/deploy/identity)
 * [Microsoft.Identity.Web](https://aka.ms/microsoft-identity-web)

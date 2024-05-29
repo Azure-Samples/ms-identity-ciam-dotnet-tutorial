@@ -124,13 +124,15 @@ Afterwards, proceed to [Step 2](#configure-an-azure-ad-app-registration-to-use-a
 
 </details>
 
-### Configure an Azure AD app registration to use a certificate
+<a name='configure-an-azure-ad-app-registration-to-use-a-certificate'></a>
 
-Now you must associate your Azure AD app registration with the certificate you will use in your application.
+### Configure a Microsoft Entra app registration to use a certificate
+
+Now you must associate your Microsoft Entra app registration with the certificate you will use in your application.
 
 > :information_source: If you have the certificate locally available, you can follow the steps below. If your certificate(s) is on Azure Key Vault, you must first export and download them to your computer, and delete the local copy after following the steps below. See: [Export certificates from Azure Key Vault](https://learn.microsoft.com/azure/key-vault/certificates/how-to-export-certificate)
 
-1. Navigate to [Azure portal](https://portal.azure.com) and select your Azure AD app registration.
+1. Navigate to [Azure portal](https://portal.azure.com) and select your Microsoft Entra app registration.
 1. Select **Certificates & secrets** blade on the left.
 1. Click on **Upload** certificate and select the certificate file to upload (e.g. *ciam-aspnet-webapp*).
 1. Click **Add**. Once the certificate is uploaded, the *thumbprint*, *start date*, and *expiration* values are displayed. Record the *thumbprint* value as you will make use of it later in your app's configuration file.
