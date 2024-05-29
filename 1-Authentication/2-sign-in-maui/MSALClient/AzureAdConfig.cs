@@ -23,7 +23,7 @@ namespace SignInMaui.MSALClient
         public string Authority { get; set; }
 
         /// <summary>
-        /// Gets or sets the login instance for your CIAM tenant. In CIAM usually of the form https://<YOUR_DOMAIN>.b2clogin.com
+        /// Gets or sets the login instance for your CIAM tenant. In CIAM usually of the form https://YOUR_DOMAIN.b2clogin.com
         /// </summary>
         /// <value>
         /// The login instance for your CIAM tenant
