@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SignInMaui.Views.MainView"
-             Title="Microsoft identity platform"
+             Title="Microsoft Entra External ID"
              >
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" IsEnabled="False" />
@@ -15,13 +15,13 @@
             VerticalOptions="Center">
 
             <Image
-                Source="azure_active_directory.png"
-                SemanticProperties.Description="Azure Active Directory Logo"
+                Source="external_id.png"
+                SemanticProperties.Description="External ID"
                 HeightRequest="200"
                 HorizontalOptions="Center" />
 
             <Label 
-                Text="Azure AD for Customers"
+                Text="CIAM"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="26"
                 HorizontalOptions="Center" />
