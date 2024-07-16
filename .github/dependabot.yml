@@ -1,0 +1,21 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directories:
+    - "/1-Authentication/1-sign-in-aspnet-core-mvc"
+    - "/1-Authentication/2-sign-in-maui"
+    - "/1-Authentication/4-sign-in-device-code"
+    - "/1-Authentication/5-sign-in-dotnet-wpf"
+    - "/2-Authorization/1-call-own-api-aspnet-core-mvc"
+    - "/2-Authorization/2-call-own-api-blazor-server"
+    - "/2-Authorization/3-call-own-api-dotnet-core-daemon"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependabot"
+      - "dependencies"
