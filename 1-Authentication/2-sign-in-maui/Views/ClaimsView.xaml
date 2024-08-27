@@ -8,7 +8,7 @@
     </Shell.BackButtonBehavior>
     <VerticalStackLayout>
         <Label 
-            Text="Azure AD for Customers"
+            Text="CIAM"
             FontSize="26"
             HorizontalOptions="Center" />
         <Label 
