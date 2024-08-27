@@ -14,10 +14,10 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi(
-        new string[] {
+        [
             builder.Configuration.GetSection("DownstreamApi:Scopes:Read").Get<string>()!,
             builder.Configuration.GetSection("DownstreamApi:Scopes:Write").Get<string>()!
-        }
+        ]
     )
     .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
     .AddInMemoryTokenCaches();
