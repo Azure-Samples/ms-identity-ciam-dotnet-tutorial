@@ -51,7 +51,9 @@ This sample demonstrates an ASP.NET Core web app that authenticates users agains
 
 * An IDE such as [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/download)
 * [.NET Core SDK](https://www.microsoft.com/net/learn/get-started)
-* An **Microsoft Entra External ID** tenant. For more information, see: [How to get a Microsoft Entra External ID tenant](https://learn.microsoft.com/entra/external-id/customers/how-to-create-customer-tenant-portal)
+* An external tenant. To create one, choose from the following methods:
+    * (Recommended) Use the [Microsoft Entra External ID extension](https://aka.ms/ciamvscode/readme/marketplace) to set up an external tenant directly in Visual Studio Code.
+    * [Create a new external tenant](https://learn.microsoft.com/entra/external-id/customers/how-to-create-external-tenant-portal) in the Microsoft Entra admin center.
 * A user account in your **Microsoft Entra External ID** tenant.
 
 ## Register the web application in your tenant
