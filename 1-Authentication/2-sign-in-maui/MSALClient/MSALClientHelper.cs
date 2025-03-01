@@ -89,9 +89,7 @@ namespace SignInMaui.MSALClient
             // Initialize the MSAL library by building a public client application
             this.PublicClientApplication = this.PublicClientApplicationBuilder
                 .WithRedirectUri($"msal{PublicClientSingleton.Instance.MSALClientHelper.AzureAdConfig.ClientId}://auth")
-#if WINDOWS
-                .WithWindowsEmbeddedBrowserSupport()
-#endif
+                .WithRedirectUri("http://localhost")
                 .Build();
 
             await AttachTokenCache();
