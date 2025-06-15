@@ -70,6 +70,7 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows10.0.19041.0'">
 		<PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.61.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.864.35" />
 	</ItemGroup>
 
 	<ItemGroup>
