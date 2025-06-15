@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0-android;net7.0-ios</TargetFrameworks>
+		<TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
 		<!-- Uncomment the following line to build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 		<OutputType>Exe</OutputType>
 		<RootNamespace>SignInMaui</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -29,7 +29,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -61,15 +61,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.Identity.Client" Version="4.61.0" />
-	  <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.61.0" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Identity.Client" Version="4.64.0" />
+	  <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.64.0" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows10.0.19041.0'">
-		<PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.61.0" />
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows10.0.19041.0'">
+		<PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.64.0" />
 	</ItemGroup>
 
 	<ItemGroup>
