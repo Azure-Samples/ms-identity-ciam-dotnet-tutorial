@@ -31,8 +31,6 @@ public partial class ClaimsView : ContentPage
         }
     }
 
-    protected override bool OnBackButtonPressed() { return true; }
-
     private async void SignOutButton_Clicked(object sender, EventArgs e)
     {
         await PublicClientSingleton.Instance.SignOutAsync().ContinueWith((t) =>

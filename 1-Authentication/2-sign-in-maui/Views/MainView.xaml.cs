@@ -32,7 +32,6 @@ namespace SignInMaui.Views
             await PublicClientSingleton.Instance.AcquireTokenSilentAsync();
             await Shell.Current.GoToAsync("claimsview");
         }
-        protected override bool OnBackButtonPressed() { return true; }
 
     }
 }
