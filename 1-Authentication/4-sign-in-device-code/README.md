@@ -60,7 +60,7 @@ This sample demonstrates a .NET 7.0 browserless application that authenticates u
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial.git.git
+git clone https://github.com/Azure-Samples/ms-identity-ciam-dotnet-tutorial.git
 ```
 
 or download and extract the repository *.zip* file.
