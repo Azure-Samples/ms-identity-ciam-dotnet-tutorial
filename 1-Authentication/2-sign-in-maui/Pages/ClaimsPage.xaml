@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SignInMaui.Pages.ClaimsPage"
+             Title="ID Token View">
+
+    <Grid RowDefinitions="Auto,*,Auto"
+          Padding="30,20">
+
+        <!-- Pinned header -->
+        <Label
+            Grid.Row="0"
+            FontSize="18"
+            Text="Claims found in ID token"
+            HorizontalOptions="Center"
+            Padding="0,0,0,10" />
+
+        <!-- Scrollable claims list -->
+        <CollectionView
+            Grid.Row="1"
+            x:Name="Claims"
+            ItemsSource="{Binding IdTokenClaims}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label
+                        Text="{Binding}"
+                        HorizontalOptions="Center"
+                        Padding="0,4" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Pinned footer -->
+        <Button
+            Grid.Row="2"
+            x:Name="SignOutButton"
+            Text="Sign Out"
+            HorizontalOptions="Center"
+            Margin="0,15,0,0"
+            Clicked="SignOutButton_Clicked" />
+
+    </Grid>
+
+</ContentPage>

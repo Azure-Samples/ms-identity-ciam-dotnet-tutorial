@@ -1,27 +1,18 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Identity.Client;
 
-namespace MauiAppBasic.Platforms.Android.Resources
+namespace SignInMaui.Platforms.Android;
+
+/// <summary>
+/// Activity that handles the MSAL redirect URI callback from the system browser
+/// after Entra External ID authentication completes.
+/// The intent filter is declared in AndroidManifest.xml so that scripts can
+/// replace the placeholder client ID.
+/// </summary>
+[Activity(Exported = true, Name = "com.companyname.signinmaui.MsalActivity")]
+public class MsalActivity : BrowserTabActivity
 {
-    [Activity(Exported =true)]
-    [IntentFilter(new[] { Intent.ActionView },
-        Categories = new[] { Intent.CategoryBrowsable, Intent.CategoryDefault },
-        DataHost = "auth",
-        DataScheme = "msalEnter_the_Application_Id_Here")]
-    public class MsalActivity : BrowserTabActivity
-    {
-    }
 }

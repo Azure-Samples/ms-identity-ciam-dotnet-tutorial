@@ -22,7 +22,7 @@ ms.date: 12/08/2023
 > [!div renderon="portal" id="display-on-portal" class="sxs-lookup"]
 >1. Make sure you've installed:
 >
-> - [.NET SDK v7](https://dotnet.microsoft.com/download/dotnet/7.0) or later.
+> - [.NET SDK v10](https://dotnet.microsoft.com/download/dotnet/10.0) or later.
 > - [Visual Studio 2022](https://aka.ms/vsdownloads) with the MAUI workload installed.
 >
 > 1. Unzip the sample app.
@@ -34,7 +34,7 @@ ms.date: 12/08/2023
 >
 > 1. Select **Debug Target** drop-down.
 > 1. Select **Framework**
-> 1. Select **net7.0-windows...**
+> 1. Select **net10.0-windows...**
 >
 > Run the app by pressing _F5_ or select the _play button_ at the top of Visual Studio.
 > After you run the app, the Windows app  appears automatically, then follow the prompts.

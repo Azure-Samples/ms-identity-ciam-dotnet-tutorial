@@ -1,366 +1,316 @@
 #Requires -Version 7
- 
-[CmdletBinding()]
-param(
-    [Parameter(Mandatory=$False, HelpMessage='Tenant ID (This is a GUID which represents the "Directory ID" of the AzureAD tenant into which you want to create the apps')]
-    [string] $tenantId,
-    [Parameter(Mandatory=$False, HelpMessage='Azure environment to use while running the script. Default = Global')]
-    [string] $azureEnvironmentName
-)
 
 <#
- This script creates the Azure AD applications needed for this sample and updates the configuration files
- for the visual Studio projects from the data in the Azure AD applications.
+.SYNOPSIS
+    Creates the Azure AD app registration for this MAUI sample using Microsoft Graph PowerShell.
 
- In case you don't have Microsoft.Graph.Applications already installed, the script will automatically install it for the current user
- 
- There are two ways to run this script. For more information, read the AppCreationScripts.md file in the same folder as this script.
+.DESCRIPTION
+    This script creates an app registration in your Entra External ID (CIAM) tenant,
+    sets MSAL redirect URIs, grants openid/offline_access permissions, creates a
+    sign-up/sign-in user flow, and patches the sample configuration files.
+
+    Prerequisites: Microsoft Graph PowerShell SDK
+      Install-Module Microsoft.Graph.Applications -Scope CurrentUser
+      Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser
+
+.PARAMETER TenantId
+    Optional. The tenant ID (GUID) or domain (e.g., "contoso.onmicrosoft.com").
+
+.PARAMETER AppName
+    Optional. The app registration display name. Defaults to "ciam-dotnet-maui".
+
+.EXAMPLE
+    ./Configure.ps1
+    ./Configure.ps1 -TenantId "contoso.onmicrosoft.com"
 #>
 
-# Adds the requiredAccesses (expressed as a pipe separated string) to the requiredAccess structure
-# The exposed permissions are in the $exposedPermissions collection, and the type of permission (Scope | Role) is 
-# described in $permissionType
-Function AddResourcePermission($requiredAccess, `
-                               $exposedPermissions, [string]$requiredAccesses, [string]$permissionType)
-{
-    foreach($permission in $requiredAccesses.Trim().Split("|"))
-    {
-        foreach($exposedPermission in $exposedPermissions)
-        {
-            if ($exposedPermission.Value -eq $permission)
-                {
-                $resourceAccess = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphResourceAccess
-                $resourceAccess.Type = $permissionType # Scope = Delegated permissions | Role = Application permissions
-                $resourceAccess.Id = $exposedPermission.Id # Read directory data
-                $requiredAccess.ResourceAccess += $resourceAccess
-                }
-        }
-    }
-}
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $false)]
+    [string] $TenantId,
 
-#
-# Example: GetRequiredPermissions "Microsoft Graph"  "Graph.Read|User.Read"
-# See also: http://stackoverflow.com/questions/42164581/how-to-configure-a-new-azure-ad-application-through-powershell
-Function GetRequiredPermissions([string] $applicationDisplayName, [string] $requiredDelegatedPermissions, [string]$requiredApplicationPermissions, $servicePrincipal)
-{
-    # If we are passed the service principal we use it directly, otherwise we find it from the display name (which might not be unique)
-    if ($servicePrincipal)
-    {
-        $sp = $servicePrincipal
-    }
-    else
-    {
-        $sp = Get-MgServicePrincipal -Filter "DisplayName eq '$applicationDisplayName'"
-    }
-    $appid = $sp.AppId
-    $requiredAccess = New-Object Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess
-    $requiredAccess.ResourceAppId = $appid 
-    $requiredAccess.ResourceAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphResourceAccess]
+    [Parameter(Mandatory = $false)]
+    [string] $AppName = "ciam-dotnet-maui",
 
-    # $sp.Oauth2Permissions | Select Id,AdminConsentDisplayName,Value: To see the list of all the Delegated permissions for the application:
-    if ($requiredDelegatedPermissions)
-    {
-        AddResourcePermission $requiredAccess -exposedPermissions $sp.Oauth2PermissionScopes -requiredAccesses $requiredDelegatedPermissions -permissionType "Scope"
-    }
-    
-    # $sp.AppRoles | Select Id,AdminConsentDisplayName,Value: To see the list of all the Application permissions for the application
-    if ($requiredApplicationPermissions)
-    {
-        AddResourcePermission $requiredAccess -exposedPermissions $sp.AppRoles -requiredAccesses $requiredApplicationPermissions -permissionType "Role"
-    }
-    return $requiredAccess
-}
-
-
-<#.Description
-   This function takes a string input as a single line, matches a key value and replaces with the replacement value
-#> 
-Function UpdateLine([string] $line, [string] $value)
-{
-    $index = $line.IndexOf(':')
-    $lineEnd = ''
-
-    if($line[$line.Length - 1] -eq ','){   $lineEnd = ',' }
-    
-    if ($index -ige 0)
-    {
-        $line = $line.Substring(0, $index+1) + " " + '"' + $value+ '"' + $lineEnd
-    }
-    return $line
-}
-
-<#.Description
-   This function takes a dictionary of keys to search and their replacements and replaces the placeholders in a text file
-#> 
-Function UpdateTextFile([string] $configFilePath, [System.Collections.HashTable] $dictionary)
-{
-    $lines = Get-Content $configFilePath
-    $index = 0
-    while($index -lt $lines.Length)
-    {
-        $line = $lines[$index]
-        foreach($key in $dictionary.Keys)
-        {
-            if ($line.Contains($key))
-            {
-                $lines[$index] = UpdateLine $line $dictionary[$key]
-            }
-        }
-        $index++
-    }
-
-    Set-Content -Path $configFilePath -Value $lines -Force
-}
-
-<#.Description
-   This function takes a string input as a single line, matches a key value and replaces with the replacement value
-#>     
-Function ReplaceInLine([string] $line, [string] $key, [string] $value)
-{
-    $index = $line.IndexOf($key)
-    if ($index -ige 0)
-    {
-        $index2 = $index+$key.Length
-        $line = $line.Substring(0, $index) + $value + $line.Substring($index2)
-    }
-    return $line
-}
-
-<#.Description
-   This function takes a dictionary of keys to search and their replacements and replaces the placeholders in a text file
-#>     
-Function ReplaceInTextFile([string] $configFilePath, [System.Collections.HashTable] $dictionary)
-{
-    $lines = Get-Content $configFilePath
-    $index = 0
-    while($index -lt $lines.Length)
-    {
-        $line = $lines[$index]
-        foreach($key in $dictionary.Keys)
-        {
-            if ($line.Contains($key))
-            {
-                $lines[$index] = ReplaceInLine $line $key $dictionary[$key]
-            }
-        }
-        $index++
-    }
-
-    Set-Content -Path $configFilePath -Value $lines -Force
-}
-
-
-<#.Description
-   Primary entry method to create and configure app registrations
-#> 
-Function ConfigureApplications
-{
-    <#.Description
-       This function creates the Azure AD applications for the sample in the provided Azure AD tenant and updates the
-       configuration files in the client and service project  of the visual studio solution (App.Config and Web.Config)
-       so that they are consistent with the Applications parameters
-    #> 
-    
-    if (!$azureEnvironmentName)
-    {
-        $azureEnvironmentName = "Global"
-    }
-
-    # Connect to the Microsoft Graph API, non-interactive is not supported for the moment (Oct 2021)
-    Write-Host "Connecting to Microsoft Graph"
-    if ($tenantId -eq "") {
-        Connect-MgGraph -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
-    }
-    else {
-        Connect-MgGraph -TenantId $tenantId -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
-    }
-    
-    $context = Get-MgContext
-    $tenantId = $context.TenantId
-
-    # Get the user running the script
-    $currentUserPrincipalName = $context.Account
-    $user = Get-MgUser -Filter "UserPrincipalName eq '$($context.Account)'"
-
-    # get the tenant we signed in to
-    $Tenant = Get-MgOrganization
-    $tenantName = $Tenant.DisplayName
-    
-    $verifiedDomain = $Tenant.VerifiedDomains | where {$_.Isdefault -eq $true}
-    $verifiedDomainName = $verifiedDomain.Name
-    $tenantId = $Tenant.Id
-
-    Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
-
-   # Create the client AAD application
-   Write-Host "Creating the AAD application (ciam-dotnet-maui)"
-   # create the application 
-   $clientAadApplication = New-MgApplication -DisplayName "ciam-dotnet-maui" `
-                                                      -PublicClient `
-                                                      @{ `
-                                                        } `
-                                                       -SignInAudience AzureADMyOrg `
-                                                      #end of command
-
-    $currentAppId = $clientAadApplication.AppId
-    $currentAppObjectId = $clientAadApplication.Id
-
-    $replyUrlsForApp = "msal$currentAppId`://auth", "msal$currentAppId`://auth"
-    Update-MgApplication -ApplicationId $currentAppObjectId -PublicClient @{RedirectUris=$replyUrlsForApp}
-    $tenantName = (Get-MgApplication -ApplicationId $currentAppObjectId).PublisherDomain
-    #Update-MgApplication -ApplicationId $currentAppObjectId -IdentifierUris @("https://$tenantName/ciam-dotnet-maui")
-    
-    # create the service principal of the newly created application     
-    $clientServicePrincipal = New-MgServicePrincipal -AppId $currentAppId -Tags {WindowsAzureActiveDirectoryIntegratedApp}
-
-    # add the user running the script as an app owner if needed
-    $owner = Get-MgApplicationOwner -ApplicationId $currentAppObjectId
-    if ($owner -eq $null)
-    { 
-        New-MgApplicationOwnerByRef -ApplicationId $currentAppObjectId  -BodyParameter @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$user.ObjectId"}
-        Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($clientServicePrincipal.DisplayName)'"
-    }
-    Write-Host "Done creating the client application (ciam-dotnet-maui)"
-
-    # URL of the AAD application in the Azure portal
-    # Future? $clientPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$currentAppId+"/objectId/"+$currentAppObjectId+"/isMSAApp/"
-    $clientPortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/"+$currentAppId+"/isMSAApp~/false"
-
-    Add-Content -Value "<tr><td>client</td><td>$currentAppId</td><td><a href='$clientPortalUrl'>ciam-dotnet-maui</a></td></tr>" -Path createdApps.html
-    # Declare a list to hold RRA items    
-    $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Graph.PowerShell.Models.MicrosoftGraphRequiredResourceAccess]
-
-    # Add Required Resources Access (from 'client' to 'Microsoft Graph')
-    Write-Host "Getting access from 'client' to 'Microsoft Graph'"
-    $requiredPermission = GetRequiredPermissions -applicationDisplayName "Microsoft Graph"`
-        -requiredDelegatedPermissions "openid|offline_access"
-
-    $requiredResourcesAccess.Add($requiredPermission)
-    Write-Host "Added 'Microsoft Graph' to the RRA list."
-    # Useful for RRA additions troubleshooting
-    # $requiredResourcesAccess.Count
-    # $requiredResourcesAccess
-    
-    Update-MgApplication -ApplicationId $currentAppObjectId -RequiredResourceAccess $requiredResourcesAccess
-    Write-Host "Granted permissions."
-    
-
-    # print the registered app portal URL for any further navigation
-    Write-Host "Successfully registered and configured that app registration for 'ciam-dotnet-maui' at `n $clientPortalUrl" -ForegroundColor Green 
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\appsettings.json"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\appsettings.json"))
-    
-    $dictionary = @{ "Enter_the_Tenant_Subdomain_Here" = $tenantName.Split(".onmicrosoft.com")[0];"Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\Platforms\Android\MsalActivity.cs"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\Platforms\Android\MsalActivity.cs"))
-    
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\Platforms\Android\AndroidManifest.xml"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\Platforms\Android\AndroidManifest.xml"))
-    
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-    
-    # Update config file for 'client'
-    # $configFile = $pwd.Path + "\..\Platforms\iOS\AppDelegate.cs"
-    $configFile = $(Resolve-Path ($pwd.Path + "\..\Platforms\iOS\AppDelegate.cs"))
-    
-    $dictionary = @{ "Enter_the_Application_Id_Here" = $clientAadApplication.AppId };
-
-    Write-Host "Updating the sample config '$configFile' with the following config values:" -ForegroundColor Yellow 
-    $dictionary
-    Write-Host "-----------------"
-
-    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
-    Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
-    Write-Host "- For client"
-    Write-Host "  - Navigate to $clientPortalUrl"
-    Write-Host "  - Navigate to your tenant and create user flows to allow users to sign up for the application." -ForegroundColor Red 
-    Write-Host "  - The delegated permissions for the 'client' application require admin consent. Do remember to navigate to the application registration in the app portal and consent for those." -ForegroundColor Red 
-    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
-   
-Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  
-} # end of ConfigureApplications function
-
-# Pre-requisites
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph")) {
-    Install-Module "Microsoft.Graph" -Scope CurrentUser 
-}
-
-#Import-Module Microsoft.Graph
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Authentication")) {
-    Install-Module "Microsoft.Graph.Authentication" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Authentication
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Identity.DirectoryManagement")) {
-    Install-Module "Microsoft.Graph.Identity.DirectoryManagement" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Identity.DirectoryManagement
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Applications")) {
-    Install-Module "Microsoft.Graph.Applications" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Applications
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Groups")) {
-    Install-Module "Microsoft.Graph.Groups" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Groups
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Users")) {
-    Install-Module "Microsoft.Graph.Users" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Users
-
-Set-Content -Value "<html><body><table>" -Path createdApps.html
-Add-Content -Value "<thead><tr><th>Application</th><th>AppId</th><th>Url in the Azure portal</th></tr></thead><tbody>" -Path createdApps.html
+    [Parameter(Mandatory = $false)]
+    [string] $FlowName = "signup_signin"
+)
 
 $ErrorActionPreference = "Stop"
+$ProjectDir = Resolve-Path (Join-Path $PSScriptRoot "..")
 
-# Run interactively (will ask you for the tenant ID)
+# --- Ensure we have a tenant ---
+if (-not $TenantId) {
+    Write-Host ""
+    Write-Host "Enter your CIAM tenant domain prefix"
+    Write-Host "(e.g., 'contoso' from contoso.onmicrosoft.com): " -ForegroundColor Magenta -NoNewline
+    $TenantId = Read-Host
+    if ([string]::IsNullOrWhiteSpace($TenantId)) {
+        Write-Error "Tenant domain is required."
+        exit 1
+    }
+}
+if ($TenantId -notmatch "\.") {
+    $TenantId = "$TenantId.onmicrosoft.com"
+}
 
-try
-{
-    ConfigureApplications -tenantId $tenantId -environment $azureEnvironmentName
+# --- Ensure required modules are installed ---
+$requiredModules = @("Microsoft.Graph.Applications", "Microsoft.Graph.Identity.DirectoryManagement", "Microsoft.Graph.Identity.SignIns")
+foreach ($module in $requiredModules) {
+    if (-not (Get-Module -ListAvailable -Name $module)) {
+        Write-Host "Installing $module..."
+        Install-Module $module -Scope CurrentUser -Force
+    }
+    Import-Module $module
 }
-catch
-{
-    $_.Exception.ToString() | out-host
-    $message = $_
-    Write-Warning $Error[0]    
-    Write-Host "Unable to register apps. Error is $message." -ForegroundColor White -BackgroundColor Red
+
+# --- Connect to Microsoft Graph ---
+Write-Host ""
+Write-Host "Connecting to Microsoft Graph for tenant '$TenantId'..."
+Connect-MgGraph -TenantId $TenantId `
+    -Scopes "Application.ReadWrite.All", "Organization.Read.All", "IdentityUserFlow.ReadWrite.All" `
+    -NoWelcome
+
+$context = Get-MgContext
+$TenantId = $context.TenantId
+$AccountName = $context.Account
+
+$org = Get-MgOrganization
+$TenantDomain = ($org.VerifiedDomains | Where-Object { $_.IsDefault }).Name
+$TenantName = $TenantDomain -replace "\.onmicrosoft\.com$", ""
+
+Write-Host "Connected to tenant '$TenantName' ($TenantId) as '$AccountName'"
+
+# --- Check if app already exists ---
+$existingApp = Get-MgApplication -Filter "displayName eq '$AppName'" -Top 1 -ErrorAction SilentlyContinue
+
+if ($existingApp) {
+    Write-Host ""
+    Write-Host "App '$AppName' already exists with AppId: $($existingApp.AppId)"
+    $response = Read-Host "Delete and recreate? (y/N)"
+    if ($response -match "^[Yy]$") {
+        Remove-MgApplication -ApplicationId $existingApp.Id
+        Write-Host "Deleted existing app registration."
+        $existingApp = $null
+    }
 }
-Write-Host "Disconnecting from tenant"
-Disconnect-MgGraph
+
+# --- Create or reuse app ---
+if ($existingApp) {
+    $AppId = $existingApp.AppId
+    $ObjId = $existingApp.Id
+    Write-Host "Using existing app registration."
+} else {
+    Write-Host ""
+    Write-Host "Creating app registration '$AppName'..."
+
+    $graphPermission = @{
+        ResourceAppId  = "00000003-0000-0000-c000-000000000000"
+        ResourceAccess = @(
+            @{ Id = "37f7f235-527c-4136-accd-4a02d197296e"; Type = "Scope" },  # openid
+            @{ Id = "7427e0e9-2fba-42fe-b0c0-848c9e6a8182"; Type = "Scope" }   # offline_access
+        )
+    }
+
+    $app = New-MgApplication `
+        -DisplayName $AppName `
+        -SignInAudience "AzureADMyOrg" `
+        -IsFallbackPublicClient `
+        -RequiredResourceAccess @($graphPermission)
+
+    $AppId = $app.AppId
+    $ObjId = $app.Id
+    Write-Host "Created app with AppId: $AppId"
+
+    # Set redirect URIs
+    # - msal{clientId}://auth  — iOS, Android, Mac Catalyst (custom scheme)
+    # - http://localhost        — Windows (embedded WebView2 via MSAL Desktop WinUI3)
+    Update-MgApplication -ApplicationId $ObjId -PublicClient @{
+        RedirectUris = @("msal${AppId}://auth", "http://localhost")
+    }
+    Write-Host "Set redirect URIs: msal${AppId}://auth, http://localhost"
+
+    # Create service principal
+    try {
+        New-MgServicePrincipal -AppId $AppId -ErrorAction Stop | Out-Null
+        Write-Host "Created service principal."
+        Write-Host "  Waiting for propagation..."
+        Start-Sleep -Seconds 5
+    } catch {
+        Write-Host "Service principal already exists (non-fatal)."
+    }
+}
+
+$PortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
+
+# --- Patch configuration files ---
+Write-Host ""
+Write-Host "Updating configuration files..."
+
+# appsettings.json
+$appSettingsPath = Join-Path $ProjectDir "appsettings.json"
+if (Test-Path $appSettingsPath) {
+    $appSettings = Get-Content $appSettingsPath -Raw | ConvertFrom-Json
+    $appSettings.AzureAd.Authority = "https://$TenantName.ciamlogin.com/"
+    $appSettings.AzureAd.ClientId = $AppId
+    $appSettings | ConvertTo-Json -Depth 10 | Set-Content $appSettingsPath -Encoding UTF8
+    Write-Host "  ✅ appsettings.json"
+} else {
+    Write-Host "  ❌ appsettings.json — file not found"
+}
+
+# AndroidManifest.xml
+$manifestPath = Join-Path $ProjectDir "Platforms" "Android" "AndroidManifest.xml"
+if (Test-Path $manifestPath) {
+    [xml]$manifest = Get-Content $manifestPath
+    $ns = New-Object System.Xml.XmlNamespaceManager($manifest.NameTable)
+    $ns.AddNamespace("android", "http://schemas.android.com/apk/res/android")
+    $dataNodes = $manifest.SelectNodes("//data[@android:host='auth']", $ns)
+    foreach ($node in $dataNodes) {
+        $null = $node.SetAttribute("scheme", "http://schemas.android.com/apk/res/android", "msal$AppId")
+    }
+    $manifest.Save($manifestPath)
+    Write-Host "  ✅ AndroidManifest.xml"
+} else {
+    Write-Host "  ❌ AndroidManifest.xml — file not found"
+}
+
+# Info.plist
+$plistPath = Join-Path $ProjectDir "Platforms" "iOS" "Info.plist"
+if (Test-Path $plistPath) {
+    [xml]$plist = Get-Content $plistPath
+    $strings = $plist.SelectNodes("//string")
+    foreach ($s in $strings) {
+        if ($s.InnerText -match "^msal") {
+            $null = ($s.InnerText = "msal$AppId")
+        }
+    }
+    $plist.Save($plistPath)
+    Write-Host "  ✅ Info.plist"
+} else {
+    Write-Host "  ❌ Info.plist — file not found"
+}
+
+# --- Create user flow ---
+Write-Host ""
+Write-Host "Setting up sign-up/sign-in user flow..."
+
+# Check if flow already exists
+$existingFlows = $null
+try {
+    $existingFlows = Invoke-MgGraphRequest -Method GET `
+        -Uri "/v1.0/identity/authenticationEventsFlows" `
+        -ErrorAction Stop
+} catch {
+    # May fail on non-CIAM tenants
+}
+
+$existingFlow = $null
+if ($existingFlows.value) {
+    $existingFlow = $existingFlows.value | Where-Object { $_.displayName -eq $FlowName } | Select-Object -First 1
+}
+
+if ($existingFlow) {
+    Write-Host "  ✅ User flow '$FlowName' already exists (id: $($existingFlow.id))."
+
+    # Ensure app is linked
+    $linked = Invoke-MgGraphRequest -Method GET `
+        -Uri "/v1.0/identity/authenticationEventsFlows/$($existingFlow.id)/conditions/applications/includeApplications"
+    $linkedAppIds = @()
+    if ($linked.value) {
+        $linkedAppIds = $linked.value | ForEach-Object { $_.appId }
+    }
+
+    if ($linkedAppIds -contains $AppId) {
+        Write-Host "  ✅ App already linked to flow."
+    } else {
+        $linked = $false
+        for ($attempt = 1; $attempt -le 5; $attempt++) {
+            try {
+                $null = Invoke-MgGraphRequest -Method POST `
+                    -Uri "/v1.0/identity/authenticationEventsFlows/$($existingFlow.id)/conditions/applications/includeApplications" `
+                    -Body @{ appId = $AppId } `
+                    -ErrorAction Stop
+                Write-Host "  ✅ App linked to existing flow."
+                $linked = $true
+                break
+            } catch {
+                if ($attempt -lt 5) {
+                    Write-Host "  ⏳ Waiting for service principal to propagate (attempt $attempt/5)..."
+                    Start-Sleep -Seconds 5
+                } else {
+                    Write-Host "  ❌ Could not link app to flow after $attempt attempts: $_" -ForegroundColor Red
+                }
+            }
+        }
+    }
+} else {
+    Write-Host "  Creating user flow '$FlowName'..."
+
+    $userFlowBody = @{
+        "@odata.type" = "#microsoft.graph.externalUsersSelfServiceSignUpEventsFlow"
+        displayName   = $FlowName
+        conditions     = @{
+            applications = @{
+                includeApplications = @(
+                    @{ appId = $AppId }
+                )
+            }
+        }
+        onAuthenticationMethodLoadStart = @{
+            "@odata.type"     = "#microsoft.graph.onAuthenticationMethodLoadStartExternalUsersSelfServiceSignUp"
+            identityProviders = @(
+                @{ id = "EmailPassword-OAUTH" }
+            )
+        }
+        onInteractiveAuthFlowStart = @{
+            "@odata.type"    = "#microsoft.graph.onInteractiveAuthFlowStartExternalUsersSelfServiceSignUp"
+            isSignUpAllowed  = $true
+        }
+        onAttributeCollection = @{
+            "@odata.type" = "#microsoft.graph.onAttributeCollectionExternalUsersSelfServiceSignUp"
+            attributes    = @(
+                @{ id = "email"; displayName = "Email Address"; description = "Email address of the user"; userFlowAttributeType = "builtIn"; dataType = "string" },
+                @{ id = "displayName"; displayName = "Display Name"; description = "Display Name of the User."; userFlowAttributeType = "builtIn"; dataType = "string" }
+            )
+            attributeCollectionPage = @{
+                views = @(
+                    @{
+                        inputs = @(
+                            @{ attribute = "email"; label = "Email Address"; inputType = "text"; hidden = $true; editable = $false; writeToDirectory = $true; required = $true },
+                            @{ attribute = "displayName"; label = "Display Name"; inputType = "text"; hidden = $false; editable = $true; writeToDirectory = $true; required = $false }
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    try {
+        $result = Invoke-MgGraphRequest -Method POST `
+            -Uri "/v1.0/identity/authenticationEventsFlows" `
+            -Body $userFlowBody `
+            -ErrorAction Stop
+        Write-Host "  ✅ User flow '$FlowName' created and linked to app."
+    } catch {
+        Write-Host "  ❌ Failed to create user flow." -ForegroundColor Red
+        Write-Host "     $_" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "  This API requires a Microsoft Entra External ID (CIAM) tenant." -ForegroundColor Yellow
+        Write-Host "  If using a standard Azure AD tenant, create the flow manually:" -ForegroundColor Yellow
+        Write-Host "     Entra admin center → External Identities → User flows"
+        Write-Host "     Name: $FlowName, Provider: Email with password, then link '$AppName'"
+    }
+}
+
+$PortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
+
+Write-Host ""
+Write-Host "================================================================================================" -ForegroundColor Green
+Write-Host "Successfully registered and configured '$AppName'"
+Write-Host "  App ID:  $AppId"
+Write-Host "  Tenant:  $TenantName ($TenantId)"
+Write-Host "  Portal:  $PortalUrl"
+Write-Host "================================================================================================" -ForegroundColor Green
+
+Disconnect-MgGraph | Out-Null

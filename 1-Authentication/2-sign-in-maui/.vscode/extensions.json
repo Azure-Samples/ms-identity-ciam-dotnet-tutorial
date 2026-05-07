@@ -1,6 +1,10 @@
 {
     // See http://go.microsoft.com/fwlink/?LinkId=827846
     // for the documentation about the extensions.json format
-    "recommendations": ["ms-azuretools.ms-entra"]
-  }
+    "recommendations": [
+        "ms-azuretools.ms-entra",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.dotnet-maui"
+    ]
+}
   

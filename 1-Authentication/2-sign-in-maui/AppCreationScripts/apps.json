@@ -42,19 +42,13 @@
                     }
                 },
                 {
-                  "settingFile": "Platforms/Android/MsalActivity.cs",
-                  "replaceTokens": {
-                    "appId": "Enter_the_Application_Id_Here"
-                  }
-                },
-                {
                   "settingFile": "Platforms/Android/AndroidManifest.xml",
                   "replaceTokens": {
                     "appId": "Enter_the_Application_Id_Here"
                   }
                 },
                 {
-                  "settingFile": "Platforms/iOS/AppDelegate.cs",
+                  "settingFile": "Platforms/iOS/Info.plist",
                   "replaceTokens": {
                     "appId": "Enter_the_Application_Id_Here"
                   }

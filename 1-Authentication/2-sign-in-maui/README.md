@@ -48,7 +48,7 @@ This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that au
 
 ## Prerequisites
 
-* [Visual Studios](https://aka.ms/vsdownload) with the **MAUI** workload installed:
+* [Visual Studio 2022 17.14+](https://aka.ms/vsdownload) or the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) with the **MAUI** workload installed:
   * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
   * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
 * An external tenant. To create one, choose from the following methods:

@@ -1,152 +1,162 @@
-﻿#Requires -Version 7
+#Requires -Version 7
+
+<#
+.SYNOPSIS
+    Tears down Azure resources created by Configure.ps1 and restores placeholder values.
+
+.DESCRIPTION
+    Deletes the app registration, unlinks it from the user flow, and restores
+    configuration files to their placeholder values.
+
+    Prerequisites: Microsoft Graph PowerShell SDK
+      Install-Module Microsoft.Graph.Applications -Scope CurrentUser
+      Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser
+
+.PARAMETER TenantId
+    Optional. The tenant ID or domain to clean up.
+
+.PARAMETER AppName
+    Optional. The app registration display name. Defaults to "ciam-dotnet-maui".
+
+.EXAMPLE
+    ./Cleanup.ps1
+    ./Cleanup.ps1 -TenantId "contoso.onmicrosoft.com"
+#>
 
 [CmdletBinding()]
-param(    
-    [Parameter(Mandatory=$False, HelpMessage='Tenant ID (This is a GUID which represents the "Directory ID" of the AzureAD tenant into which you want to create the apps')]
-    [string] $tenantId,
-    [Parameter(Mandatory=$False, HelpMessage='Azure environment to use while running the script. Default = Global')]
-    [string] $azureEnvironmentName
+param(
+    [Parameter(Mandatory = $false)]
+    [string] $TenantId,
+
+    [Parameter(Mandatory = $false)]
+    [string] $AppName = "ciam-dotnet-maui",
+
+    [Parameter(Mandatory = $false)]
+    [string] $FlowName = "signup_signin"
 )
 
-
-Function Cleanup
-{
-    if (!$azureEnvironmentName)
-    {
-        $azureEnvironmentName = "Global"
-    }
-
-    <#
-    .Description
-    This function removes the Azure AD applications for the sample. These applications were created by the Configure.ps1 script
-    #>
-
-    # $tenantId is the Active Directory Tenant. This is a GUID which represents the "Directory ID" of the AzureAD tenant 
-    # into which you want to create the apps. Look it up in the Azure portal in the "Properties" of the Azure AD. 
-
-    # Connect to the Microsoft Graph API
-    Write-Host "Connecting to Microsoft Graph"
-
-
-    if ($tenantId -eq "") 
-    {
-        Connect-MgGraph -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
-    }
-    else 
-    {
-        Connect-MgGraph -TenantId $tenantId -Scopes "User.Read.All Organization.Read.All Application.ReadWrite.All" -Environment $azureEnvironmentName
-    }
-    
-    $context = Get-MgContext
-    $tenantId = $context.TenantId
-
-    # Get the user running the script
-    $currentUserPrincipalName = $context.Account
-    $user = Get-MgUser -Filter "UserPrincipalName eq '$($context.Account)'"
-
-    # get the tenant we signed in to
-    $Tenant = Get-MgOrganization
-    $tenantName = $Tenant.DisplayName
-    
-    $verifiedDomain = $Tenant.VerifiedDomains | where {$_.Isdefault -eq $true}
-    $verifiedDomainName = $verifiedDomain.Name
-    $tenantId = $Tenant.Id
-
-    Write-Host ("Connected to Tenant {0} ({1}) as account '{2}'. Domain is '{3}'" -f  $Tenant.DisplayName, $Tenant.Id, $currentUserPrincipalName, $verifiedDomainName)
-
-    # Removes the applications
-    Write-Host "Cleaning-up applications from tenant '$tenantId'"
-
-    Write-Host "Removing 'client' (ciam-dotnet-maui) if needed"
-    try
-    {
-        Get-MgApplication -Filter "DisplayName eq 'ciam-dotnet-maui'" | ForEach-Object {Remove-MgApplication -ApplicationId $_.Id }
-    }
-    catch
-    {
-        $message = $_
-        Write-Warning $Error[0]
-        Write-Host "Unable to remove the application 'ciam-dotnet-maui'. Error is $message. Try deleting manually." -ForegroundColor White -BackgroundColor Red
-    }
-
-    Write-Host "Making sure there are no more (ciam-dotnet-maui) applications found, will remove if needed..."
-    $apps = Get-MgApplication -Filter "DisplayName eq 'ciam-dotnet-maui'" | Format-List Id, DisplayName, AppId, SignInAudience, PublisherDomain
-    
-    if ($apps)
-    {
-        Remove-MgApplication -ApplicationId $apps.Id
-    }
-
-    foreach ($app in $apps) 
-    {
-        Remove-MgApplication -ApplicationId $app.Id
-        Write-Host "Removed ciam-dotnet-maui.."
-    }
-
-    # also remove service principals of this app
-    try
-    {
-        Get-MgServicePrincipal -filter "DisplayName eq 'ciam-dotnet-maui'" | ForEach-Object {Remove-MgServicePrincipal -ServicePrincipalId $_.Id -Confirm:$false}
-    }
-    catch
-    {
-        $message = $_
-        Write-Warning $Error[0]
-        Write-Host "Unable to remove ServicePrincipal 'ciam-dotnet-maui'. Error is $message. Try deleting manually from Enterprise applications." -ForegroundColor White -BackgroundColor Red
-    }
-}
-
-# Pre-requisites
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph")) {
-    Install-Module "Microsoft.Graph" -Scope CurrentUser 
-}
-
-#Import-Module Microsoft.Graph
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Authentication")) {
-    Install-Module "Microsoft.Graph.Authentication" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Authentication
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Identity.DirectoryManagement")) {
-    Install-Module "Microsoft.Graph.Identity.DirectoryManagement" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Identity.DirectoryManagement
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Applications")) {
-    Install-Module "Microsoft.Graph.Applications" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Applications
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Groups")) {
-    Install-Module "Microsoft.Graph.Groups" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Groups
-
-if ($null -eq (Get-Module -ListAvailable -Name "Microsoft.Graph.Users")) {
-    Install-Module "Microsoft.Graph.Users" -Scope CurrentUser 
-}
-
-Import-Module Microsoft.Graph.Users
-
 $ErrorActionPreference = "Stop"
+$ProjectDir = Resolve-Path (Join-Path $PSScriptRoot "..")
 
-
-try
-{
-    Cleanup -tenantId $tenantId -environment $azureEnvironmentName
+# --- Ensure we have a tenant ---
+if (-not $TenantId) {
+    Write-Host ""
+    Write-Host "Enter your CIAM tenant domain prefix"
+    Write-Host "(e.g., 'contoso' from contoso.onmicrosoft.com): " -ForegroundColor Magenta -NoNewline
+    $TenantId = Read-Host
+    if ([string]::IsNullOrWhiteSpace($TenantId)) {
+        Write-Error "Tenant domain is required."
+        exit 1
+    }
 }
-catch
-{
-    $_.Exception.ToString() | out-host
-    $message = $_
-    Write-Warning $Error[0]    
-    Write-Host "Unable to register apps. Error is $message." -ForegroundColor White -BackgroundColor Red
+if ($TenantId -notmatch "\.") {
+    $TenantId = "$TenantId.onmicrosoft.com"
 }
 
-Write-Host "Disconnecting from tenant"
-Disconnect-MgGraph
+# --- Ensure required modules are installed ---
+$requiredModules = @("Microsoft.Graph.Applications", "Microsoft.Graph.Identity.DirectoryManagement", "Microsoft.Graph.Identity.SignIns")
+foreach ($module in $requiredModules) {
+    if (-not (Get-Module -ListAvailable -Name $module)) {
+        Write-Host "Installing $module..."
+        Install-Module $module -Scope CurrentUser -Force
+    }
+    Import-Module $module
+}
+
+# --- Connect to Microsoft Graph ---
+Write-Host ""
+Write-Host "Connecting to Microsoft Graph for tenant '$TenantId'..."
+Connect-MgGraph -TenantId $TenantId `
+    -Scopes "Application.ReadWrite.All", "Organization.Read.All", "IdentityUserFlow.ReadWrite.All" `
+    -NoWelcome
+
+$context = Get-MgContext
+Write-Host "Connected to tenant $($context.TenantId) as '$($context.Account)'"
+
+# --- Find and delete app registrations ---
+Write-Host ""
+Write-Host "Looking for app registrations named '$AppName'..."
+
+$apps = Get-MgApplication -Filter "displayName eq '$AppName'" -All
+
+if (-not $apps -or $apps.Count -eq 0) {
+    Write-Host "No app registrations found with name '$AppName'."
+} else {
+    # Unlink apps from user flow before deleting
+    $FlowName = "signup_signin"
+    try {
+        $flows = Invoke-MgGraphRequest -Method GET `
+            -Uri "/v1.0/identity/authenticationEventsFlows" `
+            -ErrorAction Stop
+        $flow = $flows.value | Where-Object { $_.displayName -eq $FlowName } | Select-Object -First 1
+        if ($flow) {
+            foreach ($app in $apps) {
+                Write-Host "  Unlinking $($app.AppId) from user flow..."
+                try {
+                    Invoke-MgGraphRequest -Method DELETE `
+                        -Uri "/v1.0/identity/authenticationEventsFlows/$($flow.id)/conditions/applications/includeApplications/$($app.AppId)" `
+                        -ErrorAction Stop
+                } catch {
+                    # May not be linked — ignore
+                }
+            }
+        }
+    } catch {
+        # May fail on non-CIAM tenants — ignore
+    }
+
+    # Delete app registrations
+    foreach ($app in $apps) {
+        Write-Host "  Deleting app: $($app.AppId)"
+        Remove-MgApplication -ApplicationId $app.Id
+    }
+    Write-Host "  ✅ App registration(s) deleted." -ForegroundColor Green
+}
+
+# --- Restore placeholder values ---
+Write-Host ""
+Write-Host "Restoring placeholder values in configuration files..."
+
+# appsettings.json
+$appSettingsPath = Join-Path $ProjectDir "appsettings.json"
+if (Test-Path $appSettingsPath) {
+    $appSettings = Get-Content $appSettingsPath -Raw | ConvertFrom-Json
+    $appSettings.AzureAd.Authority = "https://Enter_the_Tenant_Subdomain_Here.ciamlogin.com/"
+    $appSettings.AzureAd.ClientId = "Enter_the_Application_Id_Here"
+    $appSettings | ConvertTo-Json -Depth 10 | Set-Content $appSettingsPath -Encoding UTF8
+    Write-Host "  ✅ appsettings.json" -ForegroundColor Green
+}
+
+# AndroidManifest.xml
+$manifestPath = Join-Path $ProjectDir "Platforms" "Android" "AndroidManifest.xml"
+if (Test-Path $manifestPath) {
+    [xml]$manifest = Get-Content $manifestPath
+    $ns = New-Object System.Xml.XmlNamespaceManager($manifest.NameTable)
+    $ns.AddNamespace("android", "http://schemas.android.com/apk/res/android")
+    $dataNodes = $manifest.SelectNodes("//data[@android:host='auth']", $ns)
+    foreach ($node in $dataNodes) {
+        $null = $node.SetAttribute("scheme", "http://schemas.android.com/apk/res/android", "msalEnter_the_Application_Id_Here")
+    }
+    $manifest.Save($manifestPath)
+    Write-Host "  ✅ AndroidManifest.xml" -ForegroundColor Green
+}
+
+# Info.plist
+$plistPath = Join-Path $ProjectDir "Platforms" "iOS" "Info.plist"
+if (Test-Path $plistPath) {
+    [xml]$plist = Get-Content $plistPath
+    $strings = $plist.SelectNodes("//string")
+    foreach ($s in $strings) {
+        if ($s.InnerText -match "^msal") {
+            $null = ($s.InnerText = "msalEnter_the_Application_Id_Here")
+        }
+    }
+    $plist.Save($plistPath)
+    Write-Host "  ✅ Info.plist" -ForegroundColor Green
+}
+
+Write-Host ""
+Write-Host "=== Cleanup Complete ✅ ===" -ForegroundColor Green
+Write-Host ""
+
+Disconnect-MgGraph | Out-Null
