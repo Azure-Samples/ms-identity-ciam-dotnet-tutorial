@@ -31,6 +31,8 @@ internal static class MacCatalystWebViewExtensions
 
     private class MacCatalystWebUi : ICustomWebUi
     {
+        // Must be a field — ASWebAuthenticationSession is deallocated if no strong
+        // reference is held, which cancels the browser sheet mid-flow.
         private ASWebAuthenticationSession? _session;
 
         public async Task<Uri> AcquireAuthorizationCodeAsync(
@@ -38,7 +40,11 @@ internal static class MacCatalystWebViewExtensions
         {
             var tcs = new TaskCompletionSource<Uri>();
 
-            using var registration = cancellationToken.Register(() => tcs.TrySetCanceled());
+            using var registration = cancellationToken.Register(() =>
+            {
+                _session?.Cancel();
+                tcs.TrySetCanceled();
+            });
 
             var callbackScheme = redirectUri.Scheme;
 
@@ -54,6 +60,8 @@ internal static class MacCatalystWebViewExtensions
                     callbackScheme,
                     (callbackUrl, error) =>
                     {
+                        _session = null;
+
                         if (error is not null)
                         {
                             if (error.Code == (long)ASWebAuthenticationSessionErrorCode.CanceledLogin)
@@ -80,6 +88,7 @@ internal static class MacCatalystWebViewExtensions
 
                 if (!_session.Start())
                 {
+                    _session = null;
                     tcs.TrySetException(new Exception("Failed to start ASWebAuthenticationSession."));
                 }
             });

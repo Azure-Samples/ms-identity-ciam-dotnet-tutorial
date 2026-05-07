@@ -85,9 +85,9 @@ public class MsalTokenService(IPublicClientApplication msalClient, ILogger<MsalT
     /// </summary>
     public async Task<IAccount?> GetAccountAsync()
     {
-        var accounts = await msalClient.GetAccountsAsync();
+        var accounts = (await msalClient.GetAccountsAsync()).ToList();
 
-        if (accounts.Count() > 1)
+        if (accounts.Count > 1)
         {
             foreach (var acc in accounts)
             {
