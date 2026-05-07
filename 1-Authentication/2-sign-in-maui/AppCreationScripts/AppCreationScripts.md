@@ -8,6 +8,7 @@
 
    ```pwsh
    Install-Module Microsoft.Graph.Applications -Scope CurrentUser
+   Install-Module Microsoft.Graph.Identity.DirectoryManagement -Scope CurrentUser
    Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser
    ```
 
@@ -36,6 +37,7 @@
 - [PowerShell 7+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) (cross-platform)
 - Microsoft Graph PowerShell SDK modules:
   - `Microsoft.Graph.Applications`
+  - `Microsoft.Graph.Identity.DirectoryManagement`
   - `Microsoft.Graph.Identity.SignIns`
 - An Azure account with permissions to create app registrations
 

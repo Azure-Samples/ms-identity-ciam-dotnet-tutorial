@@ -11,6 +11,7 @@
 
     Prerequisites: Microsoft Graph PowerShell SDK
       Install-Module Microsoft.Graph.Applications -Scope CurrentUser
+      Install-Module Microsoft.Graph.Identity.DirectoryManagement -Scope CurrentUser
       Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser
 
 .PARAMETER TenantId
