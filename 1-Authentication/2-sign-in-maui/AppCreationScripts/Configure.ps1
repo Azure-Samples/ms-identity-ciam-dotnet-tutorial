@@ -20,9 +20,14 @@
 .PARAMETER AppName
     Optional. The app registration display name. Defaults to "ciam-dotnet-maui".
 
+.PARAMETER AzureEnvironmentName
+    Optional. Azure cloud environment. Defaults to "Global".
+    Accepted values: Global, AzureChinaCloud, AzureUSGovernment.
+
 .EXAMPLE
     ./Configure.ps1
     ./Configure.ps1 -TenantId "contoso.onmicrosoft.com"
+    ./Configure.ps1 -TenantId "contoso" -AzureEnvironmentName "AzureUSGovernment"
 #>
 
 [CmdletBinding()]
@@ -34,7 +39,10 @@ param(
     [string] $AppName = "ciam-dotnet-maui",
 
     [Parameter(Mandatory = $false)]
-    [string] $FlowName = "signup_signin"
+    [string] $FlowName = "signup_signin",
+
+    [Parameter(Mandatory = $false)]
+    [string] $AzureEnvironmentName = "Global"
 )
 
 $ErrorActionPreference = "Stop"
@@ -70,6 +78,7 @@ Write-Host ""
 Write-Host "Connecting to Microsoft Graph for tenant '$TenantId'..."
 Connect-MgGraph -TenantId $TenantId `
     -Scopes "Application.ReadWrite.All", "Organization.Read.All", "IdentityUserFlow.ReadWrite.All" `
+    -Environment $AzureEnvironmentName `
     -NoWelcome
 
 $context = Get-MgContext

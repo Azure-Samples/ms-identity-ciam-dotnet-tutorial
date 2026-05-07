@@ -126,6 +126,23 @@ You can also specify a custom app name and user flow name:
 ./Configure.ps1 -TenantId "contoso" -AppName "my-maui-app" -FlowName "my_signup_signin"
 ```
 
+### Running the script on Azure Sovereign clouds
+
+All options above can be used on any Azure Sovereign cloud. By default, the scripts target `Global`, but this can be changed using the `-AzureEnvironmentName` parameter.
+
+The accepted values are:
+
+- `Global` (default)
+- `AzureChinaCloud`
+- `AzureUSGovernment`
+
+Example:
+
+```pwsh
+./Cleanup.ps1 -TenantId "contoso" -AzureEnvironmentName "AzureUSGovernment"
+./Configure.ps1 -TenantId "contoso" -AzureEnvironmentName "AzureUSGovernment"
+```
+
 ### Cleanup
 
 To remove the app registration and restore config placeholders:
