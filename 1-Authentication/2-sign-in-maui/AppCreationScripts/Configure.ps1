@@ -151,7 +151,7 @@ if ($existingApp) {
     }
 }
 
-$PortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
+$PortalUrl = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
 
 # --- Patch configuration files ---
 Write-Host ""
@@ -313,7 +313,7 @@ if ($existingFlow) {
     }
 }
 
-$PortalUrl = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
+$PortalUrl = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/$AppId/isMSAApp~/false"
 
 Write-Host ""
 Write-Host "================================================================================================" -ForegroundColor Green
