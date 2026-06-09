@@ -1,46 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SignInMaui.Views.MainView"
-             Title="Microsoft Entra External ID"
-             >
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior IsVisible="False" IsEnabled="False" />
-    </Shell.BackButtonBehavior>
+             x:Class="SignInMaui.Pages.SignInPage"
+             Title="Microsoft Entra External ID">
 
     <ScrollView>
-        <VerticalStackLayout 
-            Spacing="25" 
-            Padding="30,0" 
+        <VerticalStackLayout
+            Spacing="25"
+            Padding="30,0"
             VerticalOptions="Center">
 
             <Image
                 Source="external_id.png"
-                SemanticProperties.Description="External ID"
+                SemanticProperties.Description="External ID logo"
                 HeightRequest="200"
                 HorizontalOptions="Center" />
 
-            <Label 
+            <Label
                 Text="CIAM"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="26"
                 HorizontalOptions="Center" />
 
-            <Label 
+            <Label
                 Text="MAUI sample"
-                SemanticProperties.HeadingLevel="Level1"
+                SemanticProperties.HeadingLevel="Level2"
                 FontSize="26"
                 HorizontalOptions="Center" />
 
-            <Button 
+            <Button
                 x:Name="SignInButton"
                 Text="Sign In"
-                SemanticProperties.Hint="Sign In"
+                SemanticProperties.Hint="Sign in with Microsoft Entra External ID"
                 Clicked="OnSignInClicked"
                 HorizontalOptions="Center"
-                IsEnabled="False"/>
+                IsEnabled="False" />
 
         </VerticalStackLayout>
     </ScrollView>
- 
+
 </ContentPage>

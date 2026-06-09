@@ -41,14 +41,14 @@ This sample demonstrates a cross platform MAUI app (iOS, Android, WinUI) that au
 
 ## Scenario
 
-1. The client MAUI App uses the  to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
+1. The client MAUI App uses [MSAL.NET](https://aka.ms/msal-net) to sign-in a user and obtain a JWT [ID Token](https://aka.ms/id-tokens) from **Azure AD for Customers**.
 1. The **ID Token** proves that the user has successfully authenticated against **Azure AD for Customers**.
 
 ![Scenario Image](./ReadmeFiles/topology.png)
 
 ## Prerequisites
 
-* [Visual Studios](https://aka.ms/vsdownload) with the **MAUI** workload installed:
+* [Visual Studio 2022 17.14+](https://aka.ms/vsdownload) or the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) with the **MAUI** workload installed:
   * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
   * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
 * An external tenant. To create one, choose from the following methods:
@@ -159,14 +159,11 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 1. Find the placeholder `Enter_the_Tenant_Subdomain_Here` and replace it with the Directory (tenant) subdomain. For instance, if your tenant primary domain is *contoso.onmicrosoft.com*, use *contoso*.
 1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
-1. Open the `Platforms\Android\MsalActivity.cs` file.
-1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
-
 1. Open the `Platforms\Android\AndroidManifest.xml` file.
-1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
+1. Find the placeholder `Enter_the_Application_Id_Here` in the `<data android:scheme="msalEnter_the_Application_Id_Here" ...>` element and replace it with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
 
-1. Open the `Platforms\iOS\AppDelegate.cs` file.
-1. Find the placeholder `Enter_the_Application_Id_Here` and replace the existing value with the application ID (clientId) of `ciam-dotnet-maui` app copied from the Azure portal.
+1. Open the `Platforms\iOS\Info.plist` file.
+1. Find the placeholder `msalEnter_the_Application_Id_Here` in the `CFBundleURLSchemes` array and replace `Enter_the_Application_Id_Here` with the application ID (clientId).
 
 ### Step 4: Running the sample
 
@@ -209,70 +206,63 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-The structure of the solution is straightforward. Authentication logic resides in the `MSALClient` folder and UX logic within the `Views` folder.
+The app uses a **dependency injection** architecture with MSAL authentication services registered in `MauiProgram.cs`.
 
-- MSAL's main primitive for native clients, `PublicClientApplication`, is initialized as a static variable in `MSALClientHelper.cs` (For details see [Client applications in MSAL.NET](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Client-Applications))
+### Authentication services (`MSALClient/`)
 
-- When the app tries to get an access token to make an API call after the sign in button is clicked (`MainView.xaml.cs`) it will attempt to get a token without showing any UX - just in case a suitable token is already present in the cache from previous sessions. This is the code performing that logic:
+- **`MsalConfig.cs`** reads settings from `appsettings.json` (tenant authority, client ID, scopes).
+- **`MsalServiceExtensions.cs`** provides `AddMsalClient()` which registers `IPublicClientApplication` and `MsalTokenService` with platform-specific configuration for each target (Android, iOS, Mac Catalyst, Windows).
+- **`MsalTokenService.cs`** wraps MSAL token operations — `SignInAsync()` attempts silent token acquisition then falls back to interactive, `SignInInteractiveAsync()` launches the browser-based sign-in, and `SignOutAsync()` clears cached accounts.
 
-```CSharp
-private async void OnSignInClicked(object sender, EventArgs e)
+### Sign-in flow
+
+When the user navigates to the sign-in page, `SignInPage` checks for a cached account:
+
+```csharp
+var account = await _tokenService.GetAccountAsync();
+if (account is not null)
 {
-    await PublicClientSingleton.Instance.AcquireTokenSilentAsync();
-    await Shell.Current.GoToAsync("scopeview");
+    await Shell.Current.GoToAsync("//claims");
 }
 ```
 
-- If the attempt to obtain a token silently fails, a screen with the sign in button (at the bottom of the application) is displayed.
-- When the sign in button is pressed, we execute the same logic - but using a method that shows interactive UX:
+When the sign-in button is pressed, the interactive flow is triggered:
 
-```CSharp
-return await this.PublicClientApplication.AcquireTokenInteractive(scopes)
-    .WithParentActivityOrWindow(PlatformConfig.Instance.ParentWindow)
-    .ExecuteAsync()
-    .ConfigureAwait(false);
+```csharp
+await _tokenService.SignInAsync();
+await Shell.Current.GoToAsync("//claims");
 ```
 
-- The `Scopes` parameter indicates the permissions the application needs to gain access to the data requested through subsequent web API call.
+After authentication, `ClaimsPage` displays the ID token claims.
 
-- The sign out logic is very simple. In this sample we have just one user, however we are demonstrating a more generic sign out logic that you can apply if you have multiple concurrent users and you want to clear up the entire cache.
+### Sign-out
 
-```CSharp
-await this.PublicClientApplication.RemoveAsync(user).ConfigureAwait(false);
+Sign-out removes all cached accounts and navigates back to the sign-in page:
+
+```csharp
+await _tokenService.SignOutAsync();
+await Shell.Current.GoToAsync("//signin");
 ```
 
-### iOS specific considerations
+### iOS and Mac Catalyst specific considerations
 
-The `Platforms\iOS` project only requires one extra line, in `AppDelegate.cs`.
-You need to ensure that the `OpenUrl` handler looks as the snippet below:
+The `Platforms/iOS/AppDelegate.cs` overrides `OpenUrl` to hand the authentication callback URL back to MSAL:
 
-```CSharp
+```csharp
 public override bool OpenUrl(UIApplication application, NSUrl url, NSDictionary options)
 {
-    if (AuthenticationContinuationHelper.IsBrokerResponse(null))
-    {
-        // Done on different thread to allow return in no time.
-        _ = Task.Factory.StartNew(() => AuthenticationContinuationHelper.SetBrokerContinuationEventArgs(url));
-
-        return true;
-    }
-
-    else if (!AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url))
-    {
-        return false;
-    }
-
-    return true;
+    AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url);
+    return base.OpenUrl(application, url, options);
 }
 ```
 
-This logic is meant to ensure that once the interactive portion of the authentication flow is concluded by the Authenticator app, the flow goes back to MSAL.
+The `Platforms/iOS/Info.plist` must include a `CFBundleURLSchemes` entry with `msal{ClientId}` so iOS routes the authentication callback to the app.
 
-Also, in order to make the token cache work and have the `AcquireTokenSilentAsync` work multiple steps must be followed :
+On **Mac Catalyst**, MSAL doesn't ship a native maccatalyst TFM yet, so the app includes `MacCatalystWebUi.cs` which uses `ASWebAuthenticationSession` as a custom web UI. This workaround will be removed once [MSAL ships Mac Catalyst support](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/3527).
 
-1. Enable Keychain access in your `Entitlements.plist` file and specify in the **Keychain Groups** your bundle identifier.
-1. In your project options, on iOS **Bundle Signing view**, select your `Entitlements.plist` file for the Custom Entitlements field.
-1. When signing a certificate, make sure XCode uses the same Apple Id.
+For token cache persistence on iOS and Mac Catalyst:
+1. Enable Keychain access in your `Entitlements.plist` file and specify `com.microsoft.adalcache` in the **Keychain Groups**.
+1. When signing a certificate, make sure Xcode uses the same Apple Id.
 
 ## Troubleshooting
 

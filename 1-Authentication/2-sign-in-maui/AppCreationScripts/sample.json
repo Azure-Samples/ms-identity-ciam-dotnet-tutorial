@@ -60,17 +60,6 @@
         {
             "App": "client",
             "SettingKind": "Replace",
-            "SettingFile": "\\..\\Platforms\\Android\\MsalActivity.cs",
-            "Mappings": [
-                {
-                    "key": "Enter_the_Application_Id_Here",
-                    "value": ".AppId"
-                }
-            ]
-        },
-        {
-            "App": "client",
-            "SettingKind": "Replace",
             "SettingFile": "\\..\\Platforms\\Android\\AndroidManifest.xml",
             "Mappings": [
                 {
@@ -82,7 +71,7 @@
         {
             "App": "client",
             "SettingKind": "Replace",
-            "SettingFile": "\\..\\Platforms\\iOS\\AppDelegate.cs",
+            "SettingFile": "\\..\\Platforms\\iOS\\Info.plist",
             "Mappings": [
                 {
                     "key": "Enter_the_Application_Id_Here",
