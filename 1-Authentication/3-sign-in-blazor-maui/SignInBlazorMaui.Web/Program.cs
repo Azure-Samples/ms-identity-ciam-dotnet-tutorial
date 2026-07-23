@@ -11,11 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents()
+    // Serialize the server-side authentication state so it flows to WebAssembly
+    // components without the browser needing to hold any tokens. SerializeAllClaims
+    // makes the full set of user claims available to WASM-rendered components.
+    .AddAuthenticationStateSerialization(options => options.SerializeAllClaims = true);
 
 // Add device-specific services used by the SignInBlazorMaui.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
+
+// Per-user profile value. The store is a process-wide singleton (stand-in for a
+// database); the Interactive Server components use ServerUserProfileService to read
+// and write it in-process.
+builder.Services.AddSingleton<ProfileStore>();
+builder.Services.AddScoped<IUserProfileService, ServerUserProfileService>();
 
 builder.Services.AddCascadingAuthenticationState();
 
@@ -100,7 +111,10 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddAdditionalAssemblies(typeof(SignInBlazorMaui.Shared._Imports).Assembly);
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(
+        typeof(SignInBlazorMaui.Shared._Imports).Assembly,
+        typeof(SignInBlazorMaui.Web.Client._Imports).Assembly);
 
 // Login endpoint: triggers OIDC redirect to Entra External ID
 app.MapGet("/authentication/login", async (HttpContext context, string? returnUrl) =>
@@ -131,5 +145,19 @@ app.MapGet("/api/weather", async (IWeatherService weatherService) =>
     var forecasts = await weatherService.GetWeatherForecastsAsync();
     return TypedResults.Ok(forecasts);
 }).RequireAuthorization();
+
+// Profile API used by the MAUI client (and any WebAssembly client). Reads and writes
+// the same server-side ProfileStore that the Interactive Server components use.
+// The state-changing PUT disables antiforgery because it is already protected by
+// authentication (a bearer token from MAUI, or the same-origin auth cookie).
+app.MapGet("/api/profile", (HttpContext context, ProfileStore store) =>
+    TypedResults.Ok(store.Get(UserId.From(context.User))))
+    .RequireAuthorization();
+
+app.MapPut("/api/profile", (HttpContext context, ProfileStore store, UserProfile profile) =>
+{
+    store.Set(UserId.From(context.User), profile);
+    return TypedResults.NoContent();
+}).RequireAuthorization().DisableAntiforgery();
 
 app.Run();

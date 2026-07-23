@@ -35,6 +35,7 @@ public static class MauiProgram
         // Add device-specific services used by the SignInBlazorMaui.Shared project
         builder.Services.AddSingleton<IFormFactor, FormFactor>();
         builder.Services.AddScoped<IWeatherService, WeatherService>();
+        builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
         return builder.Build();
     }

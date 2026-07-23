@@ -2,11 +2,14 @@
 @using Microsoft.AspNetCore.Authorization
 @using SignInBlazorMaui.Shared.Services
 @attribute [Authorize]
+@rendermode InteractiveWebAssembly
 @inject IWeatherService WeatherService
 
 <PageTitle>Weather</PageTitle>
 
 <h1>Weather</h1>
+
+<RenderModeIndicator />
 
 <p>This component demonstrates showing data.</p>
 

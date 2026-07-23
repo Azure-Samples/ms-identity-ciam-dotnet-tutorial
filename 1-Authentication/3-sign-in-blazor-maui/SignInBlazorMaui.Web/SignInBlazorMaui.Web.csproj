@@ -1,23 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Web" Version="3.8.3" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.8.3" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
-    <!-- Pin Microsoft.OpenApi to a patched version (GHSA-v5pm-xwqc-g5wc); the version
-         referenced transitively by Microsoft.AspNetCore.OpenApi 10.0.2 is flagged by NuGet audit. -->
-    <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.13.2" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="4.13.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.6.26359.118" />
+    <!-- Pin Microsoft.OpenApi to the latest 3.x to stay current with security fixes.
+         Microsoft.AspNetCore.OpenApi (net11) requires Microsoft.OpenApi >= 3.6.0. -->
+    <PackageReference Include="Microsoft.OpenApi" Version="3.9.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SignInBlazorMaui.Shared\SignInBlazorMaui.Shared.csproj" />
+    <ProjectReference Include="..\SignInBlazorMaui.Web.Client\SignInBlazorMaui.Web.Client.csproj" />
   </ItemGroup>
 
 </Project>

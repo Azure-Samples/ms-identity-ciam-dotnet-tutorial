@@ -1,0 +1,75 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using SignInBlazorMaui.Shared.Services
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IUserProfileService ProfileService
+
+<PageTitle>Profile</PageTitle>
+
+<h1>Profile</h1>
+
+<RenderModeIndicator />
+
+<p>
+    Edit your profile value below. This page uses the <strong>Interactive Server</strong>
+    render mode on the web, so it reads and writes the value with direct, in-process
+    access to the server-side store &mdash; no API call and no token handling. In the MAUI
+    app the same page runs natively and reaches the value through the protected
+    <code>/api/profile</code> endpoint using the app's access token.
+</p>
+
+@if (profile is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="profile" OnValidSubmit="SaveAsync">
+        <div class="mb-3">
+            <label class="form-label" for="displayName">Display name</label>
+            <InputText id="displayName" class="form-control" @bind-Value="profile.DisplayName" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="favoriteColor">Favorite color</label>
+            <InputText id="favoriteColor" class="form-control" @bind-Value="profile.FavoriteColor" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+
+    @if (saved)
+    {
+        <div class="alert alert-success mt-3" role="alert">Profile saved.</div>
+    }
+
+    <p class="text-muted mt-4">
+        <small>
+            This component is executing on <strong>@Environment.MachineName</strong>
+            (process @Environment.ProcessId).
+            In Interactive Server mode on the web that machine is the <strong>server</strong>,
+            which is why it can touch server-only resources in-process. A WebAssembly page
+            would report the browser instead.
+        </small>
+    </p>
+}
+
+@code {
+    private UserProfile? profile;
+    private bool saved;
+
+    protected override async Task OnInitializedAsync()
+    {
+        profile = await ProfileService.GetProfileAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        if (profile is null)
+        {
+            return;
+        }
+
+        await ProfileService.UpdateProfileAsync(profile);
+        saved = true;
+    }
+}

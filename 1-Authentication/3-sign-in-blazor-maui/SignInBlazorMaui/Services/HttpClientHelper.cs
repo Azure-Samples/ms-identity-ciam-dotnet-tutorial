@@ -22,6 +22,7 @@ internal class HttpClientHelper
         }
     }
     public static string WeatherUrl => $"{BaseUrl}api/weather";
+    public static string ProfileUrl => $"{BaseUrl}api/profile";
 
     public static HttpClient GetHttpClient()
     {

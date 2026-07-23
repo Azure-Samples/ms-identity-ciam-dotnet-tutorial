@@ -2,12 +2,20 @@
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 @attribute [Authorize]
+@rendermode InteractiveWebAssembly
 
 <PageTitle>Account</PageTitle>
 
 <h1>Account</h1>
 
-<p>Your profile information from Microsoft Entra External ID.</p>
+<RenderModeIndicator />
+
+<p>
+    Your identity claims, read locally on this device. On the web this page runs in
+    <strong>WebAssembly</strong>, so the claims come from the authentication state the
+    server serialized to the browser &mdash; no token is stored client-side. In the MAUI
+    app the same page runs natively and shows the claims from the on-device MSAL session.
+</p>
 
 <AuthorizeView>
     <Authorized>

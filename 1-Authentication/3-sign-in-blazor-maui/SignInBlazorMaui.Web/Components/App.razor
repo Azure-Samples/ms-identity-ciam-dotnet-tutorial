@@ -11,21 +11,13 @@
     <link rel="stylesheet" href="@Assets["SignInBlazorMaui.Web.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="_content/SignInBlazorMaui.Shared/favicon.png" />
-    <HeadOutlet @rendermode="PageRenderMode" />
+    <HeadOutlet />
 </head>
 
 <body>
-    <Routes @rendermode="PageRenderMode" />
+    <Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 
 </html>
-
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    private IComponentRenderMode? PageRenderMode =>
-        HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;
-}
