@@ -16,8 +16,11 @@ public class ServerUserProfileService(
     public async Task<UserProfile> GetProfileAsync() =>
         store.Get(await GetUserIdAsync());
 
-    public async Task UpdateProfileAsync(UserProfile profile) =>
+    public async Task<bool> UpdateProfileAsync(UserProfile profile)
+    {
         store.Set(await GetUserIdAsync(), profile);
+        return true;
+    }
 
     private async Task<string> GetUserIdAsync()
     {

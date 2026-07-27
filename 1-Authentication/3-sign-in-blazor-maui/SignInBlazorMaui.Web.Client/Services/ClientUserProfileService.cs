@@ -14,9 +14,9 @@ public class ClientUserProfileService(HttpClient httpClient) : IUserProfileServi
     public async Task<UserProfile> GetProfileAsync() =>
         await httpClient.GetFromJsonAsync<UserProfile>("api/profile") ?? new UserProfile();
 
-    public async Task UpdateProfileAsync(UserProfile profile)
+    public async Task<bool> UpdateProfileAsync(UserProfile profile)
     {
         var response = await httpClient.PutAsJsonAsync("api/profile", profile);
-        response.EnsureSuccessStatusCode();
+        return response.IsSuccessStatusCode;
     }
 }

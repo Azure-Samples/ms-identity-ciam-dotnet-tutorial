@@ -35,7 +35,7 @@ public class UserProfileService(MsalAuthenticationStateProvider authStateProvide
         }
     }
 
-    public async Task UpdateProfileAsync(UserProfile profile)
+    public async Task<bool> UpdateProfileAsync(UserProfile profile)
     {
         try
         {
@@ -45,16 +45,17 @@ public class UserProfileService(MsalAuthenticationStateProvider authStateProvide
             if (accessToken is null)
             {
                 Debug.WriteLine("No access token available for profile API call.");
-                return;
+                return false;
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await httpClient.PutAsJsonAsync(HttpClientHelper.ProfileUrl, profile);
-            response.EnsureSuccessStatusCode();
+            return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"An error occurred saving the profile: {ex.Message}");
+            return false;
         }
     }
 }

@@ -14,7 +14,7 @@ public interface IUserProfileService
 {
     Task<UserProfile> GetProfileAsync();
 
-    Task UpdateProfileAsync(UserProfile profile);
+    Task<bool> UpdateProfileAsync(UserProfile profile);
 }
 
 /// <summary>

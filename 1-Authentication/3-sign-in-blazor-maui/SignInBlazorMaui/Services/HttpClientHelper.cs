@@ -1,5 +1,7 @@
 namespace SignInBlazorMaui.Services;
 
+using System.Net;
+
 /// <summary>
 /// Helper class to manage HttpClient configuration and API endpoint URLs.
 /// </summary>
@@ -26,11 +28,23 @@ internal class HttpClientHelper
 
     public static HttpClient GetHttpClient()
     {
+        HttpClient client;
 #if WINDOWS || MACCATALYST
-        return new HttpClient();
+        client = new HttpClient();
 #else
-        return new HttpClient(new HttpsClientHandlerService().GetPlatformMessageHandler());
+        client = new HttpClient(new HttpsClientHandlerService().GetPlatformMessageHandler());
 #endif
+
+        // The local Kestrel dev server offers both HTTP/1.1 and HTTP/2. On iOS the
+        // native handler can hang negotiating HTTP/2 against the local HTTPS server,
+        // so prefer HTTP/1.1 for these local development calls.
+        client.DefaultRequestVersion = HttpVersion.Version11;
+        client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+
+        // Fail fast instead of hanging if the dev server is unreachable.
+        client.Timeout = TimeSpan.FromSeconds(30);
+
+        return client;
     }
 }
 

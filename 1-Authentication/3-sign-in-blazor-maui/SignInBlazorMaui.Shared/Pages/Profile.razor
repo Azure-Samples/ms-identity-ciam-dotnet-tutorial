@@ -37,9 +37,15 @@ else
         <button type="submit" class="btn btn-primary">Save</button>
     </EditForm>
 
-    @if (saved)
+    @if (saved == true)
     {
         <div class="alert alert-success mt-3" role="alert">Profile saved.</div>
+    }
+    else if (saved == false)
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            Couldn't save your profile. Make sure the server is running and you're signed in.
+        </div>
     }
 
     <p class="text-muted mt-4">
@@ -55,7 +61,7 @@ else
 
 @code {
     private UserProfile? profile;
-    private bool saved;
+    private bool? saved;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +75,6 @@ else
             return;
         }
 
-        await ProfileService.UpdateProfileAsync(profile);
-        saved = true;
+        saved = await ProfileService.UpdateProfileAsync(profile);
     }
 }
