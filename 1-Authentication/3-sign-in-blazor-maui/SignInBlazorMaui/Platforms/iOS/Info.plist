@@ -37,7 +37,7 @@
             <string>com.companyname.signinblazormaui</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>msalEnter_the_Application_Id_Herenter_the_Application_Id_Here</string>
+                <string>msalEnter_the_Application_Id_Here</string>
             </array>
         </dict>
     </array>

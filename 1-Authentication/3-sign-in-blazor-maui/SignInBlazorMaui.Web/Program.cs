@@ -1,6 +1,7 @@
 using SignInBlazorMaui.Shared.Services;
 using SignInBlazorMaui.Web.Components;
 using SignInBlazorMaui.Web.Services;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,6 +70,12 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
 
     options.Events.OnRemoteFailure = context =>
     {
+        // Log the real reason so authentication failures aren't silently swallowed.
+        var logger = context.HttpContext.RequestServices
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("OidcRemoteFailure");
+        logger.LogError(context.Failure, "OIDC remote failure: {Message}", context.Failure?.Message);
+
         context.Response.Redirect("/");
         context.HandleResponse();
         return Task.CompletedTask;
@@ -102,6 +109,25 @@ else
 
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+// The OpenID Connect sign-in/sign-out callbacks arrive as a cross-site form POST
+// from the identity provider (response_mode=form_post). .NET 11 adds automatic
+// cross-origin CSRF protection that records an invalid antiforgery verdict for such
+// cross-site posts, which would stop the OpenID Connect handler from reading the
+// response form. These callbacks have their own CSRF protection built into the
+// OIDC protocol (the 'state' parameter and correlation/nonce cookies validated by
+// the handler), so mark the antiforgery verdict valid for those paths only.
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path;
+    if (path.StartsWithSegments("/signin-oidc") ||
+        path.StartsWithSegments("/signout-callback-oidc"))
+    {
+        context.Features.Set<IAntiforgeryValidationFeature>(new AllowAntiforgeryValidationFeature());
+    }
+
+    await next();
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -161,3 +187,17 @@ app.MapPut("/api/profile", (HttpContext context, ProfileStore store, UserProfile
 }).RequireAuthorization().DisableAntiforgery();
 
 app.Run();
+
+/// <summary>
+/// Antiforgery verdict that reports success. Used to mark the OpenID Connect
+/// callback paths as valid so .NET 11's automatic cross-origin CSRF protection
+/// doesn't block the identity provider's legitimate form_post callback. The OIDC
+/// protocol provides its own CSRF protection via the 'state' parameter and the
+/// correlation/nonce cookies that the handler validates.
+/// </summary>
+sealed class AllowAntiforgeryValidationFeature : IAntiforgeryValidationFeature
+{
+    public bool IsValid => true;
+
+    public Exception? Error => null;
+}

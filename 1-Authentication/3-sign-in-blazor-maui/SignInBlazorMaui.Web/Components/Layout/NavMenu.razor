@@ -19,12 +19,12 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="authentication/login">
+                    <NavLink class="nav-link" href="authentication/login" data-enhance-nav="false">
                         <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="authentication/register">
+                    <NavLink class="nav-link" href="authentication/register" data-enhance-nav="false">
                         <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
                     </NavLink>
                 </div>
@@ -58,7 +58,7 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <form action="authentication/logout" method="post">
+                    <form action="authentication/logout" method="post" data-enhance="false">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                         <button type="submit" class="nav-link">
