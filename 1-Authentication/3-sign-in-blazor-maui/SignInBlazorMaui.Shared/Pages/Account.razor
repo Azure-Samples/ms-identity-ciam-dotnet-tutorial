@@ -1,0 +1,76 @@
+@page "/account"
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@attribute [Authorize]
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Account</PageTitle>
+
+<h1>Account</h1>
+
+<RenderModeIndicator />
+
+<p>
+    Your identity claims, read locally on this device. On the web this page runs in
+    <strong>WebAssembly</strong>, so the claims come from the authentication state the
+    server serialized to the browser &mdash; no token is stored client-side. In the MAUI
+    app the same page runs natively and shows the claims from the on-device MSAL session.
+</p>
+
+<AuthorizeView>
+    <Authorized>
+        <h4 class="mb-3">Profile</h4>
+        <div class="row mb-3">
+            @if (!string.IsNullOrEmpty(displayName))
+            {
+                <div class="col-sm-6 mb-2">
+                    <h6 class="mb-1">Display Name</h6>
+                    <p class="mb-0">@displayName</p>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(email))
+            {
+                <div class="col-sm-6 mb-2">
+                    <h6 class="mb-1">Email</h6>
+                    <p class="mb-0">@email</p>
+                </div>
+            }
+        </div>
+
+        <h4 class="mb-3">Token Claims</h4>
+        <div class="row">
+            @foreach (var claim in claims)
+            {
+                <div class="col-sm-6 mb-3">
+                    <h6 class="mb-1" style="word-break: break-all;">@claim.Type</h6>
+                    <p class="mb-0" style="word-break: break-all;">@claim.Value</p>
+                </div>
+            }
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    private string? displayName;
+    private string? email;
+    private IEnumerable<Claim> claims = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState is null) return;
+
+        var state = await AuthState;
+        var user = state.User;
+        claims = user.Claims.OrderBy(c => c.Type).ToList();
+
+        displayName = user.FindFirst("name")?.Value;
+
+        email = user.FindFirst("emails")?.Value
+             ?? user.FindFirst("email")?.Value
+             ?? user.FindFirst(ClaimTypes.Email)?.Value
+             ?? user.FindFirst("preferred_username")?.Value;
+    }
+}

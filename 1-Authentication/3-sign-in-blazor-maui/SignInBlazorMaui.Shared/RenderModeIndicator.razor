@@ -1,0 +1,16 @@
+@* Displays the render mode the component is currently running in.
+   Under global static SSR with per-page interactivity you can observe a page
+   transition from "Static" (prerender) to its interactive mode ("Server" or
+   "WebAssembly"). In the MAUI Blazor Hybrid app it always reports the hybrid
+   WebView renderer, because Blazor Hybrid is always interactive. *@
+
+<div class="render-mode-indicator alert alert-secondary py-2 my-2" role="status">
+    <small>
+        Rendered by <strong>@RendererInfo.Name</strong>
+        &middot; interactive: <strong>@RendererInfo.IsInteractive</strong>
+        @if (AssignedRenderMode is not null)
+        {
+            <text> &middot; assigned render mode: <strong>@AssignedRenderMode.GetType().Name</strong></text>
+        }
+    </small>
+</div>
