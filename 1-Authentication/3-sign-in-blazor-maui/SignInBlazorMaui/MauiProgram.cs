@@ -1,4 +1,5 @@
 using SignInBlazorMaui.Services;
+using SignInBlazorMaui.Shared;
 using SignInBlazorMaui.Shared.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,12 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        // A BlazorWebView is always interactive and, on .NET 10, does not support the
+        // explicit render modes that the shared components declare. Clear the render
+        // modes so those components render without a render mode inside the WebView.
+        // See SignInBlazorMaui.Shared.InteractiveRenderSettings for details.
+        InteractiveRenderSettings.ConfigureBlazorHybridRenderModes();
+
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()

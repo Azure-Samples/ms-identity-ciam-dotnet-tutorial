@@ -18,7 +18,7 @@ internal static class MsalServiceExtensions
             .Create(config.ClientId)
             .WithAuthority(config.Authority)
             .WithRedirectUri(config.RedirectUri)
-            .WithIosKeychainSecurityGroup(MsalConfig.IosKeychainSecurityGroup);
+            .WithIosKeychainSecurityGroup(AppInfo.Current.PackageName);
 
 #if WINDOWS
         // Windows: use embedded WebView2 browser + WAM broker for authentication.

@@ -44,7 +44,7 @@ This sample demonstrates a **4-project Blazor solution** that authenticates user
 | **SignInBlazorMaui.Web** | ASP.NET Core Blazor Web App (server) using Microsoft.Identity.Web for OIDC sign-in. Hosts the shared UI in static SSR, Interactive Server, and Interactive WebAssembly, and exposes protected `/api/weather` and `/api/profile` endpoints |
 | **SignInBlazorMaui.Web.Client** | Blazor WebAssembly client for the Web App's Interactive WebAssembly / Interactive Auto pages. It stores **no tokens** — it receives the authentication state serialized from the server |
 
-The same Blazor UI runs natively on mobile/desktop (via MAUI) and in the browser (via the Blazor Web App), with platform-appropriate authentication on each. This sample targets **.NET 11**.
+The same Blazor UI runs natively on mobile/desktop (via MAUI) and in the browser (via the Blazor Web App), with platform-appropriate authentication on each. This sample targets **.NET 10**.
 
 ## Scenario
 
@@ -56,7 +56,7 @@ The same Blazor UI runs natively on mobile/desktop (via MAUI) and in the browser
 
 ## Prerequisites
 
-* [Visual Studio 2022 17.14+](https://aka.ms/vsdownload) or the [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0) with the **MAUI** and **wasm-tools** workloads installed:
+* [Visual Studio 2022 17.14+](https://aka.ms/vsdownload) or the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) with the **MAUI** and **wasm-tools** workloads installed:
   * [Instructions for Windows](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vswin)
   * [Instructions for MacOS](https://learn.microsoft.com/dotnet/maui/get-started/installation?tabs=vsma)
 * An external tenant. To create one, choose from the following methods:
@@ -199,7 +199,7 @@ The Web App uses **per-page interactivity**, so each page selects the render mod
 
 This layout shows the real-world trade-off between render modes: pages that only need to read or edit data are served as static SSR or WebAssembly to avoid a per-user Interactive Server circuit, while a page that benefits from direct in-process server access (`Profile`) uses Interactive Server.
 
-Because the shared pages declare `@rendermode`, they rely on the .NET 11 change ([dotnet/aspnetcore#65876](https://github.com/dotnet/aspnetcore/pull/65876)) that lets a Blazor Hybrid `BlazorWebView` treat render modes as no-ops. In the MAUI app every page simply runs interactively in the native WebView.
+Because the shared pages declare a per-page `@rendermode` and are also hosted by the MAUI `BlazorWebView`, they use an indirection (`InteractiveRenderSettings` in the `.Shared` RCL) to assign render modes. On .NET 10 a `BlazorWebView` is always interactive and throws if a component specifies a render mode, so the MAUI app calls `InteractiveRenderSettings.ConfigureBlazorHybridRenderModes()` at startup to clear the modes (they become no-ops) while the web app keeps the real per-page modes. See the comments in `SignInBlazorMaui.Shared/InteractiveRenderSettings.cs` for details. On .NET 11 this workaround is no longer needed ([dotnet/aspnetcore#65876](https://github.com/dotnet/aspnetcore/pull/65876) makes Blazor Hybrid treat render modes as no-ops natively).
 
 ### MAUI authentication
 
@@ -210,7 +210,7 @@ MSAL configuration is loaded from an embedded `appsettings.json` via `MsalConfig
 - **Mac Catalyst**: `ASWebAuthenticationSession` via custom `ICustomWebUi` (workaround for missing maccatalyst TFM in MSAL — [tracking issue](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/3527))
 - **Windows**: Embedded WebView2 via `WithWindowsDesktopFeatures`
 
-Token cache persistence uses `SecureStorage` on Windows and Mac Catalyst (MSAL handles iOS Keychain and Android SharedPreferences natively).
+Token cache persistence uses `SecureStorage` on Windows and Mac Catalyst (MSAL handles iOS Keychain and Android SharedPreferences natively). On Apple platforms, the cache remains in the app's private Keychain access group.
 
 ### Web authentication
 
@@ -234,11 +234,11 @@ public override bool OpenUrl(UIApplication application, NSUrl url, NSDictionary 
 }
 ```
 
-Enable Keychain access in `Entitlements.plist` with the `com.microsoft.adalcache` group.
+MSAL stores its token cache in the app's own private Keychain group. `MsalServiceExtensions` passes the bundle identifier (`AppInfo.Current.PackageName`) to `WithIosKeychainSecurityGroup`, and `Platforms/iOS/Entitlements.plist` grants access only to `$(AppIdentifierPrefix)$(CFBundleIdentifier)`. This disables MSAL's cross-app `com.microsoft.adalcache` sharing while retaining secure, durable token storage. For more information, see [Disable keychain sharing](https://learn.microsoft.com/entra/msal/objc/howto-v2-keychain-objc).
 
 ### Mac Catalyst specific considerations
 
-MSAL doesn't ship a maccatalyst TFM yet, so `MacCatalystWebUi.cs` provides an `ASWebAuthenticationSession` workaround via `ICustomWebUi`. Remove this file once MSAL ships Mac Catalyst support.
+MSAL doesn't ship a maccatalyst TFM yet, so `MacCatalystWebUi.cs` provides an `ASWebAuthenticationSession` workaround via `ICustomWebUi`. The generic MSAL token cache is serialized to MAUI `SecureStorage`, which stores it in the app-private Keychain group declared by `Platforms/MacCatalyst/Entitlements.plist`. A Mac Catalyst development build therefore needs a valid Apple Development signing identity and a matching provisioning profile. Remove these workarounds once MSAL ships Mac Catalyst support.
 
 ## Troubleshooting
 

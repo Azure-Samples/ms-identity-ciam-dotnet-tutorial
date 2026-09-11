@@ -2,9 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
+        <!-- Use only this app's default access group, not MSAL's shared SSO group. -->
         <key>keychain-access-groups</key>
         <array>
-            <string>$(AppIdentifierPrefix)com.microsoft.adalcache</string>
+            <string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string>
         </array>
     </dict>
 </plist>

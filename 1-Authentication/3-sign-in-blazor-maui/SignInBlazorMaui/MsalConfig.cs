@@ -44,11 +44,6 @@ public class MsalConfig
         $"msal{ClientId}://auth";
 #endif
 
-    /// <summary>
-    /// iOS Keychain security group for token cache persistence.
-    /// </summary>
-    public const string IosKeychainSecurityGroup = "com.microsoft.adalcache";
-
     private static MsalConfig Load()
     {
         var assembly = Assembly.GetExecutingAssembly();
